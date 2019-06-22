@@ -1,0 +1,9 @@
+/node_modules/
+token.json
+out.jpg
+package.json
+package-lock.json
+creds.json
+credentials.json
+botconfig.json
+.vscode
