@@ -159,7 +159,7 @@ bot.on("message", async message => { //Someone sends a message in a channel
         if (commandfile) console.log("RTS", commandfile.help.name, args) //if theres a command file then log that its rts and then the name and args
     } else if (message.guild.id == botconfig.PIGSServer) {//if said in the pigs server
         var commandfile = bot.PIGSCommands.get(cmd.slice(prefix.length)); // try to get a pigs command with the specified cmd without the prefix
-        if (commandfile && (message.channel.id != botconfig.PIGSBotCommandsChannel.id && message.channel.id != botconfig.PIGSVoucherChannel.id) && !message.member.hasPermission("KICK_MEMBERS") && cmd != ".status") return message.channel.send("Do this in <#" + botconfig.PIGSBotCommandsChannel.id + "> instead") //if theres a command but its said in the wrong channel
+        if (commandfile && (message.channel.id != "511853214858084364" && message.channel.id != botconfig.PIGSBotCommandsChannel.id && message.channel.id != botconfig.PIGSVoucherChannel.id) && !message.member.hasPermission("KICK_MEMBERS") && cmd != ".status") return message.channel.send("Do this in <#" + botconfig.PIGSBotCommandsChannel.id + "> instead") //if theres a command but its said in the wrong channel
         if (commandfile) console.log("PIGS", commandfile.help.name, args) //if theres a command file then log that its pigs and then the name and args
     }
     if (!commandfile) { //if theres isn't a pigs or rts command
