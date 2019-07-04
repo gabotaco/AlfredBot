@@ -1,7 +1,7 @@
 const WarThogsID = "572838338470346757"
 
 module.exports.run = async (bot, message, args) => {
-    if (recimessage.memberever.roles.has(WarThogsID)) { //if they have the role by ID
+    if (message.member.roles.has(WarThogsID)) { //if they have the role by ID
         message.member.removeRole(WarThogsID) //removes role
         message.channel.send("Took away the warthogs role")
         return;

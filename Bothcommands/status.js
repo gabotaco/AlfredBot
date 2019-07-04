@@ -21,12 +21,14 @@ module.exports.run = async (bot, message, args) => {
       await functions.FindApplicant(auth, message.channel, message.member.user.tag, botconfig.ApplicationDiscordIndex, SignMeUpIndex, function (row) { //Find member by discord
         FoundMember = true;
         if (!row[0]) message.channel.send("We have received your application.") //Nothing in status
+        else if (row[0] == "Hired") message.delete();
         else message.channel.send(`Your current application status is: ${row[0]}`) //Send status
       })
     } else { //Provided ID
       await functions.FindApplicant(auth, message.channel, ID, botconfig.ApplicationInGameIDIndex, SignMeUpIndex, function (row) { //Find member by ID
         FoundMember = true;
         if (!row[0]) message.channel.send("We have received your application.") //Nothing in status
+        else if (row[0] == "Hired") message.delete();
         else message.channel.send(`Your current application status is: ${row[0]}`) //Send status
       })
     }
