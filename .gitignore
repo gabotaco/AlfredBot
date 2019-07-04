@@ -7,3 +7,5 @@ creds.json
 credentials.json
 botconfig.json
 .vscode
+client_secret_*.json
+tokens.json

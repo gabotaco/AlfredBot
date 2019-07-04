@@ -148,11 +148,16 @@ bot.on("message", async message => { //Someone sends a message in a channel
 
     if (message.guild.id == botconfig.PIGSServer) var prefix = botconfig.prefix.PIGS //in case of a different prefix for each server
     else if (message.guild.id == botconfig.RTSServer) var prefix = botconfig.prefix.RTS
-
-    if (!message.content.startsWith(prefix)) return; //if it doesn't start with the prefix
     const messageArray = message.content.split(' '); //splits the message into an array for every space into an array
     const cmd = messageArray[0].toLowerCase(); //command is first word in lowercase
     const args = messageArray.slice(1); //args is everything after the first word
+    if (message.mentions && message.mentions.members.first().id == "472060657081122818") {
+        message.channel.startTyping(); //start type in the channel
+        await bot.BothCommands.get("ask").run(bot, message, args)
+        message.channel.stopTyping(true) //stops typing in the channel after the command finishes
+    }
+    if (!message.content.startsWith(prefix)) return; //if it doesn't start with the prefix
+
     if (message.guild.id == botconfig.RTSServer) { //if said in the rts server
         var commandfile = bot.RTSCommands.get(cmd.slice(prefix.length)); //Trys to get a rts command with the specified cmd without the prefix
         if (commandfile && (message.channel.id != botconfig.RTSPublicBotCommandsChannel.id && message.channel.id != botconfig.RTSBotCommandsChannel.id && message.channel.id != botconfig.RTSBennysChannel.id) && !message.member.hasPermission("KICK_MEMBERS") && cmd != ".status") return message.channel.send(`Do this in ${botconfig.RTSPublicBotCommandsChannel} or ${botconfig.RTSBotCommandsChannel}`) //if theres a command but its not in one of the allowed channels
