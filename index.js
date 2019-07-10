@@ -151,7 +151,7 @@ bot.on("message", async message => { //Someone sends a message in a channel
     const messageArray = message.content.split(' '); //splits the message into an array for every space into an array
     const cmd = messageArray[0].toLowerCase(); //command is first word in lowercase
     const args = messageArray.slice(1); //args is everything after the first word
-    if (message.mentions && message.mentions.members.first().id == "472060657081122818") {
+    if (message.mentions.members.size > 0 && message.mentions.members.first().id == "472060657081122818") {
         message.channel.startTyping(); //start type in the channel
         await bot.BothCommands.get("ask").run(bot, message, args)
         message.channel.stopTyping(true) //stops typing in the channel after the command finishes
