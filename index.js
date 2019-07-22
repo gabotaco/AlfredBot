@@ -68,7 +68,6 @@ bot.on("ready", async () => { //When the bot logs in
     botconfig.RTSPublicBotCommandsChannel = bot.channels.get(botconfig.RTSPublicBotCommandsChannel)
     botconfig.RTSBotCommandsChannel = bot.channels.get(botconfig.RTSBotCommandsChannel)
     botconfig.RTSBennysChannel = bot.channels.get(botconfig.RTSBennysChannel)
-    botconfig.RTSStreamingChannel = bot.channels.get(botconfig.RTSStreamingChannel)
     botconfig.PIGSBotCommandsChannel = bot.channels.get(botconfig.PIGSBotCommandsChannel)
     botconfig.PIGSVoucherChannel = bot.channels.get(botconfig.PIGSVoucherChannel)
 
@@ -214,32 +213,6 @@ bot.on("message", async message => { //When a message is sent to a channel. Not 
             else if (message.guild.id == botconfig.PIGSServer) botconfig.PIGSLogs.send(GlitchEmbed) //if its in pigs send to pigs logs
         }
     })
-})
-
-bot.on("presenceUpdate", (oldMember, newMember) => { //another presence update
-    if (oldMember.guild.id == botconfig.PIGSServer) return; //if its in pigs server don't do anything
-    if (newMember.presence.game == null) { //if not playing a game
-        if (newMember.roles.has(botconfig.RTSStreamingRole)) { //if they have the streaming role
-            newMember.removeRole(botconfig.RTSStreamingRole) //remove stop
-            return;
-        } else { //if they don't
-            return; //stop
-        }
-    }
-    if (newMember.presence.game.streaming) { //if they are streaming
-        newMember.addRole(botconfig.RTSStreamingRole) //adds streaming role
-
-        let streamEmbed = new Discord.RichEmbed() //makes an embed with stream info
-            .setDescription("Streaming")
-            .setColor("RANDOM")
-            .setThumbnail(newMember.user.displayAvatarURL)
-            .addField("Streamer: ", newMember, true)
-            .addField("Twitch Stream Url: ", newMember.presence.game.url, true)
-            .addField("Title: ", newMember.presence.game.name, true)
-            .addField("Game: ", newMember.presence.game.details, true)
-
-        botconfig.RTSStreamingChannel.send(streamEmbed)
-    }
 })
 
 bot.on("error", (error) => { //when theres a discord error
