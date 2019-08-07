@@ -22,7 +22,6 @@ module.exports.run = async (bot, message, args) => {
 
         const PIGSMemberData = await functions.GetMemberDetails(auth, botconfig.PIGSSheet, botconfig.PIGSEmployeeRange, SearchColumn, ID, message.channel) //Get PIGS data
         if (!PIGSMemberData) return message.channel.send("They aren't hired in either company") //If has no PIGS data then not in either company
-
         botconfig.RTSStaffChannel.send(`Copy/paste \`add_rts ${PIGSMemberData[botconfig.PIGSEmployeeRangeDiscordIndex]}\` into TT discord`) //Tell RTS staff to change TT roles
         
         const RTSMemberData = await functions.GetMemberDetails(auth, botconfig.RTSSheet, botconfig.RTSFiredEmployeeRange, SearchColumn, ID, message.channel) //Get RTS member data from fired range
@@ -44,6 +43,8 @@ module.exports.run = async (bot, message, args) => {
 
         PIGSMemberData[botconfig.PIGSEmployeeRangeNotesIndex] = leaveReason //Set leave reason
         PIGSMemberData[botconfig.PIGSEmployeeRangeDeadlineIndex] = date //set deadline to transition date
+        console.log(botconfig.PIGSSheet, botconfig.PIGSFiredEmployeeRange, botconfig.PIGSFiredEmployeeRangeStartingRow, PIGSMemberData) //Add to PIGS fired
+
         functions.AddMember(auth, message.channel, botconfig.PIGSSheet, botconfig.PIGSFiredEmployeeRange, botconfig.PIGSFiredEmployeeRangeStartingRow, PIGSMemberData, bot) //Add to PIGS fired
     }
 
