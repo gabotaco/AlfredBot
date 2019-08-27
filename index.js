@@ -57,21 +57,21 @@ fs.readdir("./PIGScommands/", (err, files) => {
 bot.on("ready", async () => { //When the bot logs in
     bot.user.setActivity("Transport Tycoon", { type: "PLAYING" }); //sets the current game. Can be PLAYING STREAMING WATCHING LISTENING
 
-    botconfig.RTSWelcome = bot.channels.get(botconfig.RTSWelcome); //sets the channels in botconfig to actual discord channels instead of just their ID's
-    botconfig.PIGSWelcome = bot.channels.get(botconfig.PIGSWelcome);
-    botconfig.RTSStaffChannel = bot.channels.get(botconfig.RTSStaffChannel)
-    botconfig.PIGSStaffChannel = bot.channels.get(botconfig.PIGSStaffChannel)
-    botconfig.PIGSLogs = bot.channels.get(botconfig.PIGSLogs);
-    botconfig.RTSLogs = bot.channels.get(botconfig.RTSLogs);
-    botconfig.PIGSOneWordStory = bot.channels.get(botconfig.PIGSOneWordStory)
-    botconfig.RTSCEOSpamChannel = bot.channels.get(botconfig.RTSCEOSpamChannel);
-    botconfig.RTSPublicBotCommandsChannel = bot.channels.get(botconfig.RTSPublicBotCommandsChannel)
-    botconfig.RTSBotCommandsChannel = bot.channels.get(botconfig.RTSBotCommandsChannel)
-    botconfig.RTSBennysChannel = bot.channels.get(botconfig.RTSBennysChannel)
-    botconfig.PIGSBotCommandsChannel = bot.channels.get(botconfig.PIGSBotCommandsChannel)
-    botconfig.PIGSVoucherChannel = bot.channels.get(botconfig.PIGSVoucherChannel)
+    // botconfig.RTSWelcome = bot.channels.get(botconfig.RTSWelcome); //sets the channels in botconfig to actual discord channels instead of just their ID's
+    // botconfig.PIGSWelcome = bot.channels.get(botconfig.PIGSWelcome);
+    // botconfig.RTSStaffChannel = bot.channels.get(botconfig.RTSStaffChannel)
+    // botconfig.PIGSStaffChannel = bot.channels.get(botconfig.PIGSStaffChannel)
+    // botconfig.PIGSLogs = bot.channels.get(botconfig.PIGSLogs);
+    // botconfig.RTSLogs = bot.channels.get(botconfig.RTSLogs);
+    // botconfig.PIGSOneWordStory = bot.channels.get(botconfig.PIGSOneWordStory)
+    // botconfig.RTSCEOSpamChannel = bot.channels.get(botconfig.RTSCEOSpamChannel);
+    // botconfig.RTSPublicBotCommandsChannel = bot.channels.get(botconfig.RTSPublicBotCommandsChannel)
+    // botconfig.RTSBotCommandsChannel = bot.channels.get(botconfig.RTSBotCommandsChannel)
+    // botconfig.RTSBennysChannel = bot.channels.get(botconfig.RTSBennysChannel)
+    // botconfig.PIGSBotCommandsChannel = bot.channels.get(botconfig.PIGSBotCommandsChannel)
+    // botconfig.PIGSVoucherChannel = bot.channels.get(botconfig.PIGSVoucherChannel)
 
-    botconfig.RTSCEOSpamChannel.send("Restarted."); //Send a message to a channel
+    bot.channels.get(botconfig.RTSCEOSpamChannel).send("Restarted."); //Send a message to a channel
 
     console.clear(); //Remove all the loaded console logs
     console.log(`${bot.user.username} is online!`); //logs that the bot is online
@@ -134,7 +134,7 @@ bot.on("guildMemberRemove", async member => { //When someone leaves the server
 
 bot.on("message", async message => { //Someone sends a message in a channel
     if (message.author.bot || message.channel.type == "dm") return; //if message is from a bot or is in a DM with the bot
-    if (message.channel.id == botconfig.PIGSOneWordStory.id) { //If its in the one word story channel
+    if (message.channel.id == botconfig.PIGSOneWordStory) { //If its in the one word story channel
         if ((message.content.split(" ").length > 1 || message.content.split("-").length > 1 || message.content.split("_").length > 1) || message.content.includes(":")) { //if the message contains an emoji or is more than one word
             message.delete() //deletes it
         } else if (LastPerson == message.member.id) message.delete() //if the last person to send a message is also the person then delete it
@@ -159,11 +159,11 @@ bot.on("message", async message => { //Someone sends a message in a channel
 
     if (message.guild.id == botconfig.RTSServer) { //if said in the rts server
         var commandfile = bot.RTSCommands.get(cmd.slice(prefix.length)); //Trys to get a rts command with the specified cmd without the prefix
-        if (commandfile && (message.channel.id != botconfig.RTSPublicBotCommandsChannel.id && message.channel.id != botconfig.RTSBotCommandsChannel.id && message.channel.id != botconfig.RTSBennysChannel.id) && !message.member.hasPermission("KICK_MEMBERS") && cmd != ".status") return message.channel.send(`Do this in ${botconfig.RTSPublicBotCommandsChannel} or ${botconfig.RTSBotCommandsChannel}`) //if theres a command but its not in one of the allowed channels
+        if (commandfile && (message.channel.id != botconfig.RTSPublicBotCommandsChannel && message.channel.id != botconfig.RTSBotCommandsChannel && message.channel.id != botconfig.RTSBennysChannel) && !message.member.hasPermission("KICK_MEMBERS") && cmd != ".status") return message.channel.send(`Do this in ${botconfig.RTSPublicBotCommandsChannel} or ${botconfig.RTSBotCommandsChannel}`) //if theres a command but its not in one of the allowed channels
         if (commandfile) console.log("RTS", commandfile.help.name, args) //if theres a command file then log that its rts and then the name and args
     } else if (message.guild.id == botconfig.PIGSServer) {//if said in the pigs server
         var commandfile = bot.PIGSCommands.get(cmd.slice(prefix.length)); // try to get a pigs command with the specified cmd without the prefix
-        if (commandfile && (message.channel.id != "511853214858084364" && message.channel.id != botconfig.PIGSBotCommandsChannel.id && message.channel.id != botconfig.PIGSVoucherChannel.id) && !message.member.hasPermission("KICK_MEMBERS") && cmd != ".status") return message.channel.send("Do this in <#" + botconfig.PIGSBotCommandsChannel.id + "> instead") //if theres a command but its said in the wrong channel
+        if (commandfile && (message.channel.id != "511853214858084364" && message.channel.id != botconfig.PIGSBotCommandsChannel && message.channel.id != botconfig.PIGSVoucherChannel) && !message.member.hasPermission("KICK_MEMBERS") && cmd != ".status") return message.channel.send("Do this in <#" + botconfig.PIGSBotCommandsChannel + "> instead") //if theres a command but its said in the wrong channel
         if (commandfile) console.log("PIGS", commandfile.help.name, args) //if theres a command file then log that its pigs and then the name and args
     }
     if (!commandfile) { //if theres isn't a pigs or rts command
