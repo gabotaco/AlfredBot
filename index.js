@@ -86,9 +86,9 @@ bot.on("messageDeleteBulk", async messages => { //When multiple messages are del
     });
 
     if (messages.array()[0].guild.id == botconfig.PIGSServer) { //if the first message is in the PIGS server (then all messages are in pigs server)
-        botconfig.PIGSLogs.send(DeletedMessages); //send to pigs logs channel
+        bot.channels.get(botconfig.PIGSLogs).send(DeletedMessages); //send to pigs logs channel
     } else if (messages.array()[0].guild.id == botconfig.RTSServer) { //rts server
-        botconfig.RTSLogs.send(DeletedMessages); //send to rts logs channel
+        bot.channels.get(botconfig.RTSLogs).send(DeletedMessages); //send to rts logs channel
     }
 })
 
@@ -101,9 +101,9 @@ bot.on("messageDelete", async (message) => { //When a single message is deleted
         .addField("Channel", message.channel)
 
     if (message.guild.id == botconfig.PIGSServer) {
-        botconfig.PIGSLogs.send(DeletedMessage)
+        bot.channels.get(botconfig.PIGSLogs).send(DeletedMessage)
     } else if (message.guild.id == botconfig.RTSServer) {
-        botconfig.RTSLogs.send(DeletedMessage)
+        bot.channels.get(botconfig.RTSLogs).send(DeletedMessage)
     }
 })
 
@@ -116,19 +116,19 @@ bot.on("guildMemberAdd", async member => { //When someone joins the guild
         }
     }
     if (member.guild.id == botconfig.RTSServer) { //rts server and not bot
-        botconfig.RTSWelcome.send(`Welcome to ${member.guild.name} ${member}!`) //Says welcome in the rts server
+        bot.channels.get(botconfig.RTSWelcome).send(`Welcome to ${member.guild.name} ${member}!`) //Says welcome in the rts server
         bot.BothCommands.get("roles").run(bot, null, [member.id]) //gets the roles command and runs it for the new member
     } else if (member.guild.id == botconfig.PIGSServer) { //pigs commands
-        botconfig.PIGSWelcome.send(`Welcome to ${member.guild.name} ${member}!`) //Says welcome in the pigs server
+        bot.channels.get(botconfig.PIGSWelcome).send(`Welcome to ${member.guild.name} ${member}!`) //Says welcome in the pigs server
         bot.BothCommands.get("roles").run(bot, null, [member.id]) //gets the roles command and runs it for the new member
     }
 })
 
 bot.on("guildMemberRemove", async member => { //When someone leaves the server
     if (member.guild.id == botconfig.RTSServer) { //rts server
-        botconfig.RTSWelcome.send(`${member.displayName} has left the server.`); //says that the username has left. Doesn't @ in case they change their name and also is glitchy sometimes
+        bot.channels.get(botconfig.RTSWelcome).send(`${member.displayName} has left the server.`); //says that the username has left. Doesn't @ in case they change their name and also is glitchy sometimes
     } else if (member.guild.id == botconfig.PIGSServer) {
-        botconfig.PIGSWelcome.send(`${member.displayName} has left the server.`); //says that the username has left. Doesn't @ in case they change their name and also is glitchy sometimes
+        bot.channels.get(botconfig.PIGSWelcome).send(`${member.displayName} has left the server.`); //says that the username has left. Doesn't @ in case they change their name and also is glitchy sometimes
     }
 })
 
@@ -209,8 +209,8 @@ bot.on("message", async message => { //When a message is sent to a channel. Not 
                 .addField("Date", message.createdAt)
                 .addField("In Channel", message.channel)
 
-            if (message.guild.id == botconfig.RTSServer) botconfig.RTSLogs.send(GlitchEmbed) //if its in rts send to rts logs
-            else if (message.guild.id == botconfig.PIGSServer) botconfig.PIGSLogs.send(GlitchEmbed) //if its in pigs send to pigs logs
+            if (message.guild.id == botconfig.RTSServer) bot.channels.get(botconfig.RTSLogs).send(GlitchEmbed) //if its in rts send to rts logs
+            else if (message.guild.id == botconfig.PIGSServer) bot.channels.get(botconfig.PIGSLogs).send(GlitchEmbed) //if its in pigs send to pigs logs
         }
     })
 })

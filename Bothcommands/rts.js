@@ -22,11 +22,11 @@ module.exports.run = async (bot, message, args) => {
 
         const PIGSMemberData = await functions.GetMemberDetails(auth, botconfig.PIGSSheet, botconfig.PIGSEmployeeRange, SearchColumn, ID, message.channel) //Get PIGS data
         if (!PIGSMemberData) return message.channel.send("They aren't hired in either company") //If has no PIGS data then not in either company
-        botconfig.RTSStaffChannel.send(`Copy/paste \`add_rts ${PIGSMemberData[botconfig.PIGSEmployeeRangeDiscordIndex]}\` into TT discord`) //Tell RTS staff to change TT roles
+        bot.channels.get(botconfig.RTSStaffChannel).send(`Copy/paste \`add_rts ${PIGSMemberData[botconfig.PIGSEmployeeRangeDiscordIndex]}\` into TT discord`) //Tell RTS staff to change TT roles
         
         const RTSMemberData = await functions.GetMemberDetails(auth, botconfig.RTSSheet, botconfig.RTSFiredEmployeeRange, SearchColumn, ID, message.channel) //Get RTS member data from fired range
         if (RTSMemberData) { //If previously in RTS
-            botconfig.RTSStaffChannel.send(`Hire ${PIGSMemberData[botconfig.PIGSEmployeeRangeInGameNameIndex]} as ${RTSMemberData[botconfig.RTSEmployeeRangeRankIndex]}`) //Tell RTS managers to rehire as old rank
+            bot.channels.get(botconfig.RTSStaffChannel).send(`Hire ${PIGSMemberData[botconfig.PIGSEmployeeRangeInGameNameIndex]} as ${RTSMemberData[botconfig.RTSEmployeeRangeRankIndex]}`) //Tell RTS managers to rehire as old rank
 
             functions.RemoveMember(auth, message.channel, botconfig.RTSSheet, SearchColumn, botconfig.RTSFiredEmployeeRange, botconfig.RTSFiredEmployeeRangeStartingRow, ID) //Remove from fired
 
