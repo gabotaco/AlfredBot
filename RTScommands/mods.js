@@ -21,45 +21,9 @@ module.exports.run = async (bot, message, args) => {
     });
 
     if (car.toLowerCase() == "random") {
-      let Code = {
-        "mods": {}
-      }
-      Code.mods["0"] = RandomNumber(1, 5)
-      Code.mods["1"] = RandomNumber(0, 4)
-      Code.mods["2"] = RandomNumber(0, 4)
-      Code.mods["3"] = RandomNumber(0, 4)
-      Code.mods["4"] = RandomNumber(0, 3)
-      Code.mods["5"] = RandomNumber(0, 1)
-      Code.mods["6"] = RandomNumber(0, 3)
-      Code.mods["7"] = RandomNumber(0, 5)
-      Code.mods["8"] = RandomNumber(0, 3)
-      Code.mods["9"] = RandomNumber(0, 3)
-      Code.mods["10"] = 1
-      Code.mods["11"] = 3
-      Code.mods["12"] = 2
-      Code.mods["13"] = 2
-      Code.mods["14"] = RandomNumber(0, 26)
-      Code.mods["15"] = 3
-      Code.mods["16"] = 4
-      Code.mods["18"] = 1
-      Code.mods["20"] = 1
-      Code.mods["22"] = RandomNumber(0, 1)
-      Code.mods["23"] = RandomNumber(0, 51)
-      Code.mods["24"] = RandomNumber(0, 20)
-      Code.mods["25"] = RandomNumber(0, 5)
-      Code.mods["26"] = RandomNumber(0, 15)
-      Code.mods["27"] = RandomNumber(0, 4)
-      Code.mods["28"] = RandomNumber(0, 44)
-      Code.mods["30"] = RandomNumber(0, 13)
-      Code.mods["33"] = RandomNumber(0, 15)
-      Code.mods["34"] = RandomNumber(0, 14)
-      Code.mods["35"] = RandomNumber(0, 21)
-      Code.mods["36"] = RandomNumber(0, 1)
-      Code.mods["37"] = RandomNumber(0, 6)
-      Code.mods["39"] = RandomNumber(0, 3)
-      Code.mods["40"] = RandomNumber(0, 4)
-      Code.mods["46"] = RandomNumber(1, 5)
-      message.channel.send(JSON.stringify(Code))
+
+
+      message.channel.send(`{"mods":{"1":${RandomNumber(0, 4)},"2":${RandomNumber(0, 4)},"3":${RandomNumber(0, 4)},"4":${RandomNumber(0, 3)},"5":${RandomNumber(0, 1)},"6":${RandomNumber(0, 3)},"7":${RandomNumber(0, 5)},"8":${RandomNumber(0, 3)},"9":${RandomNumber(0, 3)},"10":1,"11":3,"12":2,"13":2,"14":${RandomNumber(0, 26)},"15":3,"16":4,"17":-1,"18":1,"19":-1,"20":1,"21":-1,"22":${RandomNumber(0, 1)},"23":${RandomNumber(0, 51)},"24":${RandomNumber(0, 20)},"25":${RandomNumber(0, 5)},"26":${RandomNumber(0, 15)},"27":${RandomNumber(0, 4)},"28":${RandomNumber(0, 44)},"29":-1,"30":${RandomNumber(0, 13)},"31":-1,"32":-1,"33":${RandomNumber(0, 15)},"34":${RandomNumber(0, 14)},"35":${RandomNumber(0, 21)},"36":${RandomNumber(0, 1)},"37":${RandomNumber(0, 6)},"38":-1,"39":${RandomNumber(0, 3)},"40":${RandomNumber(0, 4)},"41":-1,"42":-1,"43":-1,"44":-1,"45":-1,"46":${RandomNumber(0, 4)},"47":-1,"48":-1,"0":${RandomNumber(0, 3)}}}`)
     } else {
       sheets.spreadsheets.values.update({ //Puts what they typed into the search bar
         auth: auth,
