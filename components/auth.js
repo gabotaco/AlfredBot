@@ -8,7 +8,9 @@ const readline = require('readline');
 const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
-const OAuth2 = new (require('google-auth-library-2'))().OAuth2;
+let { OAuth2Client } = require('google-auth-library');
+
+//const OAuth2 = new (require('google-auth-library'))().OAuth2;
 
 function Auth(config) {
   if (config === undefined) config = {};
@@ -25,7 +27,7 @@ function Auth(config) {
 
   const keyData = require(config.keyFilePath);
   const key = keyData.installed || keyData.web;
-  const oauthClient = new OAuth2(key.client_id, key.client_secret, key.redirect_uris[0]);
+  const oauthClient = new OAuth2Client(key.client_id, key.client_secret, key.redirect_uris[0]);
   let tokens;
 
   const saveTokens = () => {

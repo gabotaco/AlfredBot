@@ -2,6 +2,21 @@ let LastPerson = "439959655448313866"; //Last person to send a message to the on
 const botconfig = require("./botconfig.json");
 const Discord = require("discord.js");
 const fs = require("fs");
+
+const mysql = require("mysql")
+
+const con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "password",
+    database: "rc"
+});
+/*
+con.connect(function (err) {
+    if (err) throw err;
+    console.log("Connected to SQL!")
+})*/
+
 const bot = new Discord.Client({ disableEveryone: true }) //declares new bot that can't @ everyone
 
 bot.RTSCommands = new Discord.Collection(); //Store all commands inside a discord collection
@@ -9,6 +24,8 @@ bot.PIGSCommands = new Discord.Collection();
 bot.BothCommands = new Discord.Collection();
 
 bot.login(botconfig.token)//logs in the bot with the token found in botconfig.json
+
+
 
 fs.readdir("./Bothcommands/", (err, files) => { //Gets all files in the Bothcommands folder
     if (err) console.log(err);

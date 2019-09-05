@@ -95,7 +95,8 @@ module.exports.run = async (bot, message, args) => {
         const HTMLContent = HTMLTemplate(data);
 
         // browser object - render html with chromium
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({executablePath: './node_modules/chromium/lib/chromium/chrome-win/chrome.exe'});
+
         const page = await browser.newPage();
 
         // replace html

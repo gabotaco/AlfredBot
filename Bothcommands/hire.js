@@ -10,7 +10,7 @@ module.exports.run = async (bot, message, args) => {
 
   let d = new Date()
   d.setDate(d.getDate() + 14) //add 14 days to deadline
-  const date = `${botconfig.Months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`
+  const date = `${d.getFullYear()}-${d.getMonth()}-${d.getDay()}`
 
   if (message.guild.id == botconfig.PIGSServer) { //pigs server
     var SignMeUpIndex = botconfig.PIGSSignMeUpIndex
