@@ -45,6 +45,7 @@ module.exports.run = async (bot, message, args) => {
                 const D1 = new Date(row[DeadlineIndex]) //make date out of deadline
                 const D3 = D2 - D1 //difference between two dates
                 if (D3 > 0) { //if its past their deadline
+                    if (!row[DiscordIndex]) return;
                     const member = message.guild.members.get(row[DiscordIndex]) //find member in discord
                     if (member && !member.roles.has(InactiveRole)) member.addRole(InactiveRole) //if the member is in discord and doesn't have inactive role then add inactive role
                     else if (!member) message.channel.send("Couldn't find member with id " + row[DiscordIndex] + " in this discord") //If member isn't in discord
