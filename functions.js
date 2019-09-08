@@ -1,5 +1,7 @@
 const botconfig = require("./botconfig.json")
-const { google } = require('googleapis'); //allows you to use googles api
+const {
+    google
+} = require('googleapis'); //allows you to use googles api
 const Discord = require("discord.js")
 
 module.exports = {
@@ -32,25 +34,15 @@ module.exports = {
      */
     GetIDAndSearchColumn: function (message, args) {
         const Response = [];
-
+        if (!args[0]) return Response
         if (message.mentions.members.first()) args[0] = message.mentions.members.first().id; //If theres a message mention then the first arg is the mention id instead of the mention
 
-        if (message.guild.id == botconfig.RTSServer) { //If its the RTS server
-            if (args[0].length > 6) { //if the ID is longer than 6 chars
-                Response.push(botconfig.RTSEmployeeRangeDiscordIndex); //index 0 is the index of discord ids in the rts spreadsheet
-                Response.push(args[0]) //index 1 is the provided ID
-            } else if (args[0]) { //if its less than or equal to 6 chars and isn't null
-                Response.push(botconfig.RTSEmployeeRangeInGameIDIndex); //index 0 is the index of in game id's
-                Response.push(args[0])
-            }
-        } else if (message.guild.id == botconfig.PIGSServer) { //if its in the pigs server
-            if (args[0].length > 6) { //if the ID is longer than 6 chars
-                Response.push(botconfig.PIGSEmployeeRangeDiscordIndex); //index 0 is the index of discord ids in the pigs spreadsheet
-                Response.push(args[0]) //index 1 is the ID
-            } else if (args[0]) { //if its less than or equal to 6 chars and isn't null
-                Response.push(botconfig.PIGSEmployeeRangeInGameIDIndex); //index 0 is the index of in game id's in PIGS sheet
-                Response.push(args[0])  //Index 1 is the ID
-            }
+        if (args[0].length > 6) { //if the ID is longer than 6 chars
+            Response.push("discord_id"); //index 0 is the index of discord ids in the rts spreadsheet
+            Response.push(args[0]) //index 1 is the provided ID
+        } else if (args[0]) { //if its less than or equal to 6 chars and isn't null
+            Response.push("in_game_id"); //index 0 is the index of in game id's
+            Response.push(args[0])
         }
 
         return Response;
@@ -58,49 +50,18 @@ module.exports = {
 
     /**
      * @summary Changes the deadline for a member
-     * @param {OAuth2Client} auth Authentication for google api
-     * @param {Discord.GuildChannel} channel Discord channel to send messages
-     * @param {String} SpreadsheetID ID of spreadsheet with person and deadline
-     * @param {String} Range Range with the user and deadline
-     * @param {Number} StartingRow Row that the range starts on
-     * @param {Number} SearchColumn Column with the ID
-     * @param {String} ID The ID of the user
+     * @param {Discord.Client} bot The Discord bot
      * @param {String} Deadline New deadline for the user
-     * @param {String} DeadlineColumn Column to put the new deadline
+     * @param {String} column The column with the ID    
+     * @param {String} ID The ID of the user
+     * @param {Discord.GuildChannel} channel Discord channel to send messages
      */
-    ChangeDeadline: function (auth, channel, SpreadsheetID, Range, StartingRow, SearchColumn, ID, Deadline, DeadlineColumn) {
-        const sheets = google.sheets({ version: 'v4', auth });
-
-        sheets.spreadsheets.values.get({ //Gets all values in the spreadsheet in the range
-            spreadsheetId: SpreadsheetID, 
-            range: Range,
-        }, (err, res) => {
-            if (err) return channel.send('The API returned an ' + err); 
-
-            const rows = res.data.values;
-            if (rows.length) { //if there are rows
-                let currentRow = StartingRow; //Keep track of current row
-                rows.map((row) => { //Go through all the rows
-                    if (row[SearchColumn] == ID) { //if found person
-                        sheets.spreadsheets.values.update({ //replace deadline in sheet
-                            auth: auth,
-                            spreadsheetId: SpreadsheetID,
-                            range: `${DeadlineColumn}${currentRow}:${DeadlineColumn}${currentRow}`,
-                            valueInputOption: "USER_ENTERED",
-                            resource: {
-                                majorDimension: "COLUMNS",
-                                values: [[Deadline]]
-                            }
-                        }, (err, response) => {
-                            if (err) {
-                                channel.send('The API returned an error: ' + err);
-                            } else {
-                                channel.send(`Deadline changed to ${Deadline}.`)
-                            }
-                        });
-                    }
-                    currentRow++; //increase row
-                })
+    ChangeDeadline: function (bot, Deadline, column, id, channel) {
+        bot.con.query(`UPDATE members SET deadline = '${Deadline}' WHERE ${column}='${id}'`, function (err, result, fields) {
+            if (err) console.log(err)
+            else if (result.affectedRows == 0) return channel.send("Unable to find that member")
+            else {
+                channel.send(`Set deadline to ${Deadline}`)
             }
         })
     },
@@ -191,11 +152,14 @@ module.exports = {
      */
     ProcessAllInRange: function (auth, SpreadsheetID, Range, channel, callback) {
         return new Promise(resolve => {
-            const sheets = google.sheets({ version: 'v4', auth });
+            const sheets = google.sheets({
+                version: 'v4',
+                auth
+            });
 
             sheets.spreadsheets.values.get({
                 spreadsheetId: SpreadsheetID,
-                range: Range, 
+                range: Range,
             }, (err, res) => {
                 if (err) {
                     channel.send('The API returned an ' + err);
@@ -222,32 +186,16 @@ module.exports = {
      * @param {Number} SearchColumn What column their ID will be in
      * @param {String} ID Their ID
      * @param {Discord.GuildChannel} channel Discord channel
-     * @returns {[String]} Their entire row in the range
+     * @returns {Object} Their entire row in the range
      */
-    GetMemberDetails: function (auth, SpreadsheetID, Range, SearchColumn, ID, channel) {
+    GetMemberDetails: function (bot, channel, Column, ID) {
         return new Promise(resolve => {
-            const sheets = google.sheets({ version: 'v4', auth });
-
-            sheets.spreadsheets.values.get({
-                spreadsheetId: SpreadsheetID,
-                range: Range,
-            }, (err, res) => {
-                if (err) {
-                    channel.send('The API returned an ' + err);
-                    return;
-                }
-                const rows = res.data.values;
-                if (rows.length) { //if there are rows
-                    rows.map((row) => {
-                        if (row[SearchColumn] == ID) { //Found member
-                            resolve(row) //resolve member details
-                            return; //Stop function
-                        }
-                    })
-                    resolve(null)
-                }
+            bot.con.query(`SELECT * FROM members, rts, pigs WHERE members.${Column} = '${ID}' AND members.in_game_id = pigs.in_game_id AND members.in_game_id = rts.in_game_id`, function (err, result, fields) {
+                if (err) console.log(err)
+                resolve(result[0])
             })
         })
+
     },
 
     /**
@@ -260,7 +208,10 @@ module.exports = {
      */
     GetAppSheetName: function (auth, SpreadsheetID, Range, ID, channel) {
         return new Promise(resolve => {
-            const sheets = google.sheets({ version: 'v4', auth });
+            const sheets = google.sheets({
+                version: 'v4',
+                auth
+            });
 
             sheets.spreadsheets.values.get({
                 spreadsheetId: SpreadsheetID,
@@ -294,7 +245,10 @@ module.exports = {
      */
     FindApplicant: function (auth, channel, ID, SearchColumn, CompanyIndex, callback) {
         return new Promise(resolve => {
-            const sheets = google.sheets({ version: 'v4', auth });
+            const sheets = google.sheets({
+                version: 'v4',
+                auth
+            });
 
             sheets.spreadsheets.values.get({
                 spreadsheetId: botconfig.Applications,
@@ -331,7 +285,10 @@ module.exports = {
      */
     UpdateApplicantStatus: function (auth, channel, ID, CompanyIndex, Status) {
         return new Promise(async resolve => {
-            const sheets = google.sheets({ version: 'v4', auth });
+            const sheets = google.sheets({
+                version: 'v4',
+                auth
+            });
 
             await this.FindApplicant(auth, channel, ID, botconfig.ApplicationInGameIDIndex, CompanyIndex, async function (row, RowIndex) { //Find all applicants with the ID
                 return new Promise(resolve => {
@@ -342,7 +299,9 @@ module.exports = {
                         valueInputOption: "USER_ENTERED",
                         resource: {
                             majorDimension: "COLUMNS",
-                            values: [[Status]] //Change column A in RowIndex to the status
+                            values: [
+                                [Status]
+                            ] //Change column A in RowIndex to the status
                         }
                     }, (err, response) => {
                         if (err) {
@@ -370,10 +329,13 @@ module.exports = {
      * @param {String} ID The ID of the member
      */
     RemoveMember: function (auth, channel, SpreadsheetID, SearchColumn, SearchRange, SearchStartingRow, ID) {
-        const sheets = google.sheets({ version: 'v4', auth });
+        const sheets = google.sheets({
+            version: 'v4',
+            auth
+        });
 
         sheets.spreadsheets.values.get({
-            spreadsheetId: SpreadsheetID, 
+            spreadsheetId: SpreadsheetID,
             range: SearchRange,
         }, (err, res) => {
             if (err) {
@@ -382,7 +344,7 @@ module.exports = {
             }
 
             const rows = res.data.values;
-            if (rows.length) { 
+            if (rows.length) {
                 rows.map((row) => {
                     if (row[SearchColumn] == ID) { //Found member
                         const RowIndex = rows.indexOf(row) + SearchStartingRow //Get the index of the row
@@ -429,7 +391,10 @@ module.exports = {
      * @param {Discord.Client} bot The discord bot
      */
     AddMember: function (auth, channel, SpreadsheetID, Range, StartingRow, MemberData, bot) {
-        const sheets = google.sheets({ version: 'v4', auth });
+        const sheets = google.sheets({
+            version: 'v4',
+            auth
+        });
 
         sheets.spreadsheets.values.get({
             spreadsheetId: SpreadsheetID,
@@ -456,19 +421,40 @@ module.exports = {
                                         {
                                             range: `B${RowIndex}:C${RowIndex}`,
                                             majorDimension: "COLUMNS",
-                                            values: [[MemberData[botconfig.PIGSEmployeeRangeDiscordIndex]], [MemberData[botconfig.PIGSEmployeeRangeInGameNameIndex]]]
+                                            values: [
+                                                [MemberData[botconfig.PIGSEmployeeRangeDiscordIndex]],
+                                                [MemberData[botconfig.PIGSEmployeeRangeInGameNameIndex]]
+                                            ]
                                         },
                                         {
                                             range: `F${RowIndex}:T${RowIndex}`,
                                             majorDimension: "COLUMNS",
-                                            values: [[MemberData[botconfig.PIGSEmployeeRangeInGameIDIndex]], [MemberData[botconfig.PIGSEmployeeRangeNotesIndex]], [], [MemberData[botconfig.PIGSEmployeeRangeHelperIndex]], [MemberData[botconfig.PIGSEmployeeRangeEarnedBeforeIndex]], [MemberData[botconfig.PIGSEmployeeRangeTurnedInBeforeIndex]], [MemberData[botconfig.PIGSEmployeeRangeVouchersDonatedBeforeIndex]], [MemberData[botconfig.PIGSEmployeeRangeCashDonationsIndex]], [MemberData[botconfig.PIGSEmployeeRangeHustlerVouchersIndex]], [MemberData[botconfig.PIGSEmployeeRangePickPocketVouchersIndex]], [MemberData[botconfig.PIGSEmployeeRangeThiefVouchersIndex]], [MemberData[botconfig.PIGSEmployeeRangeLawlessVouchersIndex]], [MemberData[botconfig.PIGSEmployeeRangeMastermindVouchersIndex]], [MemberData[botconfig.PIGSEmployeeRangeOverlordVouchersIndex]], [MemberData[botconfig.PIGSEmployeeRangeDonatedVouchersIndex]]]
+                                            values: [
+                                                [MemberData[botconfig.PIGSEmployeeRangeInGameIDIndex]],
+                                                [MemberData[botconfig.PIGSEmployeeRangeNotesIndex]],
+                                                [],
+                                                [MemberData[botconfig.PIGSEmployeeRangeHelperIndex]],
+                                                [MemberData[botconfig.PIGSEmployeeRangeEarnedBeforeIndex]],
+                                                [MemberData[botconfig.PIGSEmployeeRangeTurnedInBeforeIndex]],
+                                                [MemberData[botconfig.PIGSEmployeeRangeVouchersDonatedBeforeIndex]],
+                                                [MemberData[botconfig.PIGSEmployeeRangeCashDonationsIndex]],
+                                                [MemberData[botconfig.PIGSEmployeeRangeHustlerVouchersIndex]],
+                                                [MemberData[botconfig.PIGSEmployeeRangePickPocketVouchersIndex]],
+                                                [MemberData[botconfig.PIGSEmployeeRangeThiefVouchersIndex]],
+                                                [MemberData[botconfig.PIGSEmployeeRangeLawlessVouchersIndex]],
+                                                [MemberData[botconfig.PIGSEmployeeRangeMastermindVouchersIndex]],
+                                                [MemberData[botconfig.PIGSEmployeeRangeOverlordVouchersIndex]],
+                                                [MemberData[botconfig.PIGSEmployeeRangeDonatedVouchersIndex]]
+                                            ]
                                         },
 
 
                                         {
                                             range: `X${RowIndex}:X${RowIndex}`,
                                             majorDimension: "COLUMNS",
-                                            values: [[MemberData[botconfig.PIGSEmployeeRangeDeadlineIndex]]]
+                                            values: [
+                                                [MemberData[botconfig.PIGSEmployeeRangeDeadlineIndex]]
+                                            ]
                                         }
                                     ]
                                 }
@@ -490,24 +476,43 @@ module.exports = {
                                         {
                                             range: `B${RowIndex}:C${RowIndex}`,
                                             majorDimension: "COLUMNS",
-                                            values: [[MemberData[botconfig.RTSEmployeeRangeDiscordIndex]], [MemberData[botconfig.RTSEmployeeRangeInGameNameIndex]]]
+                                            values: [
+                                                [MemberData[botconfig.RTSEmployeeRangeDiscordIndex]],
+                                                [MemberData[botconfig.RTSEmployeeRangeInGameNameIndex]]
+                                            ]
                                         },
 
                                         {
                                             range: `F${RowIndex}:P${RowIndex}`,
                                             majorDimension: "COLUMNS",
-                                            values: [[MemberData[botconfig.RTSEmployeeRangeInGameIDIndex]], [MemberData[botconfig.RTSEmployeeRangeNotesIndex]], [], [MemberData[botconfig.RTSEmployeeRangeHelpersIndex]], [MemberData[botconfig.RTSEmployeeRangePreVouchersIndex]], [MemberData[botconfig.RTSEmployeeRangePreMoneyIndex]], [MemberData[botconfig.RTSEmployeeRangeInitiateVouchersIndex]], [MemberData[botconfig.RTSEmployeeRangeLeadfootVouchersIndex]], [MemberData[botconfig.RTSEmployeeRangeWheelmanVouchersIndex]], [MemberData[botconfig.RTSEmployeeRangeLegendaryVouchersIndex]], [MemberData[botconfig.RTSEmployeeRangeSpeeddemonVouchersIndex]]]
+                                            values: [
+                                                [MemberData[botconfig.RTSEmployeeRangeInGameIDIndex]],
+                                                [MemberData[botconfig.RTSEmployeeRangeNotesIndex]],
+                                                [],
+                                                [MemberData[botconfig.RTSEmployeeRangeHelpersIndex]],
+                                                [MemberData[botconfig.RTSEmployeeRangePreVouchersIndex]],
+                                                [MemberData[botconfig.RTSEmployeeRangePreMoneyIndex]],
+                                                [MemberData[botconfig.RTSEmployeeRangeInitiateVouchersIndex]],
+                                                [MemberData[botconfig.RTSEmployeeRangeLeadfootVouchersIndex]],
+                                                [MemberData[botconfig.RTSEmployeeRangeWheelmanVouchersIndex]],
+                                                [MemberData[botconfig.RTSEmployeeRangeLegendaryVouchersIndex]],
+                                                [MemberData[botconfig.RTSEmployeeRangeSpeeddemonVouchersIndex]]
+                                            ]
                                         },
 
                                         {
                                             range: `R${RowIndex}:R${RowIndex}`,
                                             majorDimension: "COLUMNS",
-                                            values: [[MemberData[botconfig.RTSEmployeeRangeDonationsIndex]]]
+                                            values: [
+                                                [MemberData[botconfig.RTSEmployeeRangeDonationsIndex]]
+                                            ]
                                         },
                                         {
                                             range: `T${RowIndex}:T${RowIndex}`,
                                             majorDimension: "COLUMNS",
-                                            values: [[MemberData[botconfig.RTSEmployeeRangeDeadlineIndex]]]
+                                            values: [
+                                                [MemberData[botconfig.RTSEmployeeRangeDeadlineIndex]]
+                                            ]
                                         }
                                     ]
                                 }
@@ -561,58 +566,19 @@ module.exports = {
      * @param {Discord.GuildChannel} channel Discord channel
      * @param {String} VoucherID The Spreadsheet ID of voucher log
      */
-    PayManager: async function (auth, ID, channel, VoucherID) {
-        const sheets = google.sheets({ version: 'v4', auth });
-
-        if (VoucherID == botconfig.PIGSVoucher) { //if searching for PIGS voucher
-            var AppSheetName = await this.GetAppSheetName(auth, botconfig.PIGSSheet, botconfig.PIGSAppSheetNameRange, ID, channel) //gets appsheet name for pigs manager
-        } else if (VoucherID == botconfig.RTSVoucher) { //if searching for rts voucher
-            var AppSheetName = await this.GetAppSheetName(auth, botconfig.RTSSheet, botconfig.RTSAppSheetNameRange, ID, channel) //gets appsheet name for rts manager
-        }
-
-        sheets.spreadsheets.values.get({
-            spreadsheetId: VoucherID,
-            range: `${AppSheetName}!${botconfig.VoucherRange}`,
-        }, (err, res) => {
-            if (err) return channel.send('The API returned an ' + err);
-
-            const rows = res.data.values;
-            if (rows.length) {
-                let firstRow;
-                let lastRow;
-                let i = botconfig.VoucherRangeStartingRow
-
-                rows.map((row) => { //whats a for loop?
-                    if (row[botconfig.VoucherStatusIndex] == "Pending" && !firstRow) firstRow = i //If the status is pending and there isn't a first row yet then set firstrow to the current row number
-                    else if (!row[botconfig.VoucherStatusIndex] && !lastRow && firstRow) lastRow = i //If the row is empty and theres no last row and there is a first row then set last row to the current row
-                    i++
-                })
-
-                if (!lastRow) lastRow = i + 1; //if there isn't a last row then just set it to i+1
-
-                let values = []
-                for (let j = 0; j < lastRow - firstRow; j++) { //Make an array full of "Clear" at the right length
-                    values.push(["Clear"])
+    PayManager: async function (bot, ID, channel) {
+        bot.con.query(`UPDATE managers SET total_money = total_money + cashout_worth WHERE discord_id = '${ID}'`, function (err, result, fields) {
+            if (err) return console.log(err)
+            bot.con.query(`UPDATE managers SET cashout = '0', cashout_worth = '0' WHERE discord_id = '${ID}'`, function (err, result, fields) {
+                if (err) console.log(err)
+                if (result.affectedRows == 1) {
+                    channel.send("Paid.")
+                } else {
+                    channel.send("Couldn't find that manager")
                 }
-
-                sheets.spreadsheets.values.update({
-                    auth: auth,
-                    spreadsheetId: VoucherID,
-                    range: `${AppSheetName}!H${firstRow}:H${lastRow}`,
-                    valueInputOption: "USER_ENTERED",
-                    resource: {
-                        values: values //replace all rows with "Clear" in the range
-                    }
-                }, (err, response) => {
-                    if (err) {
-                        channel.send('The API returned an error: ' + err);
-                        return;
-                    } else {
-                        channel.send("Done!")
-                    }
-                });
-            }
+            })
         })
+
     },
 
     /**
@@ -641,7 +607,10 @@ module.exports = {
             const d = new Date()
             const date = `${botconfig.Months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}` //timestamp
 
-            const sheets = google.sheets({ version: 'v4', auth });
+            const sheets = google.sheets({
+                version: 'v4',
+                auth
+            });
 
             sheets.spreadsheets.values.get({
                 spreadsheetId: SpreadsheetID,
@@ -672,19 +641,30 @@ module.exports = {
                                 {
                                     range: `${AppSheetName}!A${LastRow}:D${LastRow}`,
                                     majorDimension: "COLUMNS",
-                                    values: [[employeeName], [employeeRank], [voucherAmount], [employeeUntilNext]]
+                                    values: [
+                                        [employeeName],
+                                        [employeeRank],
+                                        [voucherAmount],
+                                        [employeeUntilNext]
+                                    ]
                                 },
 
                                 {
                                     range: `${AppSheetName}!G${LastRow}:H${LastRow}`,
                                     majorDimension: "COLUMNS",
-                                    values: [[currentDeadline], ["Pending"]]
+                                    values: [
+                                        [currentDeadline],
+                                        ["Pending"]
+                                    ]
                                 },
 
                                 {
                                     range: `${AppSheetName}!P${LastRow}:Q${LastRow}`,
                                     majorDimension: "COLUMNS",
-                                    values: [[date], [new Date().toDateString()]]
+                                    values: [
+                                        [date],
+                                        [new Date().toDateString()]
+                                    ]
                                 }
                             ]
                         }
@@ -776,10 +756,13 @@ module.exports = {
      */
     GetMemberRow: function (auth, SearchColumn, ID, SpreadsheetID, Range, StartingRow) {
         return new Promise(resolve => {
-            const sheets = google.sheets({ version: 'v4', auth });
+            const sheets = google.sheets({
+                version: 'v4',
+                auth
+            });
 
             sheets.spreadsheets.values.get({
-                spreadsheetId: SpreadsheetID, 
+                spreadsheetId: SpreadsheetID,
                 range: Range,
             }, (err, res) => {
                 if (err) return channel.send('The API returned an ' + err);
@@ -825,8 +808,7 @@ module.exports = {
             function sortFunction(a, b) {
                 if (a[0] == b[0]) {
                     return 0;
-                }
-                else {
+                } else {
                     return (a[0] > b[0]) ? -1 : 1;
                 }
             }
@@ -842,7 +824,10 @@ module.exports = {
      * @param {Number} Row Row of payout
      */
     RemovePayout: function (auth, SpreadsheetID, AppSheetName, Row) {
-        const sheets = google.sheets({ version: 'v4', auth });
+        const sheets = google.sheets({
+            version: 'v4',
+            auth
+        });
 
         sheets.spreadsheets.values.batchClear({
             auth: auth,
@@ -873,7 +858,10 @@ module.exports = {
      * @param {String} Voucher2 Num of vouchers to put in second column (not required)
      */
     AddPayoutToSheet: async function (auth, channel, SpreadsheetID, Range, StartingRow, Column1, Voucher1, SearchColumn, ID, Deadline, DeadlineColumn, Column2, Voucher2) {
-        const sheets = google.sheets({ version: 'v4', auth });
+        const sheets = google.sheets({
+            version: 'v4',
+            auth
+        });
 
         const Row = await this.GetMemberRow(auth, SearchColumn, ID, SpreadsheetID, Range, StartingRow)
 
@@ -890,7 +878,10 @@ module.exports = {
                             {
                                 range: `${Column1}${Row}:${Column2}${Row}`,
                                 majorDimension: "COLUMNS",
-                                values: [[Voucher1], [Voucher2]]
+                                values: [
+                                    [Voucher1],
+                                    [Voucher2]
+                                ]
                             }
                         ]
                     }
@@ -917,7 +908,9 @@ module.exports = {
                             {
                                 range: `${Column1}${Row}:${Column1}${Row}`,
                                 majorDimension: "COLUMNS",
-                                values: [[Voucher1]]
+                                values: [
+                                    [Voucher1]
+                                ]
                             }
                         ]
                     }
@@ -932,5 +925,8 @@ module.exports = {
                 });
             })
         }
+    },
+    numberWithCommas: function (num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 }

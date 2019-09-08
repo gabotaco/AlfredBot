@@ -20,9 +20,7 @@ module.exports.run = async (bot, message, args) => {
     var VoucherSheet = botconfig.RTSVoucher
   }
 
-  authentication.authenticate().then((auth) => {
-    functions.PayManager(auth, User.id, message.channel, VoucherSheet) //pay manager
-  });
+    functions.PayManager(bot, User.id, message.channel) //pay manager
 }
 
 module.exports.help = {

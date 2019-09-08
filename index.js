@@ -8,17 +8,18 @@ const mysql = require("mysql")
 const con = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "password",
+    password: "admin",
     database: "rc"
 });
-/*
+
 con.connect(function (err) {
     if (err) throw err;
     console.log("Connected to SQL!")
-})*/
+})
 
 const bot = new Discord.Client({ disableEveryone: true }) //declares new bot that can't @ everyone
 
+bot.con = con;
 bot.RTSCommands = new Discord.Collection(); //Store all commands inside a discord collection
 bot.PIGSCommands = new Discord.Collection();
 bot.BothCommands = new Discord.Collection();
@@ -99,7 +100,7 @@ bot.on("messageDeleteBulk", async messages => { //When multiple messages are del
         .setTitle("Deleted Messages")
         .setColor("RANDOM")
     messages.forEach(message => { //loop through all the deleted messages
-        DeletedMessages.addField(message.member.displayName, message.content, true)
+        if (message.content) DeletedMessages.addField(message.member.displayName, message.content, true)
     });
 
     if (messages.array()[0].guild.id == botconfig.PIGSServer) { //if the first message is in the PIGS server (then all messages are in pigs server)
@@ -178,10 +179,13 @@ bot.on("message", async message => { //Someone sends a message in a channel
         var commandfile = bot.RTSCommands.get(cmd.slice(prefix.length)); //Trys to get a rts command with the specified cmd without the prefix
         if (commandfile && (message.channel.id != botconfig.RTSPublicBotCommandsChannel && message.channel.id != botconfig.RTSBotCommandsChannel && message.channel.id != botconfig.RTSBennysChannel) && !message.member.hasPermission("KICK_MEMBERS") && cmd != ".status") return message.channel.send(`Do this in ${botconfig.RTSPublicBotCommandsChannel} or ${botconfig.RTSBotCommandsChannel}`) //if theres a command but its not in one of the allowed channels
         if (commandfile) console.log("RTS", commandfile.help.name, args) //if theres a command file then log that its rts and then the name and args
+        else if (cmd.slice(prefix.length) == "vouchers") commandfile = bot.RTSCommands.get("voucher")
     } else if (message.guild.id == botconfig.PIGSServer) {//if said in the pigs server
         var commandfile = bot.PIGSCommands.get(cmd.slice(prefix.length)); // try to get a pigs command with the specified cmd without the prefix
         if (commandfile && (message.channel.id != "511853214858084364" && message.channel.id != botconfig.PIGSBotCommandsChannel && message.channel.id != botconfig.PIGSVoucherChannel) && !message.member.hasPermission("KICK_MEMBERS") && cmd != ".status") return message.channel.send("Do this in <#" + botconfig.PIGSBotCommandsChannel + "> instead") //if theres a command but its said in the wrong channel
         if (commandfile) console.log("PIGS", commandfile.help.name, args) //if theres a command file then log that its pigs and then the name and args
+        else if (cmd.slice(prefix.length) == "voucher") commandfile = bot.PIGSCommands.get("vouchers")
+
     }
     if (!commandfile) { //if theres isn't a pigs or rts command
         var commandfile = bot.BothCommands.get(cmd.slice(prefix.length)) //try to get a both server command with the specified cmd without the prefix

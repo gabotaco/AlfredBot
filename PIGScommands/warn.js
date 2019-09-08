@@ -23,12 +23,12 @@ module.exports.run = async (bot, message, args) => {
     if (!Reason) return message.channel.send("You must specify what you are warning them for")
 
     async function WarnUser(auth) {
-        const MemberData = await functions.GetMemberDetails(auth, botconfig.PIGSSheet, botconfig.PIGSEmployeeRange, SearchColumn, ID, message.channel) //Get member details
+        const MemberData = await functions.GetMemberDetails(bot, message.channel, SearchColumn, ID) //Get member details
         if (!MemberData) return message.channel.send("Unable to find that applicant")
 
-        const DiscordID = MemberData[botconfig.PIGSEmployeeRangeDiscordIndex]
-        const Deadline = MemberData[botconfig.PIGSEmployeeRangeDeadlineIndex]
-        const InGameName = MemberData[botconfig.PIGSEmployeeRangeInGameNameIndex]
+        const DiscordID = MemberData.discord_id
+        const Deadline = MemberData.deadline
+        const InGameName = MemberData.in_game_name
         
         if (!warns[DiscordID]) warns[DiscordID] = { //if they haven't been previously warned then make their wars 0
             warns: 0
@@ -56,9 +56,9 @@ module.exports.run = async (bot, message, args) => {
 
         DeadlineDate.setDate(DeadlineDate.getDate() - DaysToRemove) //Set the deadline date to the new date
 
-        const NewDeadline = `${botconfig.Months[DeadlineDate.getMonth()]} ${DeadlineDate.getDate()}, ${DeadlineDate.getFullYear()}` //Make string
+        const NewDeadline = DeadlineDate.toISOString().slice(0, 19).replace('T', ' ');
 
-        functions.ChangeDeadline(auth, message.channel, botconfig.PIGSSheet, botconfig.PIGSEmployeeRange, botconfig.PIGSEmployeeRangeStartingRow, SearchColumn, ID, NewDeadline, botconfig.PIGSDeadlineColumn) //Change their deadline
+        functions.ChangeDeadline(bot, NewDeadline, SearchColumn, ID, message.channel) //Change their deadline
         message.channel.send(`This is warning number ${warns[DiscordID].warns} for ${InGameName}`)
 
         const warned = message.guild.members.get(DiscordID) //get discord member and then inform if in discord

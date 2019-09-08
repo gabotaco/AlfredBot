@@ -1,4 +1,3 @@
-const authentication = require("../authentication");
 const botconfig = require("../botconfig.json");
 const functions = require("../functions.js")
 
@@ -10,30 +9,16 @@ module.exports.run = async (bot, message, args) => {
     if (!args[0]) args[0] = message.member.id
 
     const Response = functions.GetIDAndSearchColumn(message, args);
+    if (Response.length == 0) return message.channel.send("Please specify who you want to check the deadline of.")
+
     const SearchColumn = Response[0]
     const ID = Response[1]
 
-    if (message.guild.id == botconfig.PIGSServer) { //PIGS server
-        var SheetID = botconfig.PIGSSheet //use pigs range and sheet and index
-        var Range = botconfig.PIGSEmployeeRange
-        var DeadlineIndex = botconfig.PIGSEmployeeRangeDeadlineIndex
-    } else if (message.guild.id == botconfig.RTSServer) { //rts server
-        var SheetID = botconfig.RTSSheet; //use rts range and sheet and index
-        var Range = botconfig.RTSEmployeeRange
-        var DeadlineIndex = botconfig.RTSEmployeeRangeDeadlineIndex
-    }
-    authentication.authenticate().then(async (auth) => {
-        const MemberInfo = await functions.GetMemberDetails(auth, SheetID, Range, SearchColumn, ID, message.channel) //get the member data from the right sheet
-        if (!MemberInfo) return message.channel.send("Couldn't find that user") //no member data
 
-        message.channel.send("Deadline: " + MemberInfo[DeadlineIndex]) //get the deadline and send it
-    });
+    const MemberInfo = await functions.GetMemberDetails(bot, message.channel, SearchColumn, ID) //get the member data from the right sheet
+    if (!MemberInfo) return message.channel.send("Couldn't find that user") //no member data
 
-
-
-
-
-
+    message.channel.send("Deadline: " + MemberInfo.deadline) //get the deadline and send it
 }
 module.exports.help = {
     name: "deadline",

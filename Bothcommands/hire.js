@@ -10,28 +10,14 @@ module.exports.run = async (bot, message, args) => {
 
   let d = new Date()
   d.setDate(d.getDate() + 14) //add 14 days to deadline
-  const date = `${d.getFullYear()}-${d.getMonth()}-${d.getDay()}`
+  const date = d.toISOString().slice(0, 19).replace('T', ' ');
 
   if (message.guild.id == botconfig.PIGSServer) { //pigs server
     var SignMeUpIndex = botconfig.PIGSSignMeUpIndex
-    var MainSheet = botconfig.PIGSSheet
-    var FiredRange = botconfig.PIGSFiredEmployeeRange
-    var FiredRangeStartingRow = botconfig.PIGSFiredEmployeeRangeStartingRow
-    var InGameIDIndex = botconfig.PIGSEmployeeRangeInGameIDIndex
-    var DiscordIndex = botconfig.PIGSEmployeeRangeDiscordIndex
-    var DeadlineIndex = botconfig.PIGSEmployeeRangeDeadlineIndex
-    var EmployeeRange = botconfig.PIGSEmployeeRange
-    var EmployeeRangeStartingRow = botconfig.PIGSEmployeeRangeStartingRow
+    var CompanyName = "pigs"
   } else if (message.guild.id == botconfig.RTSServer) { //rts server
     var SignMeUpIndex = botconfig.RTSSignMeUpIndex
-    var MainSheet = botconfig.RTSSheet
-    var FiredRange = botconfig.RTSFiredEmployeeRange
-    var FiredRangeStartingRow = botconfig.RTSFiredEmployeeRangeStartingRow
-    var InGameIDIndex = botconfig.RTSEmployeeRangeInGameIDIndex
-    var DiscordIndex = botconfig.RTSEmployeeRangeDiscordIndex
-    var DeadlineIndex = botconfig.RTSEmployeeRangeDeadlineIndex
-    var EmployeeRange = botconfig.RTSEmployeeRange
-    var EmployeeRangeStartingRow = botconfig.RTSEmployeeRangeStartingRow
+    var CompanyName = "rts"
   }
 
   if (args[0] && !args[1]) { //if they only have 1 arg
@@ -49,7 +35,7 @@ module.exports.run = async (bot, message, args) => {
           if (NotHired) { //haven't hired one yet
             NotHired = false; //yes i have
             const InGameName = row[botconfig.ApplicationInGameNameIndex] //get in game name from app
-            Hire(auth, DiscordID, InGameName, InGameID) //Hire em
+            Hire(DiscordID, InGameName, InGameID) //Hire em
           }
         })
       } else { //Not in the server
@@ -67,35 +53,42 @@ module.exports.run = async (bot, message, args) => {
       return message.channel.send(".hire [discord id] \"in game id\" [in game id]")
     }
 
+
     authentication.authenticate().then((auth) => {
-      Hire(auth, DiscordID, InGameName, InGameID) //Hire em
+      Hire(DiscordID, InGameName, InGameID) //Hire em
     });
   }
 
-  async function Hire(auth, DiscordID, InGameName, InGameID) {
-    let MemberData = await functions.GetMemberDetails(auth, MainSheet, FiredRange, InGameIDIndex, InGameID, message.channel) //Try to see if they were hired before
-    if (!MemberData) { //Not hired before
-      if (message.guild.id == botconfig.PIGSServer) {
-        MemberData = [DiscordID, InGameName, null, null, InGameID, "", null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null, null, null, date] //PIGS new member data
-      } else if (message.guild.id == botconfig.RTSServer) {
-        MemberData = [DiscordID, InGameName, null, null, InGameID, "", 0, 0, 0, 0, 0, 0, 0, 0, 0, null, 0, null, date] //RTS new member data
-      }
-    }
-    else { //Hired before
-      MemberData[DiscordIndex] = DiscordID; //Set discord id of old member to the current discord id
-      MemberData[DeadlineIndex] = date //set date to the new deadline
+  async function Hire(DiscordID, InGameName, InGameID) {
+    if (!message.guild.members.has(DiscordID)) return message.channel.send("That person isn't in the discord!")
 
-      functions.RemoveMember(auth, message.channel, MainSheet, InGameIDIndex, FiredRange, FiredRangeStartingRow, InGameID) //remove from fired
-    }
-    functions.AddMember(auth, message.channel, MainSheet, EmployeeRange, EmployeeRangeStartingRow, MemberData, bot) //Hire
-    
-    functions.UpdateApplicantStatus(auth, message.channel, InGameID, SignMeUpIndex, "Hired") //set app to hired
+    bot.con.query(`UPDATE members SET in_game_id = '${InGameID}', discord_id = '${DiscordID}', in_game_name = '${InGameName}', deadline = '${date}', fire_reason = NULL, company = '${CompanyName}' WHERE in_game_id = '${InGameID}' OR discord_id = '${DiscordID}'`, function (err, result, fields) {
+      if (err) console.log(err)
+      if (result.affectedRows > 0) {
+        return message.channel.send("Hired!")
+      } else {
+        bot.con.query(`INSERT INTO members(in_game_id, discord_id, in_game_name, company, deadline) VALUES ('${InGameID}', '${DiscordID}', '${InGameName}', '${CompanyName}', '${date}');`, function (err, result, fields) {
+          if (err) return console.log(err)
+          bot.con.query(`INSERT INTO pigs(in_game_id) VALUES ('${InGameID}');`, function (err, result, fields) {
+            if (err) return console.log(err)
+            bot.con.query(`INSERT INTO rts(in_game_id) VALUES ('${InGameID}');`, function (err, result, fields) {
+              if (err) return console.log(err)
+              message.channel.send("Hired!")
+            })
+          })
+        })
+      }
+    })
+    /*bot.con.query(``, function (err, result, fields) {
+      if (err) console.log(err)
+      console.log(result, fields)
+    })*/
   }
 }
 
 module.exports.help = {
   name: "hire",
-  usage: "{Member ID} \"{In game name}\" [in-game ID]",
+  usage: "{discord ID} \"{In game name}\" [in-game ID]",
   description: "Add another person to the PIGS family",
   permission: "MANAGE_NICKNAMES"
 }

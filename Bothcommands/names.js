@@ -10,7 +10,7 @@ module.exports.run = async (bot, message, args) => {
   const Response = functions.GetServerIPandPort(args[0]);
   const ServerIP = Response[0]
   const ServerPort = Response[1]
-  
+
   let CompanyMembers = []
 
   let SentMessage = false;
@@ -18,24 +18,19 @@ module.exports.run = async (bot, message, args) => {
   let playerNames = []
   let playerID = []
   let playerJobs = []
-  
+
   if (message.guild.id == botconfig.PIGSServer) { //PIGS server
-    var MainSheet = botconfig.PIGSSheet
-    var Range = botconfig.PIGSEmployeeRange
-    var InGameIDIndex = botconfig.PIGSEmployeeRangeInGameIDIndex
+
+    var CompanyName = "pigs"
   } else if (message.guild.id == botconfig.RTSServer) { //RTS server
-    var MainSheet = botconfig.RTSSheet
-    var Range = botconfig.RTSEmployeeRange
-    var InGameIDIndex = botconfig.RTSEmployeeRangeInGameIDIndex
+
+    var CompanyName = "rts"
   }
-
-  async function GetPlayers(auth) {
-    await functions.ProcessAllInRange(auth, MainSheet, Range, message.channel, function (row) {
-      if (row[InGameIDIndex]) { //If they have an in game id
-        CompanyMembers.push(row[InGameIDIndex]) //add ingame id to company members
-      }
-    })
-
+  bot.con.query(`SELECT (in_game_id) FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) {
+    if (err) console.log(err)
+    result.forEach(member => {
+      CompanyMembers.push(member.in_game_id)
+    });
     setTimeout(() => { //wait 5000 ms
       if (!SentMessage) { //if not sent message after 5 seconds
         return message.channel.send("Server isn't online.")
@@ -57,7 +52,7 @@ module.exports.run = async (bot, message, args) => {
         if (playerNames.length < 1) return message.channel.send("No players on that server.") //if less than 1 player then no players
         let nameEmbed = new Discord.RichEmbed()
           .setColor("RANDOM")
-          .setTitle(`Players on server ${args[0]}`) 
+          .setTitle(`Players on server ${args[0]}`)
 
         let index = 0;
         playerNames.forEach(element => { //whats a for loop
@@ -67,11 +62,7 @@ module.exports.run = async (bot, message, args) => {
         message.channel.send(nameEmbed)
       }
     });
-
-  }
-  authentication.authenticate().then((auth) => {
-    GetPlayers(auth);
-  });
+  })
 }
 
 module.exports.help = {

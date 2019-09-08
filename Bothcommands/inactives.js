@@ -19,6 +19,9 @@ module.exports.run = async (bot, message, args) => {
         var DiscordIndex = botconfig.PIGSEmployeeRangeDiscordIndex;
         var InactiveRole = botconfig.PIGSInactiveRole
         var InGameNameIndex = botconfig.PIGSEmployeeRangeInGameNameIndex
+
+        var CompanyName = "pigs"
+
     } else if (message.guild.id == botconfig.RTSServer) { //rts server
         var MainSheet = botconfig.RTSSheet
         var Range = botconfig.RTSEmployeeRange
@@ -26,9 +29,11 @@ module.exports.run = async (bot, message, args) => {
         var DiscordIndex = botconfig.RTSEmployeeRangeDiscordIndex;
         var InactiveRole = botconfig.RTSInactiveRole
         var InGameNameIndex = botconfig.RTSEmployeeRangeInGameNameIndex
-    }
 
-    authentication.authenticate().then(async (auth) => {
+        var CompanyName = "rts"
+    }
+    bot.con.query(`SELECT discord_id, deadline, in_game_name FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) {
+        if (err) console.log(err)
         const discordIDS = []; //all discords of inavtive users
 
         const last = new Discord.RichEmbed()
@@ -39,47 +44,43 @@ module.exports.run = async (bot, message, args) => {
         const last4 = new Discord.RichEmbed().setColor("RANDOM")
 
         let FieldsAdded = 0
+        result.forEach(member => {
+            const D1 = new Date(member.deadline) //make date out of deadline
+            const D3 = D2 - D1 //difference between two dates
+            if (D3 > 0) {
+                const DiscordMember = message.guild.members.get((member.discord_id).toString()) //find member in discord
+                if (DiscordMember && !DiscordMember.roles.has(InactiveRole)) DiscordMember.addRole(InactiveRole) //if the member is in discord and doesn't have inactive role then add inactive role
+                else if (!DiscordMember) message.channel.send("Couldn't find member with id <@" + (member.discord_id) + "> in this discord") //If member isn't in discord
 
-        await functions.ProcessAllInRange(auth, MainSheet, Range, message.channel, function (row) { //get all employees
-            if (row[DeadlineIndex]) { //if they have a deadline
-                const D1 = new Date(row[DeadlineIndex]) //make date out of deadline
-                const D3 = D2 - D1 //difference between two dates
-                if (D3 > 0) { //if its past their deadline
-                    if (!row[DiscordIndex]) return;
-                    const member = message.guild.members.get(row[DiscordIndex]) //find member in discord
-                    if (member && !member.roles.has(InactiveRole)) member.addRole(InactiveRole) //if the member is in discord and doesn't have inactive role then add inactive role
-                    else if (!member) message.channel.send("Couldn't find member with id " + row[DiscordIndex] + " in this discord") //If member isn't in discord
+                if (FieldsAdded < 25) { //Less than 25 fields
+                    FieldsAdded++ //add field
+                    last.addField(`${member.in_game_name} (${(member.discord_id)})`, member.deadline, false) //embed 1
 
-                    if (FieldsAdded < 25) { //Less than 25 fields
-                        FieldsAdded++ //add field
-                        last.addField(`${row[InGameNameIndex]} (${row[DiscordIndex]})`, row[DeadlineIndex], false) //embed 1
+                    discordIDS.push((member.discord_id)) //push discord id's
+                } else if (FieldsAdded >= 25 && FieldsAdded < 50) { //25 or more and less than 50
+                    FieldsAdded++
+                    last2.addField(`${member.in_game_name} (${(member.discord_id)})`, member.deadline, false) //embed 2
 
-                        discordIDS.push(row[DiscordIndex]) //push discord id's
-                    } else if (FieldsAdded >= 25 && FieldsAdded < 50) { //25 or more and less than 50
-                        FieldsAdded++
-                        last2.addField(`${row[InGameNameIndex]} (${row[DiscordIndex]})`, row[DeadlineIndex], false) //embed 2
+                    discordIDS.push((member.discord_id))
+                } else if (FieldsAdded >= 50 && FieldsAdded < 75) { //50 or more and less than 75
+                    FieldsAdded++
+                    last3.addField(`${member.in_game_name} (${(member.discord_id)})`, member.deadline, false) //embed 3
 
-                        discordIDS.push(row[DiscordIndex])
-                    } else if (FieldsAdded >= 50 && FieldsAdded < 75) { //50 or more and less than 75
-                        FieldsAdded++
-                        last3.addField(`${row[InGameNameIndex]} (${row[DiscordIndex]})`, row[DeadlineIndex], false) //embed 3
+                    discordIDS.push((member.discord_id))
+                } else if (FieldsAdded >= 75) { //75 or more
+                    FieldsAdded++
+                    last4.addField(`${member.in_game_name} (${(member.discord_id)})`, member.deadline, false) //embed 4
 
-                        discordIDS.push(row[DiscordIndex])
-                    } else if (FieldsAdded >= 75) { //75 or more
-                        FieldsAdded++
-                        last4.addField(`${row[InGameNameIndex]} (${row[DiscordIndex]})`, row[DeadlineIndex], false) //embed 4
-
-                        discordIDS.push(row[DiscordIndex])
-                    }
+                    discordIDS.push((member.discord_id))
                 }
             }
-        })
+        });
 
         if (!args[0]) { //If no args
             if (last.fields[0]) { //If there are fields in embed 1
                 message.channel.send(last) //send 1
             } else { //No fields in embed 1
-                message.channel.send("No inactves")
+                message.channel.send("No inactives")
             }
             if (last2.fields[0]) { //fields in embed 2
                 message.channel.send(last2) //send 2
@@ -102,7 +103,7 @@ module.exports.run = async (bot, message, args) => {
             });
             message.channel.send(`DM'd ${notified} people`) //inform
         }
-    });
+    })
 }
 
 module.exports.help = {

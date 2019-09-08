@@ -5,29 +5,18 @@ const functions = require("../functions.js")
 module.exports.run = async (bot, message, args) => {
     if (!message.member.hasPermission("KICK_MEMBERS")) return message.channel.send("No") //If can't kick members
 
-    const InGameID = args[0] //Gets in game ID
-    if (!InGameID) return message.channel.send(".firereason [in game id]")
-    
-    if (message.guild.id == botconfig.PIGSServer) { //pigs server
-        var SheetID = botconfig.PIGSSheet
-        var FiredRange = botconfig.PIGSFiredEmployeeRange //fired range
-        var InGameIDIndex = botconfig.PIGSEmployeeRangeInGameIDIndex
-        var NotesIndex = botconfig.PIGSEmployeeRangeNotesIndex
-    } else if (message.guild.id == botconfig.RTSServer) { //rts server
-        var SheetID = botconfig.RTSSheet
-        var FiredRange = botconfig.RTSFiredEmployeeRange //fired range
-        var InGameIDIndex = botconfig.RTSEmployeeRangeInGameIDIndex
-        var NotesIndex = botconfig.RTSEmployeeRangeNotesIndex
-    }
-    async function applicants(auth) {
-        const MemberData = await functions.GetMemberDetails(auth, SheetID, FiredRange, InGameIDIndex, InGameID, message.channel) //get member data
-        if (!MemberData) return message.channel.send("Couldn't find that user") //no fired member
-        message.channel.send(MemberData[NotesIndex]) //send their notes
-    }
-    authentication.authenticate().then((auth) => {
-        applicants(auth);
-    });
+    const Response = functions.GetIDAndSearchColumn(message, args);
+    if (Response.length == 0) return message.channel.send("Please specify who you want to check the fire reason of.")
+    const SearchColumn = Response[0]
+    const ID = Response[1]
 
+
+    bot.con.query(`SELECT firereason FROM members WHERE ${SearchColumn} = ${ID}`, function (err, result, fields) {
+        if (err) console.log(err);
+        if (!result[0]) message.channel.send("Unable to find that member")
+        else if (!result[0].firereason) message.channel.send("That person isn't fired")
+        else message.channel.send(result[0].firereason)
+    })
 }
 
 module.exports.help = {

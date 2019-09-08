@@ -9,24 +9,21 @@ module.exports.run = async (bot, message, args) => {
     }
     
     if (message.guild.id == botconfig.PIGSServer) { //PIGS server
-        var SheetID = botconfig.PIGSSheet //pigs sheet stuff
-        var Range = botconfig.PIGSEmployeeRange
-        var InGameNameIndex = botconfig.PIGSEmployeeRangeInGameNameIndex
+        var CompanyName = "pigs"
     } else if (message.guild.id == botconfig.RTSServer) { //rts server
-        var SheetID = botconfig.RTSSheet //rts sheet stuff
-        var Range = botconfig.RTSEmployeeRange
-        var InGameNameIndex = botconfig.RTSEmployeeRangeInGameNameIndex
+        var CompanyName = "rts"
     }
 
-    authentication.authenticate().then(async (auth) => {
-        let employees = 0 //Start at 0
-
-        await functions.ProcessAllInRange(auth, SheetID, Range, message.channel, function (row) {
-            if (row[InGameNameIndex]) employees++; //Increase count if theres an in game name
-        })
-
-        message.channel.send(`There are currently ${employees} employees in PIGS`)
-    });
+    bot.con.query(`SELECT company FROM members`, function (err, result, fields) {
+        if (err) console.log(err)
+        let employees = 0;
+        result.forEach(member => {
+            if (member.company == CompanyName) {
+                employees++;
+            }
+        });
+        message.channel.send(`${employees} employees in ${CompanyName.toUpperCase()}`)
+    })
 }
 
 module.exports.help = {

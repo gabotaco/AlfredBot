@@ -7,15 +7,21 @@ module.exports.run = async (bot, message, args) => {
   let CompanyMembers = [] //Company members
   let ServerPoints = [] //Keeps num of players in each server
 
-  if (message.guild.id == botconfig.PIGSServer) { //pigs server
-    var MainSheet = botconfig.PIGSSheet
-    var Range = botconfig.PIGSEmployeeRange
-    var InGameIDIndex = botconfig.PIGSEmployeeRangeInGameIDIndex
-  } else if (message.guild.id == botconfig.RTSServer) { //rts server
-    var MainSheet = botconfig.RTSSheet
-    var Range = botconfig.RTSEmployeeRange
-    var InGameIDIndex = botconfig.RTSEmployeeRangeInGameIDIndex
+  if (message.guild.id == botconfig.PIGSServer) { //PIGS server
+
+    var CompanyName = "pigs"
+  } else if (message.guild.id == botconfig.RTSServer) { //RTS server
+
+    var CompanyName = "rts"
   }
+  bot.con.query(`SELECT (in_game_id) FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) {
+    if (err) console.log(err)
+    result.forEach(member => {
+      CompanyMembers.push(member.in_game_id)
+    });
+    checkServer(0); //Check server 1
+
+  })
 
   function checkServer(index) { //Find people heisting in server
     if (index < botconfig.ActiveServers.length - 1) { //if its not the last server
@@ -60,17 +66,6 @@ module.exports.run = async (bot, message, args) => {
     });
   }
 
-  async function getMembers(auth) {
-    await functions.ProcessAllInRange(auth, MainSheet, Range, message.channel, function (row) {
-      if (row[InGameIDIndex]) { //if they have in game id
-        CompanyMembers.push(row[InGameIDIndex].toLowerCase()) //push to array
-      }
-    })
-    checkServer(0); //Check server 1
-  }
-  authentication.authenticate().then((auth) => {
-    getMembers(auth);
-  });
 }
 
 module.exports.help = {
