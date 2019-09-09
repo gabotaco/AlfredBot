@@ -27,7 +27,7 @@ module.exports.run = async (bot, message, args) => {
                     const CurrentRankVouchers = (6000 - MemberDetails.pigs_total_vouchers) * 5000
                     return NextRankVouchers + CurrentRankVouchers
                 } else {
-                    return (6000 - MemberDetails.pigs_total_vouchers) * 5000
+                    return voucherAmount * 5000
                 }
             } else if (MemberDetails.pigs_total_vouchers < 18000) { //Pickpocket
                 if (MemberDetails.pigs_total_vouchers + voucherAmount >= 18000) {
@@ -36,7 +36,7 @@ module.exports.run = async (bot, message, args) => {
                     return NextRankVouchers + CurrentRankVouchers
 
                 } else {
-                    return (18000 - MemberDetails.pigs_total_vouchers) * 6000
+                    return voucherAmount * 6000
                 }
             } else if (MemberDetails.pigs_total_vouchers < 38000) { //Thief
                 if (MemberDetails.pigs_total_vouchers + voucherAmount >= 38000) {
@@ -45,7 +45,7 @@ module.exports.run = async (bot, message, args) => {
                     return NextRankVouchers + CurrentRankVouchers
 
                 } else {
-                    return (38000 - MemberDetails.pigs_total_vouchers) * 7000
+                    return voucherAmount * 7000
                 }
             } else if (MemberDetails.pigs_total_vouchers < 68000) { //Lawless
                 if (MemberDetails.pigs_total_vouchers + voucherAmount >= 68000) {
@@ -54,7 +54,7 @@ module.exports.run = async (bot, message, args) => {
                     return NextRankVouchers + CurrentRankVouchers
 
                 } else {
-                    return (68000 - MemberDetails.pigs_total_vouchers) * 8000
+                    return voucherAmount * 8000
                 }
             } else if (MemberDetails.pigs_total_vouchers < 150000) { //Mastermind
                 if (MemberDetails.pigs_total_vouchers + voucherAmount >= 150000) {
@@ -63,7 +63,7 @@ module.exports.run = async (bot, message, args) => {
                     return NextRankVouchers + CurrentRankVouchers
 
                 } else {
-                    return (150000 - MemberDetails.pigs_total_vouchers) * 9000
+                    return voucherAmount * 9000
                 }
             } else {
                 return voucherAmount * 9500;
