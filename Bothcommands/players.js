@@ -17,7 +17,7 @@ module.exports.run = async (bot, message, args) => {
   bot.con.query(`SELECT (in_game_id) FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) {
     if (err) console.log(err)
     result.forEach(member => {
-      CompanyMembers.push(member.in_game_id)
+      CompanyMembers.push(member.in_game_id.toString())
     });
     checkServer(0); //Check server 1
 

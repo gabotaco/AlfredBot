@@ -22,7 +22,8 @@ module.exports.run = async (bot, message, args) => {
   const leaveReason = args.join(" ").slice(ID.length); //Reason is everything after ID
 
   if (leaveReason.length > 120) return message.channel.send(`Please shorten the leave reason to 120 characters`)
-  bot.con.query(`UPDATE members SET company = 'fired', fire_reason = '${leaveReason}' WHERE ${SearchColumn} = ${ID}`, function (err, result, fields) {
+  if (leaveReason.includes("'")) return message.channel.send("Please no '")
+  bot.con.query(`UPDATE members SET company = 'fired', fire_reason = '${leaveReason}', deadline = '${new Date().toISOString().slice(0, 19).replace('T', ' ')}' WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) {
     if (err) console.log(err)
     if (result.affectedRows == 0) return message.channel.send("Unable to find that member")
     else message.channel.send("Fired.")

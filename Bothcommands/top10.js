@@ -11,6 +11,8 @@ module.exports.run = async (bot, message, args) => {
         var CompanyName = "rts"
     }
 
+    const MemberInfo = await functions.GetMemberDetails(bot, message.channel, "discord_id", message.author.id)
+
     bot.con.query(`SELECT * FROM members, ${CompanyName} WHERE members.in_game_id = ${CompanyName}.in_game_id`, function (err, result, fields) {
         if (err) console.log(err)
         let vouchers = []
@@ -29,6 +31,7 @@ module.exports.run = async (bot, message, args) => {
             .setColor("RANDOM")
             .setTitle("__*Top 10 Voucher Handins*__")
             .setThumbnail(message.author.avatarURL)
+            .setFooter(`Your total vouchers: ${functions.numberWithCommas(MemberInfo[`${CompanyName}_total_vouchers`])}`)
         for (let i = 0; i < 10 && i < vouchers.length; i++) { //loop through first 10 items in array
             top10.addField(vouchers[i][1], vouchers[i][0])
         }

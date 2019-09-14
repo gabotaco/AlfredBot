@@ -61,10 +61,8 @@ module.exports.run = async (bot, message, args) => {
 
   async function Hire(DiscordID, InGameName, InGameID) {
     if (!message.guild.members.has(DiscordID)) return message.channel.send("That person isn't in the discord!")
-    authentication.authenticate().then(async (auth) => {
-      functions.UpdateApplicantStatus(auth, message.channel, InGameID, SignMeUpIndex, "Hired")
-    });
-    bot.con.query(`UPDATE members SET in_game_id = '${InGameID}', discord_id = '${DiscordID}', in_game_name = '${InGameName}', deadline = '${date}', fire_reason = NULL, company = '${CompanyName}' WHERE in_game_id = '${InGameID}' OR discord_id = '${DiscordID}'`, function (err, result, fields) {
+
+    bot.con.query(`UPDATE members SET in_game_id = '${InGameID}', discord_id = '${DiscordID}', in_game_name = '${InGameName}' WHERE in_game_id = '${InGameID}' OR discord_id = '${DiscordID}'`, function (err, result, fields) {
       if (err) {
         if (err.errno == 1366) {
           return message.channel.send("Invalid characters.")
@@ -73,18 +71,9 @@ module.exports.run = async (bot, message, args) => {
         }
       }
       if (result.affectedRows > 0) {
-        return message.channel.send("Hired!")
+        return message.channel.send("Fixed!")
       } else {
-        bot.con.query(`INSERT INTO members(in_game_id, discord_id, in_game_name, company, deadline) VALUES ('${InGameID}', '${DiscordID}', '${InGameName}', '${CompanyName}', '${date}');`, function (err, result, fields) {
-          if (err) return console.log(err)
-          bot.con.query(`INSERT INTO pigs(in_game_id) VALUES ('${InGameID}');`, function (err, result, fields) {
-            if (err) return console.log(err)
-            bot.con.query(`INSERT INTO rts(in_game_id) VALUES ('${InGameID}');`, function (err, result, fields) {
-              if (err) return console.log(err)
-              message.channel.send("Hired!")
-            })
-          })
-        })
+        return message.channel.send("They aren't hired")
       }
     })
     /*bot.con.query(``, function (err, result, fields) {
@@ -95,7 +84,7 @@ module.exports.run = async (bot, message, args) => {
 }
 
 module.exports.help = {
-  name: "hire",
+  name: "fix",
   usage: "{discord ID} \"{In game name}\" [in-game ID]",
   description: "Add another person to the PIGS family",
   permission: "MANAGE_NICKNAMES"
