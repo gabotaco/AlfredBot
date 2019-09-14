@@ -66,7 +66,9 @@ module.exports.run = async (bot, message, args) => {
             if (!person.roles.has(InactiveRole)) await person.addRole(InactiveRole) //if they don't have inactive role add it
         }
 
-        await person.setNickname(MemberDetails.in_game_name) //set nickname to in game name
+        if (person.id != "404650985529540618") await person.setNickname(MemberDetails.in_game_name) //set nickname to in game name
+
+
 
         if (person.roles.has(GuestRole)) await person.removeRole(GuestRole) //if they have guest role remove it
 
