@@ -85,12 +85,42 @@ module.exports = {
         } else if (server > 6) { //if the number is higher than 6
             var serverIP = "na.tycoon.community" //na.
             server -= 5 //last port number is that number minues 5
+        } else if (server == 1) {
+            var serverIP = "server.tycoon.community";
+            server = 0;
         } else { //any other server
             var serverIP = "na.tycoon.community" //na.
             server = 0 //server port is 0
         }
 
         return [serverIP, server]
+    },
+
+    GetServerNumber: function (serverIP, serverPort) {
+        switch (`${serverIP}:${serverPort}`) {
+            case "server.tycoon.community:30120":
+                return "1"
+            case "server.tycoon.community:30122":
+                return "2"
+            case "server.tycoon.community:30123":
+                return "3"
+            case "server.tycoon.community:30124":
+                return "4"
+            case "server.tycoon.community:30125":
+                return "5"
+            case "na.tycoon.community:30120":
+                return "6"
+            case "na.tycoon.community:30122":
+                return "7"
+            case "na.tycoon.community:30123":
+                return "8"
+            case "na.tycoon.community:30124":
+                return "9"
+            case "na.tycoon.community:30125":
+                return "A"
+            default:
+                return "idk"
+        }
     },
 
     /**
@@ -928,5 +958,13 @@ module.exports = {
     },
     numberWithCommas: function (num) {
         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+    distanceBetweenCoords: function (x1, y1, x2, y2) { //Get the distance between two x,y coords
+        const differenceInX = x2 - x1
+        const differenceInY = y2 - y1
+
+        const whatToSqrt = ((differenceInX * differenceInX) + (differenceInY * differenceInY))
+        const answer = Math.sqrt(whatToSqrt)
+        return answer
     }
 }

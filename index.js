@@ -93,6 +93,8 @@ bot.on("ready", async () => { //When the bot logs in
 
     console.clear(); //Remove all the loaded console logs
     console.log(`${bot.user.username} is online!`); //logs that the bot is online
+
+    
 });
 
 bot.on("messageDeleteBulk", async messages => { //When multiple messages are deleted (.clear)
@@ -177,7 +179,7 @@ bot.on("message", async message => { //Someone sends a message in a channel
 
     if (message.guild.id == botconfig.RTSServer) { //if said in the rts server
         var commandfile = bot.RTSCommands.get(cmd.slice(prefix.length)); //Trys to get a rts command with the specified cmd without the prefix
-        if (commandfile && (message.channel.id != botconfig.RTSPublicBotCommandsChannel && message.channel.id != botconfig.RTSBotCommandsChannel && message.channel.id != botconfig.RTSBennysChannel) && !message.member.hasPermission("KICK_MEMBERS") && cmd != ".status") return message.channel.send(`Do this in ${botconfig.RTSPublicBotCommandsChannel} or ${botconfig.RTSBotCommandsChannel}`) //if theres a command but its not in one of the allowed channels
+        if (commandfile && (message.channel.id != botconfig.RTSPublicBotCommandsChannel && message.channel.id != botconfig.RTSBotCommandsChannel && message.channel.id != botconfig.RTSBennysChannel) && !message.member.hasPermission("KICK_MEMBERS") && cmd != ".status") return message.channel.send(`Do this in <#${botconfig.RTSPublicBotCommandsChannel}> or <#${botconfig.RTSBotCommandsChannel}>`) //if theres a command but its not in one of the allowed channels
         if (commandfile) console.log("RTS", commandfile.help.name, args) //if theres a command file then log that its rts and then the name and args
         else if (cmd.slice(prefix.length) == "vouchers") commandfile = bot.RTSCommands.get("voucher")
     } else if (message.guild.id == botconfig.PIGSServer) {//if said in the pigs server

@@ -10,7 +10,7 @@ module.exports.run = async (bot, message, args) => {
   const Response = functions.GetServerIPandPort(args[0]);
   const ServerIP = Response[0]
   const ServerPort = Response[1]
-
+  console.log(Response)
   let CompanyMembers = []
 
   let SentMessage = false;
