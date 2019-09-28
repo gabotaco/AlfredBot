@@ -597,9 +597,14 @@ module.exports = {
      * @param {String} VoucherID The Spreadsheet ID of voucher log
      */
     PayManager: async function (bot, ID, channel) {
-        bot.con.query(`UPDATE managers SET total_money = total_money + cashout_worth WHERE discord_id = '${ID}'`, function (err, result, fields) {
+        if (channel.guild.id == "487285826544205845") {
+            var CompanyName = "pigs"
+        } else {
+            var CompanyName = "rts"
+        }
+        bot.con.query(`UPDATE managers SET total_money = total_money + ${CompanyName}_cashout_worth WHERE discord_id = '${ID}'`, function (err, result, fields) {
             if (err) return console.log(err)
-            bot.con.query(`UPDATE managers SET cashout = '0', cashout_worth = '0' WHERE discord_id = '${ID}'`, function (err, result, fields) {
+            bot.con.query(`UPDATE managers SET ${CompanyName}_cashout = '0', ${CompanyName}_cashout_worth = '0' WHERE discord_id = '${ID}'`, function (err, result, fields) {
                 if (err) console.log(err)
                 if (result.affectedRows == 1) {
                     channel.send("Paid.")

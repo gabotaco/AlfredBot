@@ -32,7 +32,7 @@ module.exports.run = async (bot, message, args) => {
 
         var CompanyName = "rts"
     }
-    bot.con.query(`SELECT discord_id, deadline, in_game_name FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) {
+    bot.con.query(`SELECT discord_id, deadline, in_game_name, last_turnin FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) {
         if (err) console.log(err)
         const discordIDS = []; //all discords of inavtive users
 
@@ -45,31 +45,31 @@ module.exports.run = async (bot, message, args) => {
 
         let FieldsAdded = 0
         result.forEach(member => {
-            const D1 = new Date(member.deadline) //make date out of deadline
-            const D3 = D2 - D1 //difference between two dates
-            if (D3 > 0) {
+            const D4 = D2 - new Date(member.last_turnin)
+            if (member.discord_id == "330000865215643658") console.log(D4)
+            if ( D4 >= 6383956493) {
                 const DiscordMember = message.guild.members.get((member.discord_id).toString()) //find member in discord
                 if (DiscordMember && !DiscordMember.roles.has(InactiveRole)) DiscordMember.addRole(InactiveRole) //if the member is in discord and doesn't have inactive role then add inactive role
                 else if (!DiscordMember) message.channel.send("Couldn't find member with id <@" + (member.discord_id) + "> in this discord") //If member isn't in discord
 
                 if (FieldsAdded < 25) { //Less than 25 fields
                     FieldsAdded++ //add field
-                    last.addField(`${member.in_game_name} (${(member.discord_id)})`, member.deadline, false) //embed 1
+                    last.addField(`${member.in_game_name} (${(member.discord_id)})`, member.last_turnin, false) //embed 1
 
                     discordIDS.push((member.discord_id)) //push discord id's
                 } else if (FieldsAdded >= 25 && FieldsAdded < 50) { //25 or more and less than 50
                     FieldsAdded++
-                    last2.addField(`${member.in_game_name} (${(member.discord_id)})`, member.deadline, false) //embed 2
+                    last2.addField(`${member.in_game_name} (${(member.discord_id)})`, member.last_turnin, false) //embed 2
 
                     discordIDS.push((member.discord_id))
                 } else if (FieldsAdded >= 50 && FieldsAdded < 75) { //50 or more and less than 75
                     FieldsAdded++
-                    last3.addField(`${member.in_game_name} (${(member.discord_id)})`, member.deadline, false) //embed 3
+                    last3.addField(`${member.in_game_name} (${(member.discord_id)})`, member.last_turnin, false) //embed 3
 
                     discordIDS.push((member.discord_id))
                 } else if (FieldsAdded >= 75) { //75 or more
                     FieldsAdded++
-                    last4.addField(`${member.in_game_name} (${(member.discord_id)})`, member.deadline, false) //embed 4
+                    last4.addField(`${member.in_game_name} (${(member.discord_id)})`, member.last_turnin, false) //embed 4
 
                     discordIDS.push((member.discord_id))
                 }
