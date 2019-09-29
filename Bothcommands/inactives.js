@@ -46,8 +46,7 @@ module.exports.run = async (bot, message, args) => {
         let FieldsAdded = 0
         result.forEach(member => {
             const D4 = D2 - new Date(member.last_turnin)
-            if (member.discord_id == "330000865215643658") console.log(D4)
-            if ( D4 >= 6383956493) {
+            if ( D4 >= 5184000000) {
                 const DiscordMember = message.guild.members.get((member.discord_id).toString()) //find member in discord
                 if (DiscordMember && !DiscordMember.roles.has(InactiveRole)) DiscordMember.addRole(InactiveRole) //if the member is in discord and doesn't have inactive role then add inactive role
                 else if (!DiscordMember) message.channel.send("Couldn't find member with id <@" + (member.discord_id) + "> in this discord") //If member isn't in discord

@@ -30,7 +30,7 @@ module.exports.run = async (bot, message, args) => {
     const stolenMoney = (untilnext / 75) * 10000
     const endStolen = functions.numberWithCommas(Math.ceil(stolenMoney / 10000) * 10000)
 
-    message.channel.send(`To rank up you need ${untilnext} vouchers, that is ${endStolen} stolen money`)
+    message.channel.send(`To rank up you need ${functions.numberWithCommas(untilnext)} vouchers, that is ${endStolen} stolen money`)
 }
 
 

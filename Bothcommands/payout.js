@@ -299,6 +299,11 @@ module.exports.run = async (bot, message, args) => {
 
             bot.con.query(`UPDATE managers SET ${CompanyName}_cashout = ${CompanyName}_cashout + ${voucherAmount}, ${CompanyName}_cashout_worth = ${CompanyName}_cashout_worth + ${Money} WHERE discord_id = '${message.author.id}'`, function (err, result, fields) {
                 if (err) return console.log(err)
+                if (result.affectedRows == 0) {
+                    bot.con.query(`INSERT INTO managers (discord_id, ${CompanyName}_cashout, ${CompanyName}_cashout_worth) VALUES ('${message.author.id}', '${voucherAmount}', '${Money}')`, function (err) {
+                        if (err) return console.log(err)
+                    })
+                }
                 bot.con.query(`UPDATE ${CompanyName} SET ${CompanyName}_total_vouchers = ${CompanyName}_total_vouchers + '${voucherAmount}', ${CompanyName}_total_money = ${CompanyName}_total_money + '${Money}' WHERE in_game_id = '${MemberDetails.in_game_id}'`, function (err, result, fields) {
                     if (err) return console.log(err)
                     bot.con.query(`INSERT INTO payout(manager_id, player_id, current_company, vouchers_turned_in, payed_money) VALUES('${message.author.id}', '${MemberDetails.in_game_id}', '${CompanyName}', '${voucherAmount}', '${Money}')`, function (err) {
