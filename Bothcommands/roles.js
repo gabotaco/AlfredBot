@@ -56,7 +56,7 @@ module.exports.run = async (bot, message, args) => {
     }
 
     if (MemberDetails) { //if member is hired
-        if (MemberDetails.company == "fired") return;
+        if (MemberDetails.company == "fired") return message.channel.send("Guest role.");
         const D1 = new Date(MemberDetails.deadline) //check deadline
         const D2 = new Date()
         const D3 = D2 - D1 //difference between two dates
@@ -143,6 +143,8 @@ module.exports.run = async (bot, message, args) => {
                 if (message) await message.channel.send(`Gave ${person} the speed demon role`)
             }
         }
+    } else {
+        return message.channel.send("Guest role.")
     }
 }
 

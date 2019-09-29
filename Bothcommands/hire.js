@@ -77,7 +77,7 @@ module.exports.run = async (bot, message, args) => {
       if (result.affectedRows > 0) {
         return message.channel.send("Hired!")
       } else {
-        bot.con.query(`INSERT INTO members(in_game_id, discord_id, in_game_name, company, deadline) VALUES ('${InGameID}', '${DiscordID}', '${InGameName}', '${CompanyName}', '${date}');`, function (err, result, fields) {
+        bot.con.query(`INSERT INTO members(in_game_id, discord_id, in_game_name, company, deadline, last_turnin) VALUES ('${InGameID}', '${DiscordID}', '${InGameName}', '${CompanyName}', '${date}', '${CurrentDate}');`, function (err, result, fields) {
           if (err) return console.log(err)
           bot.con.query(`INSERT INTO pigs(in_game_id) VALUES ('${InGameID}');`, function (err, result, fields) {
             if (err) return console.log(err)

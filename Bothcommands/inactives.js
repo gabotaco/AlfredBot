@@ -13,22 +13,12 @@ module.exports.run = async (bot, message, args) => {
     const D2 = new Date()
 
     if (message.guild.id == botconfig.PIGSServer) { //Pigs server
-        var MainSheet = botconfig.PIGSSheet
-        var Range = botconfig.PIGSEmployeeRange
-        var DeadlineIndex = botconfig.PIGSEmployeeRangeDeadlineIndex
-        var DiscordIndex = botconfig.PIGSEmployeeRangeDiscordIndex;
         var InactiveRole = botconfig.PIGSInactiveRole
-        var InGameNameIndex = botconfig.PIGSEmployeeRangeInGameNameIndex
 
         var CompanyName = "pigs"
 
     } else if (message.guild.id == botconfig.RTSServer) { //rts server
-        var MainSheet = botconfig.RTSSheet
-        var Range = botconfig.RTSEmployeeRange
-        var DeadlineIndex = botconfig.RTSEmployeeRangeDeadlineIndex
-        var DiscordIndex = botconfig.RTSEmployeeRangeDiscordIndex;
         var InactiveRole = botconfig.RTSInactiveRole
-        var InGameNameIndex = botconfig.RTSEmployeeRangeInGameNameIndex
 
         var CompanyName = "rts"
     }
@@ -45,8 +35,10 @@ module.exports.run = async (bot, message, args) => {
 
         let FieldsAdded = 0
         result.forEach(member => {
+            const D3 = D2 - new Date(member.deadline) //difference between two dates
+
             const D4 = D2 - new Date(member.last_turnin)
-            if ( D4 >= 5184000000) {
+            if (D4 >= 5184000000 || D3 >= 0) {
                 const DiscordMember = message.guild.members.get((member.discord_id).toString()) //find member in discord
                 if (DiscordMember && !DiscordMember.roles.has(InactiveRole)) DiscordMember.addRole(InactiveRole) //if the member is in discord and doesn't have inactive role then add inactive role
                 else if (!DiscordMember) message.channel.send("Couldn't find member with id <@" + (member.discord_id) + "> in this discord") //If member isn't in discord

@@ -33,7 +33,7 @@ module.exports.run = async (bot, message, args) => {
             .setThumbnail(message.author.avatarURL)
             .setFooter(`Your total vouchers: ${functions.numberWithCommas(MemberInfo[`${CompanyName}_total_vouchers`])}`)
         for (let i = 0; i < 10 && i < vouchers.length; i++) { //loop through first 10 items in array
-            top10.addField(vouchers[i][1], vouchers[i][0])
+            top10.addField(vouchers[i][1], functions.numberWithCommas(vouchers[i][0]))
         }
         message.channel.send(top10)
     })
