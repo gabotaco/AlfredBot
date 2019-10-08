@@ -3,7 +3,10 @@ const botconfig = require("./botconfig.json");
 const Discord = require("discord.js");
 const fs = require("fs");
 const mysql = require("mysql")
-
+const authentication = require("./authentication");
+const {
+    google
+} = require('googleapis'); //allows you to use googles api
 const con = mysql.createConnection({ //connect to database
     host: "localhost",
     user: "root",
@@ -16,7 +19,9 @@ con.connect(function (err) { //perform connection
     console.log("Connected to SQL!")
 })
 
-const bot = new Discord.Client({ disableEveryone: true }) //declares new bot that can't @ everyone
+const bot = new Discord.Client({
+    disableEveryone: true
+}) //declares new bot that can't @ everyone
 
 bot.con = con; //save connection to bot so i can access in commands
 
@@ -24,7 +29,7 @@ bot.RTSCommands = new Discord.Collection(); //Store all commands inside a discor
 bot.PIGSCommands = new Discord.Collection();
 bot.BothCommands = new Discord.Collection();
 
-bot.login(botconfig.token)//logs in the bot with the token found in botconfig.json
+bot.login(botconfig.token) //logs in the bot with the token found in botconfig.json
 
 
 
@@ -73,14 +78,16 @@ fs.readdir("./PIGScommands/", (err, files) => {
 });
 
 bot.on("ready", async () => { //When the bot logs in
-    bot.user.setActivity("Transport Tycoon", { type: "PLAYING" }); //sets the current game. Can be PLAYING STREAMING WATCHING LISTENING
+    bot.user.setActivity("Transport Tycoon", {
+        type: "PLAYING"
+    }); //sets the current game. Can be PLAYING STREAMING WATCHING LISTENING
 
     bot.channels.get(botconfig.RTSCEOSpamChannel).send("Restarted."); //Send a message to a channel
 
     console.clear(); //Remove all the loaded console logs
     console.log(`${bot.user.username} is online!`); //logs that the bot is online
 
-    
+
 });
 
 bot.on("messageDeleteBulk", async messages => { //When multiple messages are deleted (.clear)
@@ -168,7 +175,7 @@ bot.on("message", async message => { //Someone sends a message in a channel
         if (commandfile && (message.channel.id != botconfig.RTSPublicBotCommandsChannel && message.channel.id != botconfig.RTSBotCommandsChannel && message.channel.id != botconfig.RTSBennysChannel) && !message.member.hasPermission("KICK_MEMBERS") && cmd != ".status") return message.channel.send(`Do this in <#${botconfig.RTSPublicBotCommandsChannel}> or <#${botconfig.RTSBotCommandsChannel}>`) //if theres a command but its not in one of the allowed channels
         if (commandfile) console.log("RTS", commandfile.help.name, args) //if theres a command file then log that its rts and then the name and args
         else if (cmd.slice(prefix.length) == "vouchers") commandfile = bot.RTSCommands.get("voucher")
-    } else if (message.guild.id == botconfig.PIGSServer) {//if said in the pigs server
+    } else if (message.guild.id == botconfig.PIGSServer) { //if said in the pigs server
         var commandfile = bot.PIGSCommands.get(cmd.slice(prefix.length)); // try to get a pigs command with the specified cmd without the prefix
         if (commandfile && (message.channel.id != "511853214858084364" && message.channel.id != botconfig.PIGSBotCommandsChannel && message.channel.id != botconfig.PIGSVoucherChannel) && !message.member.hasPermission("KICK_MEMBERS") && cmd != ".status") return message.channel.send("Do this in <#" + botconfig.PIGSBotCommandsChannel + "> instead") //if theres a command but its said in the wrong channel
         if (commandfile) console.log("PIGS", commandfile.help.name, args) //if theres a command file then log that its pigs and then the name and args
@@ -188,7 +195,7 @@ bot.on("message", async message => { //Someone sends a message in a channel
 
 bot.on("presenceUpdate", (oldMember, newMember) => { //When a guild member's presence changes (online/offline or games)
     if (botconfig.PIGSManagers.includes(oldMember.id) && newMember.guild.id == botconfig.PIGSServer) { //if its a pigs manager and the update is triggered in the pigs server
-        if (newMember.presence.status == "offline" && !newMember.roles.has(botconfig.PIGSUnavailableRole)) return newMember.addRole(botconfig.PIGSUnavailableRole)// if they are now offline and don't have the pigs unavailable role, add the unavailable role
+        if (newMember.presence.status == "offline" && !newMember.roles.has(botconfig.PIGSUnavailableRole)) return newMember.addRole(botconfig.PIGSUnavailableRole) // if they are now offline and don't have the pigs unavailable role, add the unavailable role
         else if (newMember.presence.status == "online" && newMember.roles.has(botconfig.PIGSUnavailableRole) && (newMember.id == botconfig.AltTabsID || newMember.id == "330015505211457551")) return newMember.removeRole(botconfig.PIGSUnavailableRole) //If they are now online and have the unavailable role and are alt tabs or solid 2 hours it will auto make em available
     } else if (botconfig.RTSManagers.includes(oldMember.id) && newMember.guild.id == botconfig.RTSServer) { //if its a rts manager and the update is triggered in the rts server
         if (newMember.presence.status == "offline" && !newMember.roles.has(botconfig.RTSUnavailableRole)) return newMember.addRole(botconfig.RTSUnavailableRole) //If they are offline now and don't have the unavailable role it adds it
@@ -222,6 +229,99 @@ bot.on("message", async message => { //When a message is sent to a channel. Not 
             else if (message.guild.id == botconfig.PIGSServer) bot.channels.get(botconfig.PIGSLogs).send(GlitchEmbed) //if its in pigs send to pigs logs
         }
     })
+})
+
+bot.on("message", async message => {
+    if (message.channel.id == "630947095456514077" && (message.author.id == "404650985529540618" || message.author.id == "330000865215643658" || message.author.id == "453742447483158539")) {
+        if (parseInt(message.content)) {
+            authentication.authenticate().then(async (auth) => {
+                const sheets = google.sheets({
+                    version: 'v4',
+                    auth
+                });
+
+                sheets.spreadsheets.values.append({ //append all the hired people
+                    auth: auth,
+                    spreadsheetId: botconfig.BabySheet,
+                    range: "B3:D9999",
+                    valueInputOption: "USER_ENTERED",
+                    insertDataOption: "OVERWRITE",
+                    includeValuesInResponse: true,
+                    resource: {
+                        majorDimension: "ROWS",
+                        values: [
+                            [new Date().toDateString(), new Date().toLocaleTimeString(), message.content]
+                        ]
+                    }
+                }, function (err, response) {
+                    if (err) return console.log(err)
+                    message.channel.send("GOO GOO GAA GAA THANKS FOR THE SUSTENANCE")
+
+                    sheets.spreadsheets.values.batchGet({ //get spreadsheet range
+                        spreadsheetId: botconfig.BabySheet,
+                        ranges: ["H2", "J2", "J5"],
+                        valueRenderOption: "UNFORMATTED_VALUE",
+                        dateTimeRenderOption: "FORMATTED_STRING",
+                        auth: auth
+                    }, (err, res) => {
+                        if (err) {
+                            channel.send('The API returned an ' + err);
+                            return;
+                        }
+                        const FoodThresh = res.data.valueRanges[0].values[0]
+                        const SoonPing = res.data.valueRanges[1].values[0] * 60000
+                        const LongPing = res.data.valueRanges[2].values[0] * 60000
+
+                        if (parseInt(message.content) < FoodThresh) {
+                            setTimeout(() => {
+                                message.channel.send("<@453742447483158539> GOO GOO GAA GAA FEED ME IM STARVING")
+                            }, SoonPing);
+                        } else {
+                            setTimeout(() => {
+                                message.channel.send("<@453742447483158539> GOOD GOOD GAA GAA FEED ME IN GONNA DIE SOON")
+                            }, LongPing);
+                        }
+
+                    })
+                })
+            })
+            return;
+        }
+        switch (message.content.toLowerCase()) {
+            case "recent":
+                authentication.authenticate().then(async (auth) => {
+                    const sheets = google.sheets({
+                        version: 'v4',
+                        auth
+                    });
+
+                    sheets.spreadsheets.values.get({ //get spreadsheet range
+                        spreadsheetId: botconfig.BabySheet,
+                        range: "B3:D9999",
+                    }, (err, res) => {
+                        if (err) {
+                            channel.send('The API returned an ' + err);
+                            return;
+                        }
+
+                        const rows = res.data.values;
+                        if (rows.length) {
+                            const BabyEmbed = new Discord.RichEmbed()
+                                .setTitle("Baby Food")
+
+                            for (let i = rows.length - 1; i > rows.length - 6 && i > -1; i--) {
+                                BabyEmbed.addField(`${rows[i][0]} at ${rows[i][1]}`, rows[i][2])
+                            }
+
+                            message.channel.send(BabyEmbed)
+                        }
+
+                    })
+                })
+                break;
+        }
+
+    }
 })
 
 bot.on("error", (error) => { //when theres a discord error
