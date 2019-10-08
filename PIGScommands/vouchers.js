@@ -78,7 +78,12 @@ module.exports.run = async (bot, message, args) => {
         var Progress = 100
     }
 
-    const Deadline = new Date(MemberDetails.deadline).toDateString()
+    if (MemberDetails.company == "fired") {
+        var Deadline = "Non-Employee"
+    } else {
+        var Deadline = "Deadline: " + new Date(MemberDetails.deadline).toDateString()
+
+    }
 
     let CompanyRank
     bot.con.query(`SELECT * FROM members, pigs WHERE members.in_game_id = pigs.in_game_id`, async function (err, result, fields) {

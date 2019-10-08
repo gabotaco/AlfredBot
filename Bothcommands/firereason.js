@@ -11,11 +11,11 @@ module.exports.run = async (bot, message, args) => {
     const ID = Response[1]
 
 
-    bot.con.query(`SELECT firereason FROM members WHERE ${SearchColumn} = ${ID}`, function (err, result, fields) {
+    bot.con.query(`SELECT fire_reason, company FROM members WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) {
         if (err) console.log(err);
-        if (!result[0]) message.channel.send("Unable to find that member")
-        else if (!result[0].firereason) message.channel.send("That person isn't fired")
-        else message.channel.send(result[0].firereason)
+        if (!result) message.channel.send("Unable to find that member")
+        else if (result[0].company != "fired") message.channel.send("That person isn't fired")
+        else message.channel.send(result[0].fire_reason)
     })
 }
 

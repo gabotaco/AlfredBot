@@ -1,15 +1,16 @@
-const fs = require("fs")
-const warns = JSON.parse(fs.readFileSync("./warnings.json", "utf8"))
+const functions = require("../functions.js")
 
 module.exports.run = async (bot, message, args) => {
-    const employee = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0])) || message.member
+    if (!args[0]) args[0] = message.member.id;
 
-    if (warns[employee.id]) { //if they have warnings
-        return message.channel.send(`${warns[employee.id].warns} warnings`) //send num of warnings
-    } else { //no warnings
-        return message.channel.send("0 warnings")
-    }
+    const Response = await functions.GetIDAndSearchColumn(message, args)
+    const ID = Response[1]
+    const SearchColumn = Response[0]
 
+    bot.con.query(`SELECT warnings FROM members WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) {
+        if (err) console.log(err)
+        message.channel.send(`${result[0].warnings} warnings`)
+    })
 }
 
 module.exports.help = {

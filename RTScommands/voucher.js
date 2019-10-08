@@ -69,7 +69,12 @@ module.exports.run = async (bot, message, args) => {
         var RequiredVouchers = "Max"
     }
 
-    const Deadline = new Date(MemberDetails.deadline).toDateString()
+    if (MemberDetails.company == "fired") {
+        var Deadline = "Non-Employee"
+    } else {
+        var Deadline = "Deadline: " + new Date(MemberDetails.deadline).toDateString()
+
+    }
 
 
     bot.con.query(`SELECT * FROM members, rts WHERE members.in_game_id = rts.in_game_id`, async function (err, result, fields) {

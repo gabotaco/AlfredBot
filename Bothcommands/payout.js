@@ -116,27 +116,27 @@ module.exports.run = async (bot, message, args) => {
             const D3 = D2 - CurrentDeadline //difference between two dates
             if (D3 <= 45) {
                 if (voucherAmount > 1200000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount/2000) + 9)
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000) + 9)
                     return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
-                } else if (voucherAmount <=1200000 && voucherAmount >= 100000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount/1000) + 3)
+                } else if (voucherAmount <= 1200000 && voucherAmount >= 100000) {
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 1000) + 3)
                     return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
                 } else {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount/250))
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 250))
 
                     return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
                 }
             } else {
-                if (voucherAmount >1200000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount/3000)+2)
+                if (voucherAmount > 1200000) {
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 3000) + 2)
 
                     return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
                 } else if (voucherAmount <= 1200000 && voucherAmount >= 100000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount/2000))
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000))
 
                     return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
                 } else {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount/1000))
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 1000))
 
                     return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
                 }
@@ -222,30 +222,34 @@ module.exports.run = async (bot, message, args) => {
         var NewDeadline = function (MemberDetails) {
             const CurrentDeadline = new Date(MemberDetails.deadline)
             const D2 = new Date()
-            const D3 = D2 - CurrentDeadline //difference between two dates
+            let D3 = D2 - CurrentDeadline //difference between two dates
+            if (D3 >= 0) {
+                CurrentDeadline.setDate(new Date().getDate() + 7)
+                console.log(CurrentDeadline.toISOString().slice(0, 19).replace("T", " "))
+            }
             if (D3 <= 45) {
                 if (voucherAmount > 1200000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount/2000) + 9)
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000) + 9)
                     return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
-                } else if (voucherAmount <=1200000 && voucherAmount >= 1000000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount/1000) + 3)
+                } else if (voucherAmount <= 1200000 && voucherAmount >= 1000000) {
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 1000) + 3)
                     return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
                 } else {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount/250))
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 250))
 
                     return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
                 }
             } else {
-                if (voucherAmount >1200000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount/3000)+2)
+                if (voucherAmount > 1200000) {
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 3000) + 2)
 
                     return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
                 } else if (voucherAmount <= 1200000 && voucherAmount >= 100000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount/2000))
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000))
 
                     return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
                 } else {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount/1000))
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 1000))
 
                     return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
                 }
@@ -261,8 +265,8 @@ module.exports.run = async (bot, message, args) => {
     const DoRank = RankUp(MemberDetails);
 
     const payoutEmbed = new Discord.RichEmbed()
-    .setTitle(`Payout for ${MemberDetails.in_game_name}`)
-    .addField(`Money`, `$${functions.numberWithCommas(Money)}`)
+        .setTitle(`Payout for ${MemberDetails.in_game_name}`)
+        .addField(`Money`, `$${functions.numberWithCommas(Money)}`)
     if (!DoRank) {
         payoutEmbed.setColor("RED")
         payoutEmbed.addField(`Rank up?`, "NO")
@@ -273,7 +277,7 @@ module.exports.run = async (bot, message, args) => {
     }
 
     message.channel.send(payoutEmbed)
-    
+
 
 
     message.channel.send("Please confirm the payout. Say either \"yes\" or \"no\"") //ask to confirm
