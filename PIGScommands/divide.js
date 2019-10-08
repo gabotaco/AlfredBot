@@ -1,5 +1,3 @@
-const Discord = require("discord.js")
-
 module.exports.run = async (bot, message, args) => {
    message.delete(); //Deletes the .divide
    message.channel.send("--------------------------------------------------------------------------------------------------------------------------------------") //sends long ----

@@ -1,21 +1,18 @@
-const botconfig = require("../botconfig.json");
 const functions = require("../functions.js")
 
 module.exports.run = async (bot, message, args) => {
-    if (!message.member.hasPermission("KICK_MEMBERS")) {
+    if (!message.member.hasPermission("KICK_MEMBERS")) { //if can't kick members
         return message.channel.send("You aren't allowed to do that")
     }
 
-    if (!args[0]) args[0] = message.member.id
+    if (!args[0]) args[0] = message.member.id //if nobody specified do themselves
 
-    const Response = functions.GetIDAndSearchColumn(message, args);
-    if (Response.length == 0) return message.channel.send("Please specify who you want to check the deadline of.")
-
+    const Response = functions.GetIDAndSearchColumn(message, args); //check if they used discord id or ingame id
     const SearchColumn = Response[0]
     const ID = Response[1]
 
 
-    const MemberInfo = await functions.GetMemberDetails(bot, message.channel, SearchColumn, ID) //get the member data from the right sheet
+    const MemberInfo = await functions.GetMemberDetails(bot, SearchColumn, ID) //Get their member info
     if (!MemberInfo) return message.channel.send("Couldn't find that user") //no member data
 
     message.channel.send("Deadline: " + MemberInfo.deadline) //get the deadline and send it

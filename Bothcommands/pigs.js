@@ -1,5 +1,3 @@
-const botconfig = require("../botconfig.json");
-const authentication = require("../authentication"); //Imports functions from authentication file
 const functions = require("../functions.js")
 
 module.exports.run = async (bot, message, args) => {
@@ -12,7 +10,7 @@ module.exports.run = async (bot, message, args) => {
     const SearchColumn = Response[0]
     const ID = Response[1];
 
-    bot.con.query(`UPDATE members SET company = 'pigs' WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) {
+    bot.con.query(`UPDATE members SET company = 'pigs' WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) { //set company
         if (err) console.log(err)
         message.channel.send("Transferred to PIGS")
     })

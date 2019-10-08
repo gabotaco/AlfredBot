@@ -1,6 +1,4 @@
-const authentication = require("../authentication");
 const botconfig = require("../botconfig.json");
-const functions = require("../functions.js")
 
 module.exports.run = async (bot, message, args) => {
     if (!message.member.hasPermission("MANAGE_NICKNAMES")) { //Can't manage nicknames
@@ -14,11 +12,13 @@ module.exports.run = async (bot, message, args) => {
         var CompanyName = "rts"
     }
 
-    bot.con.query(`SELECT company FROM members`, function (err, result, fields) {
-        if (err) console.log(err)
-        let employees = 0;
-        result.forEach(member => {
-            if (member.company == CompanyName) {
+    bot.con.query(`SELECT company FROM members`, function (err, result, fields) { //get the company for every member
+        if (err) return console.log(err)
+
+        let employees = 0; //start at 0
+
+        result.forEach(member => { //go through each member
+            if (member.company == CompanyName) { //if their company is the company name
                 employees++;
             }
         });

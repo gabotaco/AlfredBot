@@ -8,7 +8,7 @@ module.exports.run = async (bot, message, args) => {
     const SearchColumn = Response[0]
     const ID = Response[1]
 
-    bot.con.query(`UPDATE members SET deadline = DATE_ADD(deadline, INTERVAL 7 DAY) WHERE ${SearchColumn}='${ID}'`, function (err, result, fields) {
+    bot.con.query(`UPDATE members SET deadline = DATE_ADD(deadline, INTERVAL 7 DAY) WHERE ${SearchColumn}='${ID}'`, function (err, result, fields) { //adds 7 days to deadline
         if (err) console.log(err)
         else message.channel.send(`Updated deadline.`)
     })

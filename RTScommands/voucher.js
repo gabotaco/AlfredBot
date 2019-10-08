@@ -1,7 +1,5 @@
 const Discord = require("discord.js")
 const fs = require("fs")
-const authentication = require("../authentication");
-const botconfig = require("../botconfig.json");
 const functions = require("../functions.js")
 const Handlebars = require('handlebars');
 const puppeteer = require('puppeteer');
@@ -16,7 +14,7 @@ module.exports.run = async (bot, message, args) => {
     const SearchColumn = Response[0]
 
 
-    const MemberDetails = await functions.GetMemberDetails(bot, message.channel, SearchColumn, ID) //Get member details
+    const MemberDetails = await functions.GetMemberDetails(bot, SearchColumn, ID) //Get member details
     if (!MemberDetails) return message.channel.send("You aren't hired")
 
     let VoucherPerson = message.guild.members.get(MemberDetails.discord_id) //get discord member

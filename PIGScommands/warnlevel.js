@@ -7,9 +7,10 @@ module.exports.run = async (bot, message, args) => {
     const ID = Response[1]
     const SearchColumn = Response[0]
 
-    bot.con.query(`SELECT warnings FROM members WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) {
-        if (err) console.log(err)
-        message.channel.send(`${result[0].warnings} warnings`)
+    bot.con.query(`SELECT warnings FROM members WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) { //get the warning number for the member
+        if (err) return console.log(err)
+        if (result.length == 0) return message.channel.send("Not hired") //not hired
+        message.channel.send(`${result[0].warnings} warnings`) //hired
     })
 }
 

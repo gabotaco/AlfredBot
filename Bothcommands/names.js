@@ -1,17 +1,16 @@
 const Discord = require("discord.js")
 const botconfig = require("../botconfig.json");
-const authentication = require("../authentication"); //Imports functions from authentication file
 const request = require("request")
 const functions = require("../functions.js")
 
 module.exports.run = async (bot, message, args) => {
   if (!args[0]) return message.channel.send("You must provide the server number") //No first arg
 
-  const Response = functions.GetServerIPandPort(args[0]);
+  const Response = functions.GetServerIPandPort(args[0]); //get server ip and port
   const ServerIP = Response[0]
   const ServerPort = Response[1]
-  console.log(Response)
-  let CompanyMembers = []
+
+  let CompanyMembers = [] //track company members
 
   let SentMessage = false;
 
@@ -26,11 +25,14 @@ module.exports.run = async (bot, message, args) => {
 
     var CompanyName = "rts"
   }
-  bot.con.query(`SELECT (in_game_id) FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) {
-    if (err) console.log(err)
+
+  bot.con.query(`SELECT (in_game_id) FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) { //get hired members in game ids
+    if (err) return console.log(err)
+
     result.forEach(member => {
-      CompanyMembers.push(member.in_game_id.toString())
+      CompanyMembers.push(member.in_game_id.toString()) //add each id to array
     });
+    
     setTimeout(() => { //wait 5000 ms
       if (!SentMessage) { //if not sent message after 5 seconds
         return message.channel.send("Server isn't online.")

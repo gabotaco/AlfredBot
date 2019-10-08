@@ -2,24 +2,24 @@ let LastPerson = "439959655448313866"; //Last person to send a message to the on
 const botconfig = require("./botconfig.json");
 const Discord = require("discord.js");
 const fs = require("fs");
-
 const mysql = require("mysql")
 
-const con = mysql.createConnection({
+const con = mysql.createConnection({ //connect to database
     host: "localhost",
     user: "root",
     password: "admin",
     database: "rc"
 });
 
-con.connect(function (err) {
+con.connect(function (err) { //perform connection
     if (err) throw err;
     console.log("Connected to SQL!")
 })
 
 const bot = new Discord.Client({ disableEveryone: true }) //declares new bot that can't @ everyone
 
-bot.con = con;
+bot.con = con; //save connection to bot so i can access in commands
+
 bot.RTSCommands = new Discord.Collection(); //Store all commands inside a discord collection
 bot.PIGSCommands = new Discord.Collection();
 bot.BothCommands = new Discord.Collection();
@@ -74,20 +74,6 @@ fs.readdir("./PIGScommands/", (err, files) => {
 
 bot.on("ready", async () => { //When the bot logs in
     bot.user.setActivity("Transport Tycoon", { type: "PLAYING" }); //sets the current game. Can be PLAYING STREAMING WATCHING LISTENING
-
-    // botconfig.RTSWelcome = bot.channels.get(botconfig.RTSWelcome); //sets the channels in botconfig to actual discord channels instead of just their ID's
-    // botconfig.PIGSWelcome = bot.channels.get(botconfig.PIGSWelcome);
-    // botconfig.RTSStaffChannel = bot.channels.get(botconfig.RTSStaffChannel)
-    // botconfig.PIGSStaffChannel = bot.channels.get(botconfig.PIGSStaffChannel)
-    // botconfig.PIGSLogs = bot.channels.get(botconfig.PIGSLogs);
-    // botconfig.RTSLogs = bot.channels.get(botconfig.RTSLogs);
-    // botconfig.PIGSOneWordStory = bot.channels.get(botconfig.PIGSOneWordStory)
-    // botconfig.RTSCEOSpamChannel = bot.channels.get(botconfig.RTSCEOSpamChannel);
-    // botconfig.RTSPublicBotCommandsChannel = bot.channels.get(botconfig.RTSPublicBotCommandsChannel)
-    // botconfig.RTSBotCommandsChannel = bot.channels.get(botconfig.RTSBotCommandsChannel)
-    // botconfig.RTSBennysChannel = bot.channels.get(botconfig.RTSBennysChannel)
-    // botconfig.PIGSBotCommandsChannel = bot.channels.get(botconfig.PIGSBotCommandsChannel)
-    // botconfig.PIGSVoucherChannel = bot.channels.get(botconfig.PIGSVoucherChannel)
 
     bot.channels.get(botconfig.RTSCEOSpamChannel).send("Restarted."); //Send a message to a channel
 

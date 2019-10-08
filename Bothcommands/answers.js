@@ -30,7 +30,7 @@ module.exports.run = async (bot, message, args) => {
     })
 
 
-    if (!AnswersEmbed.fields[0]) {
+    if (!AnswersEmbed.fields[0]) { //no added fields
       message.channel.send("Couldn't find that applicant")
       return;
     }

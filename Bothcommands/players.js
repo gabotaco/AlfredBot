@@ -1,5 +1,4 @@
 const botconfig = require("../botconfig.json");
-const authentication = require("../authentication"); //Imports functions from authentication file
 const request = require("request")
 const functions = require("../functions.js")
 
@@ -14,8 +13,8 @@ module.exports.run = async (bot, message, args) => {
 
     var CompanyName = "rts"
   }
-  bot.con.query(`SELECT (in_game_id) FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) {
-    if (err) console.log(err)
+  bot.con.query(`SELECT (in_game_id) FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) { //get all members
+    if (err) return console.log(err)
     result.forEach(member => {
       CompanyMembers.push(member.in_game_id.toString())
     });

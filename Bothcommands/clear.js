@@ -15,11 +15,6 @@ module.exports.run = async (bot, message, args) => {
     } catch (error) { //didn't work
         message.channel.send("these messages are so old not even the power of alfred can delete them")
     }
-
-
-
-
-
 }
 
 

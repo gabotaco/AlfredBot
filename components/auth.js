@@ -2,15 +2,12 @@
 
 const EventEmitter = require('events');
 const util = require('util');
-const grpc = require('grpc');
 const open = require('open');
 const readline = require('readline');
 const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
 let { OAuth2Client } = require('google-auth-library');
-
-//const OAuth2 = new (require('google-auth-library'))().OAuth2;
 
 function Auth(config) {
   if (config === undefined) config = {};

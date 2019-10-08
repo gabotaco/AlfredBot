@@ -66,7 +66,7 @@ module.exports.run = async (bot, message, args) => {
     });
     const CurrentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-    bot.con.query(`UPDATE members SET in_game_id = '${InGameID}', discord_id = '${DiscordID}', in_game_name = '${InGameName}', deadline = '${date}', fire_reason = NULL, company = '${CompanyName}', last_turnin = '${CurrentDate}' WHERE in_game_id = '${InGameID}' OR discord_id = '${DiscordID}'`, function (err, result, fields) {
+    bot.con.query(`UPDATE members SET in_game_id = '${InGameID}', discord_id = '${DiscordID}', in_game_name = '${InGameName}', deadline = '${date}', fire_reason = NULL, company = '${CompanyName}', last_turnin = '${CurrentDate}' WHERE in_game_id = '${InGameID}' OR discord_id = '${DiscordID}'`, function (err, result, fields) { //try to find if member was perviously hired and hire em back
       if (err) {
         if (err.errno == 1366) {
           return message.channel.send("Invalid characters.")
@@ -76,12 +76,12 @@ module.exports.run = async (bot, message, args) => {
       }
       if (result.affectedRows > 0) {
         return message.channel.send("Hired!")
-      } else {
-        bot.con.query(`INSERT INTO members(in_game_id, discord_id, in_game_name, company, deadline, last_turnin) VALUES ('${InGameID}', '${DiscordID}', '${InGameName}', '${CompanyName}', '${date}', '${CurrentDate}');`, function (err, result, fields) {
+      } else { //if wasn't previously hired
+        bot.con.query(`INSERT INTO members(in_game_id, discord_id, in_game_name, company, deadline, last_turnin) VALUES ('${InGameID}', '${DiscordID}', '${InGameName}', '${CompanyName}', '${date}', '${CurrentDate}');`, function (err, result, fields) { //add to members table
           if (err) return console.log(err)
-          bot.con.query(`INSERT INTO pigs(in_game_id) VALUES ('${InGameID}');`, function (err, result, fields) {
+          bot.con.query(`INSERT INTO pigs(in_game_id) VALUES ('${InGameID}');`, function (err, result, fields) { //insert into pigs table
             if (err) return console.log(err)
-            bot.con.query(`INSERT INTO rts(in_game_id) VALUES ('${InGameID}');`, function (err, result, fields) {
+            bot.con.query(`INSERT INTO rts(in_game_id) VALUES ('${InGameID}');`, function (err, result, fields) { //insert into rts table
               if (err) return console.log(err)
               message.channel.send("Hired!")
             })
@@ -89,10 +89,6 @@ module.exports.run = async (bot, message, args) => {
         })
       }
     })
-    /*bot.con.query(``, function (err, result, fields) {
-      if (err) console.log(err)
-      console.log(result, fields)
-    })*/
   }
 }
 

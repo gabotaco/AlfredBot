@@ -1,4 +1,3 @@
-const authentication = require("../authentication");
 const botconfig = require("../botconfig.json");
 const functions = require("../functions.js")
 
@@ -14,13 +13,7 @@ module.exports.run = async (bot, message, args) => {
 
   const User = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0])); //get the member @'d or by discord id
 
-  if (message.guild.id == botconfig.PIGSServer) { //pigs server
-    var VoucherSheet = botconfig.PIGSVoucher
-  } else if (message.guild.id == botconfig.RTSServer) { //rts server
-    var VoucherSheet = botconfig.RTSVoucher
-  }
-
-    functions.PayManager(bot, User.id, message.channel) //pay manager
+  functions.PayManager(bot, User.id, message.channel) //pay manager
 }
 
 module.exports.help = {

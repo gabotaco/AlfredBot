@@ -1,6 +1,3 @@
-const { google } = require("googleapis")
-const authentication = require("../authentication")
-const botconfig = require("../botconfig.json");
 const functions = require("../functions.js")
 
 module.exports.run = async (bot, message, args) => {
@@ -13,7 +10,7 @@ module.exports.run = async (bot, message, args) => {
     return message.channel.send(".fire [member id] [reason]")
   }
 
-  const Response = functions.GetIDAndSearchColumn(message, args);
+  const Response = functions.GetIDAndSearchColumn(message, args); 
   if (Response.length == 0) return message.channel.send("Please specify who you want to fire.")
 
   const SearchColumn = Response[0]
@@ -21,10 +18,13 @@ module.exports.run = async (bot, message, args) => {
 
   const leaveReason = args.join(" ").slice(ID.length); //Reason is everything after ID
 
-  if (leaveReason.length > 120) return message.channel.send(`Please shorten the leave reason to 120 characters`)
-  if (leaveReason.includes("'")) return message.channel.send("Please no '")
-  bot.con.query(`UPDATE members SET company = 'fired', fire_reason = '${leaveReason}', deadline = '${new Date().toISOString().slice(0, 19).replace('T', ' ')}' WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) {
-    if (err) console.log(err)
+  if (leaveReason.length > 120) return message.channel.send(`Please shorten the leave reason to 120 characters`) //limit is 120 characters
+
+  if (leaveReason.includes("'")) return message.channel.send("Please no '") //can't have lil quotes
+
+  bot.con.query(`UPDATE members SET company = 'fired', fire_reason = '${leaveReason}', deadline = '${new Date().toISOString().slice(0, 19).replace('T', ' ')}' WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) { //update their company to fired and add fire reason and set deadline to the fired date
+    if (err) return console.log(err)
+
     if (result.affectedRows == 0) return message.channel.send("Unable to find that member")
     else message.channel.send("Fired.")
   })

@@ -13,6 +13,7 @@ module.exports.run = async (bot, message, args) => {
 
   if (message.guild.id == botconfig.PIGSServer) var SignmeUpIndex = botconfig.PIGSSignMeUpIndex //PIGS Server then use PIGS sign me up
   else if (message.guild.id == botconfig.RTSServer) var SignmeUpIndex = botconfig.RTSSignMeUpIndex //RTS Server then use RTS sign me up
+  
   if (ID) { //if specified
     authentication.authenticate().then(async (auth) => {
       functions.UpdateApplicantStatus(auth, message.channel, ID, SignmeUpIndex, "Contacted") //Updates

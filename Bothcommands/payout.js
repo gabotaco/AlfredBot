@@ -1,5 +1,4 @@
 const Discord = require("discord.js");
-const authentication = require("../authentication");
 const botconfig = require("../botconfig.json");
 const functions = require("../functions.js")
 
@@ -20,13 +19,13 @@ module.exports.run = async (bot, message, args) => {
     if (message.guild.id == botconfig.PIGSServer) { //PIGS server
         var CompanyName = "pigs"
 
-        var VoucherWorth = function (MemberDetails) {
+        var VoucherWorth = function (MemberDetails) { //get how much to pay the person
             if (MemberDetails.pigs_total_vouchers < 6000) { //Hustler
-                if (MemberDetails.pigs_total_vouchers + voucherAmount >= 6000) {
+                if (MemberDetails.pigs_total_vouchers + voucherAmount >= 6000) { //rank up
                     const NextRankVouchers = ((MemberDetails.pigs_total_vouchers + voucherAmount) - 6000) * 6000
                     const CurrentRankVouchers = (6000 - MemberDetails.pigs_total_vouchers) * 5000
                     return NextRankVouchers + CurrentRankVouchers
-                } else {
+                } else { //don't rank up
                     return voucherAmount * 5000
                 }
             } else if (MemberDetails.pigs_total_vouchers < 18000) { //Pickpocket
@@ -70,12 +69,12 @@ module.exports.run = async (bot, message, args) => {
             }
         }
 
-        var RankUp = function (MemberDetails) {
+        var RankUp = function (MemberDetails) { //if they rank up
             if (MemberDetails.pigs_total_vouchers < 6000) { //Hustler
-                if (MemberDetails.pigs_total_vouchers + voucherAmount >= 6000) {
+                if (MemberDetails.pigs_total_vouchers + voucherAmount >= 6000) { //yes
                     return "Pickpocket";
                 } else {
-                    return false;
+                    return false; //no
                 }
             } else if (MemberDetails.pigs_total_vouchers < 18000) { //Pickpocket
                 if (MemberDetails.pigs_total_vouchers + voucherAmount >= 18000) {
@@ -110,25 +109,28 @@ module.exports.run = async (bot, message, args) => {
             }
         }
 
-        var NewDeadline = function (MemberDetails) {
+        var NewDeadline = function (MemberDetails) { //calculate new deadline
             const CurrentDeadline = new Date(MemberDetails.deadline)
             const D2 = new Date()
             const D3 = D2 - CurrentDeadline //difference between two dates
-            if (D3 <= 45) {
-                if (voucherAmount > 1200000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000) + 9)
+            if (D3 >= 0) { //if past deadline
+                CurrentDeadline.setDate(new Date().getDate() + 7) //add a week
+            }
+            if (D3 <= 45) { //45 days till deadline
+                if (voucherAmount > 1200000) { //turnin in a lot
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000) + 9) //add 9
                     return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
                 } else if (voucherAmount <= 1200000 && voucherAmount >= 100000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 1000) + 3)
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 1000) + 3) //add 3 days
                     return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
                 } else {
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 250))
 
                     return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
                 }
-            } else {
+            } else { //plenty of time
                 if (voucherAmount > 1200000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 3000) + 2)
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 3000) + 2) //add 2
 
                     return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
                 } else if (voucherAmount <= 1200000 && voucherAmount >= 100000) {
@@ -225,7 +227,6 @@ module.exports.run = async (bot, message, args) => {
             let D3 = D2 - CurrentDeadline //difference between two dates
             if (D3 >= 0) {
                 CurrentDeadline.setDate(new Date().getDate() + 7)
-                console.log(CurrentDeadline.toISOString().slice(0, 19).replace("T", " "))
             }
             if (D3 <= 45) {
                 if (voucherAmount > 1200000) {
@@ -257,7 +258,7 @@ module.exports.run = async (bot, message, args) => {
         }
     }
 
-    const MemberDetails = await functions.GetMemberDetails(bot, message.channel, SearchColumn, ID);
+    const MemberDetails = await functions.GetMemberDetails(bot, SearchColumn, ID); //get payout member
     if (!MemberDetails) return message.channel.send("Couldn't find that member")
 
     //figure out voucher worth and rank up
@@ -267,10 +268,11 @@ module.exports.run = async (bot, message, args) => {
     const payoutEmbed = new Discord.RichEmbed()
         .setTitle(`Payout for ${MemberDetails.in_game_name}`)
         .addField(`Money`, `$${functions.numberWithCommas(Money)}`)
-    if (!DoRank) {
+
+    if (!DoRank) { //if not rank up
         payoutEmbed.setColor("RED")
         payoutEmbed.addField(`Rank up?`, "NO")
-    } else {
+    } else { //rank up
         payoutEmbed.setColor("GREEN")
         payoutEmbed.addField("Rank up?", "YES")
         payoutEmbed.addField("Rank up to", DoRank)
@@ -302,16 +304,22 @@ module.exports.run = async (bot, message, args) => {
             const CurrentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
             bot.con.query(`UPDATE managers SET ${CompanyName}_cashout = ${CompanyName}_cashout + ${voucherAmount}, ${CompanyName}_cashout_worth = ${CompanyName}_cashout_worth + ${Money} WHERE discord_id = '${message.author.id}'`, function (err, result, fields) {
+                //update the manager with the new cashout
                 if (err) return console.log(err)
-                if (result.affectedRows == 0) {
+                if (result.affectedRows == 0) { //if no manager
                     bot.con.query(`INSERT INTO managers (discord_id, ${CompanyName}_cashout, ${CompanyName}_cashout_worth) VALUES ('${message.author.id}', '${voucherAmount}', '${Money}')`, function (err) {
                         if (err) return console.log(err)
+                        //add manager to table
                     })
                 }
+                //update the members company data
                 bot.con.query(`UPDATE ${CompanyName} SET ${CompanyName}_total_vouchers = ${CompanyName}_total_vouchers + '${voucherAmount}', ${CompanyName}_total_money = ${CompanyName}_total_money + '${Money}' WHERE in_game_id = '${MemberDetails.in_game_id}'`, function (err, result, fields) {
                     if (err) return console.log(err)
+                    //add to payout table
                     bot.con.query(`INSERT INTO payout(manager_id, player_id, current_company, vouchers_turned_in, payed_money) VALUES('${message.author.id}', '${MemberDetails.in_game_id}', '${CompanyName}', '${voucherAmount}', '${Money}')`, function (err) {
                         if (err) return console.log(err)
+
+                        //update deadline
                         bot.con.query(`UPDATE members SET deadline = '${NewDeadline(MemberDetails)}', last_turnin = '${CurrentDate}' WHERE in_game_id = '${MemberDetails.in_game_id}'`, function (err, result, fields) {
                             if (err) return console.log(err)
                             message.channel.send("Success!")

@@ -1,6 +1,4 @@
 const Discord = require("discord.js")
-const botconfig = require("../botconfig.json");
-const fs = require("fs")
 const functions = require("../functions.js")
 const date_diff_indays = function (date1, date2) { //gets the difference in days between 2 dates
     dt1 = new Date(date1);
@@ -20,7 +18,7 @@ module.exports.run = async (bot, message, args) => {
     const Reason = args.join(" ").slice(ID.length); //reason is everything after ID
     if (!Reason) return message.channel.send("You must specify what you are warning them for")
 
-        const MemberData = await functions.GetMemberDetails(bot, message.channel, SearchColumn, ID) //Get member details
+        const MemberData = await functions.GetMemberDetails(bot, SearchColumn, ID) //Get member details
         if (!MemberData) return message.channel.send("Unable to find that applicant")
 
         const DiscordID = MemberData.discord_id
@@ -59,7 +57,7 @@ module.exports.run = async (bot, message, args) => {
         const warned = message.guild.members.get(DiscordID) //get discord member and then inform if in discord
         if (warned) warned.send(`Hello ${InGameName}, It has come to our attention that you've broken a rule and as a result, you've been issued a formal warning. Your voucher deadline has been reduced. Multiple warnings could lead to removal from the company.`)
         
-        bot.con.query(`UPDATE members SET warnings = '${warns}' WHERE ${SearchColumn} = '${ID}'`, function (err, fields, result) {
+        bot.con.query(`UPDATE members SET warnings = '${warns}' WHERE ${SearchColumn} = '${ID}'`, function (err, fields, result) { //set warnings to add one
             if (err) console.log(err)
         })
 

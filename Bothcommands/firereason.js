@@ -1,5 +1,3 @@
-const botconfig = require("../botconfig.json");
-const authentication = require("../authentication"); //Imports functions from authentication file
 const functions = require("../functions.js")
 
 module.exports.run = async (bot, message, args) => {
@@ -11,11 +9,12 @@ module.exports.run = async (bot, message, args) => {
     const ID = Response[1]
 
 
-    bot.con.query(`SELECT fire_reason, company FROM members WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) {
-        if (err) console.log(err);
-        if (!result) message.channel.send("Unable to find that member")
-        else if (result[0].company != "fired") message.channel.send("That person isn't fired")
-        else message.channel.send(result[0].fire_reason)
+    bot.con.query(`SELECT fire_reason, company FROM members WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) { //get fire reason and company for the specified person
+        if (err) return console.log(err);
+
+        if (!result) message.channel.send("Unable to find that member") //no result
+        else if (result[0].company != "fired") message.channel.send("That person isn't fired") //if company isn't fired
+        else message.channel.send(result[0].fire_reason) //send fire reason if fired
     })
 }
 

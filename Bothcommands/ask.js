@@ -16,7 +16,7 @@ const config = {
 };
 
 
-const assistant = new GoogleAssistant(config.auth);
+const assistant = new GoogleAssistant(config.auth); //makes a google assistant to use
 assistant
     .on('ready', function () {
         console.log("Asisstant is ready!")
@@ -43,10 +43,10 @@ module.exports.run = async (bot, message, args) => {
                         time: 10000
                     });
                     ResponseCollector.on('collect', message => {
-                        ResponseCollector.stop()
+                        ResponseCollector.stop() //stop looking for responses
     
-                        config.conversation.textQuery = message.content
-                        assistant.start(config.conversation, startConversation);
+                        config.conversation.textQuery = message.content 
+                        assistant.start(config.conversation, startConversation); //re run this command but with the response
                     })
                 } else {
                     console.log('Conversation Complete');
@@ -59,9 +59,9 @@ module.exports.run = async (bot, message, args) => {
             });
     };
     
-    if (!args[0]) return message.channel.send("Hey")
-    config.conversation.textQuery = args.join(" ");
-    assistant.start(config.conversation, startConversation);
+    if (!args[0]) return message.channel.send("Hey") //didn't say anything
+    config.conversation.textQuery = args.join(" "); //set the text to what they said
+    assistant.start(config.conversation, startConversation); //star the assistant
 }
 
 module.exports.help = {

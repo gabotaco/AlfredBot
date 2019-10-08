@@ -1,5 +1,3 @@
-const botconfig = require("../botconfig.json");
-const authentication = require("../authentication"); //Imports functions from authentication file
 const functions = require("../functions.js")
 
 module.exports.run = async (bot, message, args) => {
@@ -10,7 +8,7 @@ module.exports.run = async (bot, message, args) => {
     const searchColumn = Response[0]
     const id = Response[1]
 
-    const MemberDetails = await functions.GetMemberDetails(bot, message.channel, searchColumn, id)
+    const MemberDetails = await functions.GetMemberDetails(bot, searchColumn, id)
     if (!MemberDetails) return message.channel.send("Unable to find that member") //not in PIGS
     if (MemberDetails.pigs_total_vouchers < 6000) {
         var untilnext = 6000 - MemberDetails.pigs_total_vouchers

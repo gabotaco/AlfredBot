@@ -6,7 +6,6 @@ module.exports.run = async (bot, message, args) => {
     const used = process.memoryUsage().heapUsed / 1024 / 1024; //get used
     const memberused = Math.round(used * 100) / 100 //then round
 
-    const lastWords = bot.user.lastMessage.content
 
     const botembed = new Discord.RichEmbed()
         .setDescription("***Bot Information***")
@@ -16,9 +15,7 @@ module.exports.run = async (bot, message, args) => {
         .addField("Created On", bot.user.createdAt)
         .addField("Memery Used in MB", memberused)
         .addField("Ping", bot.ping)
-        .addField("Minutes online", Math.round((bot.uptime / 60) / 60))
-
-    if (lastWords) botembed.addField("Last message", lastWords)
+        .addField("Minutes online", Math.round((bot.uptime / 60) / 60)) //Convert to minutes
 
     return message.channel.send(botembed);
 }

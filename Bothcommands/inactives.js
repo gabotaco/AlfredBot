@@ -1,16 +1,14 @@
 const Discord = require("discord.js")
-const authentication = require("../authentication");
 const botconfig = require("../botconfig.json");
-const functions = require("../functions.js")
 
 module.exports.run = async (bot, message, args) => {
-    if (!message.member.hasPermission("KICK_MEMBERS")) {
+    if (!message.member.hasPermission("KICK_MEMBERS")) { //can't kick members
         return message.channel.send("You aren't allowed to do that")
     }
 
     if (message.channel.parentID != botconfig.PIGSManagementCatagoryID && message.channel.parentID != botconfig.RTSManagementCatagoryID) return message.channel.send("Wrong channel") //Not in a staff room
 
-    const D2 = new Date()
+    const D2 = new Date() //curent date
 
     if (message.guild.id == botconfig.PIGSServer) { //Pigs server
         var InactiveRole = botconfig.PIGSInactiveRole
@@ -22,8 +20,8 @@ module.exports.run = async (bot, message, args) => {
 
         var CompanyName = "rts"
     }
-    bot.con.query(`SELECT discord_id, deadline, in_game_name, last_turnin FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) {
-        if (err) console.log(err)
+    bot.con.query(`SELECT discord_id, deadline, in_game_name, last_turnin FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) { //get all hired members
+        if (err) return console.log(err)
         const discordIDS = []; //all discords of inavtive users
 
         const last = new Discord.RichEmbed()
@@ -35,10 +33,10 @@ module.exports.run = async (bot, message, args) => {
 
         let FieldsAdded = 0
         result.forEach(member => {
-            const D3 = D2 - new Date(member.deadline) //difference between two dates
+            const D3 = D2 - new Date(member.deadline) //difference between deadline and today
 
-            const D4 = D2 - new Date(member.last_turnin)
-            if (D4 >= 5184000000 || D3 >= 0) {
+            const D4 = D2 - new Date(member.last_turnin) //different between today and last turnin
+            if (D4 >= 5184000000 || D3 >= 0) { //if past deadline or been 2 months since last turnin
                 const DiscordMember = message.guild.members.get((member.discord_id).toString()) //find member in discord
                 if (DiscordMember && !DiscordMember.roles.has(InactiveRole)) DiscordMember.addRole(InactiveRole) //if the member is in discord and doesn't have inactive role then add inactive role
                 else if (!DiscordMember) message.channel.send("Couldn't find member with id <@" + (member.discord_id) + "> in this discord") //If member isn't in discord

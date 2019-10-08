@@ -1,5 +1,4 @@
 const botconfig = require("../botconfig.json");
-const authentication = require("../authentication"); //Imports functions from authentication file
 const functions = require("../functions.js")
 //ID's of all rank roles
 const hustlerID = "488021473361920010"
@@ -27,20 +26,18 @@ module.exports.run = async (bot, message, args) => {
             var GuestRole = botconfig.PIGSGuestRole
             var InactiveRole = botconfig.PIGSInavtiveRole
             var FamilyID = rtsfamilyID
-            var Company = "pigs"
         } else if (message.guild.id == botconfig.RTSServer) {
             var alwaysKeep = ["453982220907184128", "503224065906180106", "529643022866972684", "472023222674784259", "481486784858030090", "480730660105879580", "479082117154996235", "478955377619370004", "478393923656482827", "478393609540861952", "477115908888723467", "475029760930611200", "475393112915574821", "472386249341272064", "449404264545255446", "471671084392120351", "454190936843354113", "454474803529646111", "477463794965020673", "453917732254121997", "458376796921004052", "453570994985238528", "448681738953162752", "453563912097497110", "472143712655245322", "482902573179731969", "447493627791409173", "453999831434919948", "453744160923713548", "472133586745688075", "455014608810541068", "472145541091033123", "447494569173712898"]
             var employeeID = "483297370482933760"
             var GuestRole = botconfig.RTSGuestRole
             var InactiveRole = botconfig.RTSInavtiveRole
             var FamilyID = pigsfamilyID
-            var Company = "rts"
         }
-    } else {
+    } else { // no message
         return;
     }
 
-    if (person.roles) {
+    if (person.roles) { //person has roles
         await person.roles.forEach(async element => { //go through all roles
             if (!alwaysKeep.includes(element.id)) await person.removeRole(element.id) //If the current role isn't in the always keep array then remove it 
         });
@@ -49,14 +46,12 @@ module.exports.run = async (bot, message, args) => {
 
     await person.addRole(GuestRole) //add guest role
 
-    if (message) { //if theres a message
-        var MemberDetails = await functions.GetMemberDetails(bot, message.channel, "discord_id", person.id) //get member details with message.channel
-    } else {
-        var MemberDetails = await functions.GetMemberDetails(auth, null, "discord_id", person.id) //no message.channel
-    }
+    var MemberDetails = await functions.GetMemberDetails(bot, "discord_id", person.id) //get member details with message.channel
 
-    if (MemberDetails) { //if member is hired
-        if (MemberDetails.company == "fired") return message.channel.send("Guest role.");
+
+    if (MemberDetails) { //if member is in database
+        if (MemberDetails.company == "fired") return message.channel.send("Guest role."); //if fired stop
+
         const D1 = new Date(MemberDetails.deadline) //check deadline
         const D2 = new Date()
         const D3 = D2 - D1 //difference between two dates
@@ -68,20 +63,17 @@ module.exports.run = async (bot, message, args) => {
 
         if (person.id != "404650985529540618") await person.setNickname(MemberDetails.in_game_name) //set nickname to in game name
 
-
-
         if (person.roles.has(GuestRole)) await person.removeRole(GuestRole) //if they have guest role remove it
 
         await person.addRole(employeeID) //add employee role
 
         //If they are a rank then add the rank role
-        if (message.guild.id == botconfig.PIGSServer) {
-            if (MemberDetails.company == "rts") {
+        if (message.guild.id == botconfig.PIGSServer) { //in pigs server
+            if (MemberDetails.company == "rts") { //rts
                 await person.addRole(FamilyID)
                 if (message) await message.channel.send(`Gave ${person} the RTS family role`)
 
-            } else
-            if (MemberDetails.pigs_total_vouchers < 6000 && !person.roles.has(hustlerID)) {
+            } else if (MemberDetails.pigs_total_vouchers < 6000 && !person.roles.has(hustlerID)) { //hustler
                 foundRole = true;
                 await person.addRole(hustlerID)
 
@@ -111,12 +103,11 @@ module.exports.run = async (bot, message, args) => {
                 await person.addRole(overlordID)
                 if (message) await message.channel.send(`Gave ${person} the overlord role`)
             }
-        } else {
-            if (MemberDetails.company == "pigs") {
+        } else { //rts discord
+            if (MemberDetails.company == "pigs") { //in pigs
                 await person.addRole(FamilyID)
                 if (message) await message.channel.send(`Gave ${person} the PIGS family role`)
-            } else
-            if (MemberDetails.rts_total_vouchers < 9600 && !person.roles.has(initiateID)) {
+            } else if (MemberDetails.rts_total_vouchers < 9600 && !person.roles.has(initiateID)) {
                 foundRole = true;
                 await person.addRole(initiateID)
                 if (message) await message.channel.send(`Gave ${person} the initiate role`)

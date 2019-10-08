@@ -1,7 +1,5 @@
 const Discord = require("discord.js")
 const fs = require("fs")
-const authentication = require("../authentication");
-const botconfig = require("../botconfig.json");
 const functions = require("../functions.js")
 const Handlebars = require('handlebars');
 const puppeteer = require('puppeteer');
@@ -16,7 +14,7 @@ module.exports.run = async (bot, message, args) => {
     const ID = Response[1]
     const SearchColumn = Response[0]
 
-    const MemberDetails = await functions.GetMemberDetails(bot, message.channel, SearchColumn, ID) //Get their member details
+    const MemberDetails = await functions.GetMemberDetails(bot, SearchColumn, ID) //Get their member details
     if (!MemberDetails) return message.channel.send("You aren't hired") //Not hired
 
     const VoucherPerson = message.guild.members.get(MemberDetails.discord_id) //get discord member
@@ -86,12 +84,14 @@ module.exports.run = async (bot, message, args) => {
     }
 
     let CompanyRank
-    bot.con.query(`SELECT * FROM members, pigs WHERE members.in_game_id = pigs.in_game_id`, async function (err, result, fields) {
+    bot.con.query(`SELECT * FROM members, pigs WHERE members.in_game_id = pigs.in_game_id`, async function (err, result, fields) { //get all data for member and link member with pigs data
         if (err) console.log(err)
         var Ranking = []
+
         result.forEach(member => {
             Ranking.push([member[`pigs_total_vouchers`], member.in_game_name])
         });
+
         Ranking.sort(sortFunction); //Sort it from highest to least
         function sortFunction(a, b) {
             if (a[0] == b[0]) {
@@ -100,11 +100,13 @@ module.exports.run = async (bot, message, args) => {
                 return (a[0] > b[0]) ? -1 : 1;
             }
         }
+
         Ranking.forEach(element => { // Go through all ranks
             if (element[1] == InGameName && !CompanyRank) { //If the member doesn't have a company rank yet and it finds their rank
                 CompanyRank = Ranking.indexOf(element) + 1 //set their rank to the index of it plus 1
             }
         });
+
         let HTMLTemplate = templateCache[HTMLPath]; // try to load from memory cache
 
         // read html file from disk and save to memory cache
