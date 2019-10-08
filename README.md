@@ -14,6 +14,8 @@
 </p>
 <p align="center">
   <a href="#breakdown">Breakdown</a> •
+    <a href="#commands">Commands</a> •
+
   <a href="#installation">Installation</a>
 </p>
 
