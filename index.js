@@ -130,10 +130,10 @@ bot.on("guildMemberAdd", async member => { //When someone joins the guild
     }
     if (member.guild.id == botconfig.RTSServer) { //rts server and not bot
         bot.channels.get(botconfig.RTSWelcome).send(`Welcome to ${member.guild.name} ${member}!`) //Says welcome in the rts server
-        bot.BothCommands.get("roles").run(bot, null, [member.id]) //gets the roles command and runs it for the new member
+        member.addRole(botconfig.RTSGuestRole)
     } else if (member.guild.id == botconfig.PIGSServer) { //pigs commands
         bot.channels.get(botconfig.PIGSWelcome).send(`Welcome to ${member.guild.name} ${member}!`) //Says welcome in the pigs server
-        bot.BothCommands.get("roles").run(bot, null, [member.id]) //gets the roles command and runs it for the new member
+        member.addRole(botconfig.PIGSGuestRole)
     }
 })
 

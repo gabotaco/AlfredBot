@@ -20,10 +20,14 @@ module.exports.run = async (bot, message, args) => {
     let VoucherPerson = message.guild.members.get(MemberDetails.discord_id) //get discord member
     if (VoucherPerson == message.member) { //if discord member is same as author
         VoucherPerson.setNickname(MemberDetails.in_game_name) //change nickname to in game name
+    } else {
+        if (!message.member.hasPermission("KICK_MEMBERS")) return message.channel.send("You aren't allowed to check someone elses vouchers!")
     }
 
     const InGameName = MemberDetails.in_game_name
     const InGameID = MemberDetails.in_game_id
+
+    const TotalVouchers = MemberDetails.rts_total_vouchers
 
     if (MemberDetails.rts_total_vouchers < 9600) {
         var NextRank = "Lead Foot"
@@ -113,7 +117,8 @@ module.exports.run = async (bot, message, args) => {
             progress: Progress,
             leaderboardsRank: CompanyRank,
             deadline: Deadline,
-            VoucherText: VoucherTextThing || "vouchers to next promotion"
+            VoucherText: VoucherTextThing || "vouchers to next promotion",
+            TotalVouchers: TotalVouchers
         }
 
         // render html file with data, for example - will replace {{name}} with name value
