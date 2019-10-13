@@ -20,9 +20,10 @@ module.exports.run = async (bot, message, args) => {
     else if (message.guild.id == botconfig.RTSServer) var SignMeUpIndex = botconfig.RTSSignMeUpIndex
 
     await functions.FindApplicant(auth, message.channel, ID, botconfig.ApplicationInGameIDIndex, SignMeUpIndex, function (row) { //Find the applicant
+      console.log(row)
       AnswersEmbed.setTitle(`Answers for ${row[botconfig.ApplicationInGameNameIndex]}`) //Add answers
       AnswersEmbed.addField("This sounds serious but it's totally not! Why should we choose you?", row[botconfig.ApplicationWhyIndex])
-      AnswersEmbed.addField("Say anything! (Hobbies, interests, field of work, whatever makes you, you!)", row[botconfig.ApplicationAnythingIndex])
+      if (row[botconfig.ApplicationAnythingIndex]) AnswersEmbed.addField("Say anything! (Hobbies, interests, field of work, whatever makes you, you!)", row[botconfig.ApplicationAnythingIndex])
       AnswersEmbed.addField("How much do you play per week right now?", row[botconfig.ApplicationPlayTimeIndex])
       if (row[0] == "") { //If they don't have a status
         functions.UpdateApplicantStatus(auth, message.channel, ID, SignMeUpIndex, "Under review") //Set it to Under review
