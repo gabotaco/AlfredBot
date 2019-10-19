@@ -1,14 +1,122 @@
 const Discord = require("discord.js") //discord
 const botconfig = require("../botconfig.json"); //handy info
-const {
-    google
-} = require('googleapis'); //allows you to use googles api
-const authentication = require("../authentication"); //Imports functions from authentication file
 const functions = require("../functions.js") //Handy functions
 
-const Hellos = ["hallo", "Përshëndetje", "ሰላም", "مرحبا", "Բարեւ Ձեզ", "Salam", "Kaixo", "добры дзень", "হ্যালো", "Здравейте", "Hola", "Kumusta", "Moni", "你好", "Bonghjornu", "zdravo", "Ahoj", "Hej", "Hello", "Saluton", "Tere", "Kamusta", "Hei", "Salut", "Hoi", "Ola", "გამარჯობა", "γεια σας", "નમસ્તે", "Bonjou", "Sannu", "aloha", "שלום", "नमस्ते", "Nyob zoo", "Szia", "Halló", "Nnọọ", "Halo", "Dia dhuit", "Ciao", "こんにちは", "ಹಲೋ", "Сәлеметсіз бе", "សួស្តី។", "여보세요", "Slav", "салам", "ສະບາຍດີ", "Salve", "Sveiki", "Здраво", "Salama", "ഹലോ", "Bongu", "Kia ora", "नमस्कार", "Сайн уу", "ဟယ်လို", "سلام", "cześć", "Olá", "ਸਤ ਸ੍ਰੀ ਅਕਾਲ", "Привет", "talofa", "Halò", "Lumela", "Mhoro", "هيلو", "හෙලෝ", "Salaan", "Habari", "Салом", "வணக்கம்", "హలో", "สวัสดี", "Merhaba", "Здравствуйте", "ہیلو", "Salom", "xin chào", "Helo", "Mholweni", "העלא", "Pẹlẹ o", "Sawubona"]
 module.exports.run = async (bot, message, args) => {
-    return message.channel.send(Hellos[Math.floor(Math.random() * Hellos.length)]) //Picks a random hello to send and sends it
+    if (message.author.id != "330000865215643658" && message.author.id != "404650985529540618") return message.channel.send("You can't do that")
+
+    let company;
+    if (args[0].toLowerCase() == "total") {
+        if (parseInt(args[1])) {
+            const Threshold = new Date()
+            Threshold.setDate(Threshold.getDate() - parseInt(args[1]))
+            bot.con.query(`SELECT * FROM payout WHERE time > '${Threshold.toISOString()}'`, function (err, result, fields) { //get all their info into one array
+                if (err) return console.log(err);
+                let TotalVouchers = 0;
+                let TotalValue = 0;
+                result.forEach(member => {
+                    TotalVouchers += member.vouchers_turned_in;
+
+                    TotalValue += member.payed_money;
+                });
+
+                const statEmbed = new Discord.RichEmbed()
+                .setTitle(`Total vouchers between now and ${parseInt(args[1])} days ago`)
+                .setColor("RANDOM")
+                .addField("Total Vouchers", functions.numberWithCommas(TotalVouchers), true)
+                .addField("Cashout value", "$" + functions.numberWithCommas(Math.abs((TotalVouchers * 10000) - (TotalVouchers * 10000) - TotalValue)), true)
+                .addField("Cashout Profit", "$" + functions.numberWithCommas((TotalVouchers * 10000) - TotalValue), true)
+                message.channel.send(statEmbed)
+            })
+        } else if (args[1].toLowerCase() == "unpaid") {
+            bot.con.query(`SELECT * FROM managers`, function (err, result, fields) { //get all their info into one array
+                if (err) return console.log(err);
+                let TotalVouchers = 0;
+                let TotalValue = 0;
+                result.forEach(member => {
+                    TotalVouchers += member.rts_cashout;
+                    TotalVouchers += member.pigs_cashout;
+
+                    TotalValue += member.rts_cashout_worth;
+                    TotalValue += member.pigs_cashout_worth;
+                });
+
+                const statEmbed = new Discord.RichEmbed()
+                .setTitle(`Total unpaid vouchers with managers`)
+                .setColor("RANDOM")
+                .addField("Total Vouchers", functions.numberWithCommas(TotalVouchers), true)
+                .addField("Total value", "$" + functions.numberWithCommas(TotalValue), true)
+                message.channel.send(statEmbed)
+            })
+        }
+        return;
+    } else if (args[0].toLowerCase() == "rts") {
+        company = "rts"
+    } else if (args[0].toLowerCase() == "pigs") {
+        company = "pigs"
+    } else {
+        return message.channel.send("Invalid company arg. Must be total rts or pigs")
+    }
+
+    if (parseInt(args[1])) {
+        const Threshold = new Date()
+        Threshold.setDate(Threshold.getDate() - parseInt(args[1]))
+        bot.con.query(`SELECT * FROM payout WHERE time > '${Threshold.toISOString()}' AND current_company = '${company}'`, function (err, result, fields) { //get all their info into one array
+            if (err) return console.log(err);
+            let TotalVouchers = 0;
+            let TotalValue = 0;
+            result.forEach(member => {
+                TotalVouchers += member.vouchers_turned_in;
+
+                TotalValue += member.payed_money;
+            });
+
+            const statEmbed = new Discord.RichEmbed()
+            .setTitle(`Total vouchers between now and ${parseInt(args[1])} days ago for ${company.toUpperCase()}`)
+            .setColor("RANDOM")
+            .addField("Total Vouchers", functions.numberWithCommas(TotalVouchers), true)
+            .addField("Cashout value", "$" + functions.numberWithCommas(Math.abs((TotalVouchers * 10000) - (TotalVouchers * 10000) - TotalValue)), true)
+            .addField("Cashout Profit", "$" + functions.numberWithCommas((TotalVouchers * 10000) - TotalValue), true)
+            message.channel.send(statEmbed)
+        })
+    } else if (args[1].toLowerCase() == "unpaid") {
+        bot.con.query(`SELECT * FROM managers`, function (err, result, fields) { //get all their info into one array
+            if (err) return console.log(err);
+            let TotalVouchers = 0;
+            let TotalValue = 0;
+            result.forEach(member => {
+                TotalVouchers += member[`${company}_cashout`];
+
+                TotalValue += member[`${company}_cashout_worth`];
+            });
+
+            const statEmbed = new Discord.RichEmbed()
+            .setTitle(`Total unpaid vouchers with ${company.toUpperCase()}'s managers`)
+            .setColor("RANDOM")
+            .addField("Total Vouchers", functions.numberWithCommas(TotalVouchers), true)
+            .addField("Total value", "$" + functions.numberWithCommas(TotalValue), true)
+            message.channel.send(statEmbed)
+        })
+    } else if (args[1].toLowerCase() == "top") {
+        const NumOfPlayers = parseInt(args[2])
+        const NumOfDays = parseInt(args[3]);
+        if (!NumOfDays || !NumOfPlayers) return message.channel.send(".stats [company] top [num of players] [num of days]")
+        if (NumOfPlayers > 25) return message.channel.send("Too many players")
+        const Threshold = new Date()
+        Threshold.setDate(Threshold.getDate() - NumOfDays)
+
+        bot.con.query(`SELECT * FROM members, payout WHERE payout.current_company = '${company}' AND members.in_game_id = payout.player_id AND payout.time > '${Threshold.toISOString()}' ORDER BY payout.vouchers_turned_in DESC LIMIT ${NumOfPlayers}`, function (err, result, fields) { //get all their info into one array
+            if (err) return console.log(err);
+            const TopEmbed = new Discord.RichEmbed()
+            .setTitle("Top Turnins over the past " + NumOfDays + " days")
+            .setColor("RANDOM")
+            result.forEach((member, i) => {
+                TopEmbed.addField(member.in_game_name + ` (${i + 1})`, functions.numberWithCommas(member.vouchers_turned_in), true)
+            });
+            message.channel.send(TopEmbed)
+        })
+
+    }
 }
 
 module.exports.help = {
