@@ -230,7 +230,7 @@ bot.on("message", async message => { //When a message is sent to a channel. Not 
         }
     })
 })
-
+let LatestFeedID = 0;
 bot.on("message", async message => {
     if (message.channel.id == "630947095456514077" && (message.author.id == "404650985529540618" || message.author.id == "330000865215643658" || message.author.id == "453742447483158539")) {
         if (parseInt(message.content)) {
@@ -272,13 +272,17 @@ bot.on("message", async message => {
                         const SoonPing = res.data.valueRanges[1].values[0] * 60000
                         const LongPing = res.data.valueRanges[2].values[0] * 60000
 
+                        const FeedID = LatestFeedID + 1;
+
+                        LatestFeedID = FeedID;
+
                         if (parseInt(message.content) < FoodThresh) {
                             setTimeout(() => {
-                                message.channel.send("<@453742447483158539> GOO GOO GAA GAA FEED ME IM STARVING")
+                                if (LatestFeedID == FeedID) message.channel.send("<@453742447483158539> GOO GOO GAA GAA FEED ME IM STARVING")
                             }, SoonPing);
                         } else {
                             setTimeout(() => {
-                                message.channel.send("<@453742447483158539> GOOD GOOD GAA GAA FEED ME IN GONNA DIE SOON")
+                                if (LatestFeedID == FeedID) message.channel.send("<@453742447483158539> GOOD GOOD GAA GAA FEED ME IN GONNA DIE SOON")
                             }, LongPing);
                         }
 

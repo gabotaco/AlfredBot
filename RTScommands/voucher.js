@@ -27,7 +27,7 @@ module.exports.run = async (bot, message, args) => {
     const InGameName = MemberDetails.in_game_name
     const InGameID = MemberDetails.in_game_id
 
-    const TotalVouchers = MemberDetails.rts_total_vouchers
+    const TotalVouchers =functions.numberWithCommas(MemberDetails.rts_total_vouchers) 
 
     if (MemberDetails.rts_total_vouchers < 9600) {
         var NextRank = "Lead Foot"
@@ -70,6 +70,8 @@ module.exports.run = async (bot, message, args) => {
         var Rank = "Speed Demon"
         var RequiredVouchers = "Max"
     }
+
+    RequiredVouchers = functions.numberWithCommas(RequiredVouchers)
 
     if (MemberDetails.company == "fired") {
         var Deadline = "Non-Employee"

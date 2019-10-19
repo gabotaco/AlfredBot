@@ -27,7 +27,7 @@ module.exports.run = async (bot, message, args) => {
     const InGameName = MemberDetails.in_game_name
     const InGameID = MemberDetails.in_game_id
 
-    const TotalVouchers = MemberDetails.pigs_total_vouchers
+    const TotalVouchers = functions.numberWithCommas(MemberDetails.pigs_total_vouchers)
     if (MemberDetails.pigs_total_vouchers < 6000) {
         var Rank = "Hustler"
         var RequiredVouchers = 6000 - MemberDetails.pigs_total_vouchers
@@ -79,6 +79,8 @@ module.exports.run = async (bot, message, args) => {
         var RequiredVouchers = functions.numberWithCommas(CurrentVouchers)
         var Progress = 100
     }
+
+    RequiredVouchers = functions.numberWithCommas(RequiredVouchers)
 
     if (MemberDetails.company == "fired") {
         var Deadline = "Non-Employee"

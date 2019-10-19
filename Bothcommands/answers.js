@@ -20,7 +20,6 @@ module.exports.run = async (bot, message, args) => {
     else if (message.guild.id == botconfig.RTSServer) var SignMeUpIndex = botconfig.RTSSignMeUpIndex
 
     await functions.FindApplicant(auth, message.channel, ID, botconfig.ApplicationInGameIDIndex, SignMeUpIndex, function (row) { //Find the applicant
-      console.log(row)
       AnswersEmbed.setTitle(`Answers for ${row[botconfig.ApplicationInGameNameIndex]}`) //Add answers
       AnswersEmbed.addField("This sounds serious but it's totally not! Why should we choose you?", row[botconfig.ApplicationWhyIndex])
       if (row[botconfig.ApplicationAnythingIndex]) AnswersEmbed.addField("Say anything! (Hobbies, interests, field of work, whatever makes you, you!)", row[botconfig.ApplicationAnythingIndex])

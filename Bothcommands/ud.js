@@ -12,6 +12,10 @@ module.exports.run = async (bot, message, args) => {
     return;
   });
 
+  if (!res) {
+    message.channel.send("Did you make that up or something because its not even on urban dictionary");
+    return;
+  }
   const urbanDefinition = res.definition.replace(/\[/g, '') //removes all the [] from the message. Looks stupid.
   const bestUrbanDefinition = urbanDefinition.replace(/\]/g, '')
   const urbanExample = res.example.replace(/\[/g, '')
