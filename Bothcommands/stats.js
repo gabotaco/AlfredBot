@@ -1,7 +1,12 @@
 const Discord = require("discord.js") //discord
 const botconfig = require("../botconfig.json"); //handy info
 const functions = require("../functions.js") //Handy functions
-
+Array.prototype.indexOfId = function (id) {
+    for (var i = 0; i < this.length; i++)
+        if (this[i].in_game_id === id)
+            return i;
+    return -1;
+}
 module.exports.run = async (bot, message, args) => {
     if (message.author.id != "330000865215643658" && message.author.id != "404650985529540618") return message.channel.send("You can't do that")
 
@@ -21,11 +26,11 @@ module.exports.run = async (bot, message, args) => {
                 });
 
                 const statEmbed = new Discord.RichEmbed()
-                .setTitle(`Total vouchers between now and ${parseInt(args[1])} days ago`)
-                .setColor("RANDOM")
-                .addField("Total Vouchers", functions.numberWithCommas(TotalVouchers), true)
-                .addField("Cashout value", "$" + functions.numberWithCommas(Math.abs((TotalVouchers * 10000) - (TotalVouchers * 10000) - TotalValue)), true)
-                .addField("Cashout Profit", "$" + functions.numberWithCommas((TotalVouchers * 10000) - TotalValue), true)
+                    .setTitle(`Total vouchers between now and ${parseInt(args[1])} days ago`)
+                    .setColor("RANDOM")
+                    .addField("Total Vouchers", functions.numberWithCommas(TotalVouchers), true)
+                    .addField("Cashout value", "$" + functions.numberWithCommas(Math.abs((TotalVouchers * 10000) - (TotalVouchers * 10000) - TotalValue)), true)
+                    .addField("Cashout Profit", "$" + functions.numberWithCommas((TotalVouchers * 10000) - TotalValue), true)
                 message.channel.send(statEmbed)
             })
         } else if (args[1].toLowerCase() == "unpaid") {
@@ -42,10 +47,10 @@ module.exports.run = async (bot, message, args) => {
                 });
 
                 const statEmbed = new Discord.RichEmbed()
-                .setTitle(`Total unpaid vouchers with managers`)
-                .setColor("RANDOM")
-                .addField("Total Vouchers", functions.numberWithCommas(TotalVouchers), true)
-                .addField("Total value", "$" + functions.numberWithCommas(TotalValue), true)
+                    .setTitle(`Total unpaid vouchers with managers`)
+                    .setColor("RANDOM")
+                    .addField("Total Vouchers", functions.numberWithCommas(TotalVouchers), true)
+                    .addField("Total value", "$" + functions.numberWithCommas(TotalValue), true)
                 message.channel.send(statEmbed)
             })
         }
@@ -72,11 +77,11 @@ module.exports.run = async (bot, message, args) => {
             });
 
             const statEmbed = new Discord.RichEmbed()
-            .setTitle(`Total vouchers between now and ${parseInt(args[1])} days ago for ${company.toUpperCase()}`)
-            .setColor("RANDOM")
-            .addField("Total Vouchers", functions.numberWithCommas(TotalVouchers), true)
-            .addField("Cashout value", "$" + functions.numberWithCommas(Math.abs((TotalVouchers * 10000) - (TotalVouchers * 10000) - TotalValue)), true)
-            .addField("Cashout Profit", "$" + functions.numberWithCommas((TotalVouchers * 10000) - TotalValue), true)
+                .setTitle(`Total vouchers between now and ${parseInt(args[1])} days ago for ${company.toUpperCase()}`)
+                .setColor("RANDOM")
+                .addField("Total Vouchers", functions.numberWithCommas(TotalVouchers), true)
+                .addField("Cashout value", "$" + functions.numberWithCommas(Math.abs((TotalVouchers * 10000) - (TotalVouchers * 10000) - TotalValue)), true)
+                .addField("Cashout Profit", "$" + functions.numberWithCommas((TotalVouchers * 10000) - TotalValue), true)
             message.channel.send(statEmbed)
         })
     } else if (args[1].toLowerCase() == "unpaid") {
@@ -91,10 +96,10 @@ module.exports.run = async (bot, message, args) => {
             });
 
             const statEmbed = new Discord.RichEmbed()
-            .setTitle(`Total unpaid vouchers with ${company.toUpperCase()}'s managers`)
-            .setColor("RANDOM")
-            .addField("Total Vouchers", functions.numberWithCommas(TotalVouchers), true)
-            .addField("Total value", "$" + functions.numberWithCommas(TotalValue), true)
+                .setTitle(`Total unpaid vouchers with ${company.toUpperCase()}'s managers`)
+                .setColor("RANDOM")
+                .addField("Total Vouchers", functions.numberWithCommas(TotalVouchers), true)
+                .addField("Total value", "$" + functions.numberWithCommas(TotalValue), true)
             message.channel.send(statEmbed)
         })
     } else if (args[1].toLowerCase() == "top") {
@@ -105,14 +110,33 @@ module.exports.run = async (bot, message, args) => {
         const Threshold = new Date()
         Threshold.setDate(Threshold.getDate() - NumOfDays)
 
-        bot.con.query(`SELECT * FROM members, payout WHERE payout.current_company = '${company}' AND members.in_game_id = payout.player_id AND payout.time > '${Threshold.toISOString()}' ORDER BY payout.vouchers_turned_in DESC LIMIT ${NumOfPlayers}`, function (err, result, fields) { //get all their info into one array
+        bot.con.query(`SELECT * FROM members, payout WHERE payout.current_company = '${company}' AND members.in_game_id = payout.player_id AND payout.time > '${Threshold.toISOString()}' ORDER BY payout.player_id DESC`, function (err, result, fields) { //get all their info into one array
             if (err) return console.log(err);
-            const TopEmbed = new Discord.RichEmbed()
-            .setTitle("Top Turnins over the past " + NumOfDays + " days")
-            .setColor("RANDOM")
-            result.forEach((member, i) => {
-                TopEmbed.addField(member.in_game_name + ` (${i + 1})`, functions.numberWithCommas(member.vouchers_turned_in), true)
+            let TopPlayers = []
+            for (let i = 0; i < result.length; i++) {
+                const index = TopPlayers.indexOfId(result[i].in_game_id)
+                if (index > -1) {
+                    TopPlayers[index].vouchers_turned_in += result[i].vouchers_turned_in
+                } else {
+                    TopPlayers.push(result[i])
+                }
+            }
+            TopPlayers.sort(function (x, y) {
+                if (x.vouchers_turned_in < y.vouchers_turned_in) {
+                    return 1;
+                }
+                if (x.vouchers_turned_in > y.vouchers_turned_in) {
+                    return -1;
+                }
+                return 0;
             });
+
+            const TopEmbed = new Discord.RichEmbed()
+                .setTitle("Top Turnins over the past " + NumOfDays + " days")
+                .setColor("RANDOM")
+            for (let i = 0; i < NumOfPlayers && i < TopPlayers.length; i++) {
+                TopEmbed.addField(TopPlayers[i].in_game_name + ` (${i + 1})`, functions.numberWithCommas(TopPlayers[i].vouchers_turned_in), true)
+            }
             message.channel.send(TopEmbed)
         })
 

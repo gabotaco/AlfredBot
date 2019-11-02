@@ -135,7 +135,6 @@ module.exports.run = async (bot, message, args) => {
             TotalVouchers: TotalVouchers
 
         }
-        console.log(data)
         // render html file with data, for example - will replace {{name}} with name value
         const HTMLContent = HTMLTemplate(data);
     

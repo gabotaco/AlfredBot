@@ -139,9 +139,9 @@ bot.on("guildMemberAdd", async member => { //When someone joins the guild
 
 bot.on("guildMemberRemove", async member => { //When someone leaves the server
     if (member.guild.id == botconfig.RTSServer) { //rts server
-        bot.channels.get(botconfig.RTSWelcome).send(`${member.displayName} has left the server.`); //says that the username has left. Doesn't @ in case they change their name and also is glitchy sometimes
+        bot.channels.get(botconfig.RTSWelcome).send(`${member} (${member.displayName}) has left the server.`); //says that the username has left. Doesn't @ in case they change their name and also is glitchy sometimes
     } else if (member.guild.id == botconfig.PIGSServer) {
-        bot.channels.get(botconfig.PIGSWelcome).send(`${member.displayName} has left the server.`); //says that the username has left. Doesn't @ in case they change their name and also is glitchy sometimes
+        bot.channels.get(botconfig.PIGSWelcome).send(`${member} (${member.displayName}) has left the server.`); //says that the username has left. Doesn't @ in case they change their name and also is glitchy sometimes
     }
 })
 
