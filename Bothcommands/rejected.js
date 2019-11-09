@@ -38,7 +38,7 @@ Here at the Rockwell Corporation, we strive to maintain a tight-knit community o
                             
 In the case of your candidacy, this background check has raised a red flag to our management team and, as a result, your application has been rejected. If you feel this decision has been made in error, you may appeal by @mentioning Rock in <#560917748184776736> channel of the company's Discord.
                             
-Once again, thank you for your interest; we wish you the best of luck in your future endeavors.`).then(msg => {
+Once again, thank you for your interest; we wish you the best of luck in your future endeavors. Reason for fire: '${LeaveReason}'`).then(msg => {
           message.channel.send("Notified.")
         })
       }
