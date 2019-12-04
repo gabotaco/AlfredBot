@@ -146,6 +146,14 @@ bot.on("guildMemberRemove", async member => { //When someone leaves the server
 })
 
 bot.on("message", async message => { //Someone sends a message in a channel
+    ProcessMessage(message)
+});
+
+bot.on("messageUpdate", async (oldMessage, newMessage) => {
+    ProcessMessage(newMessage)
+})
+
+async function ProcessMessage(message) {
     if (message.author.bot || message.channel.type == "dm") return; //if message is from a bot or is in a DM with the bot
     if (message.channel.id == botconfig.PIGSOneWordStory) { //If its in the one word story channel
         if ((message.content.split(" ").length > 1 || message.content.split("-").length > 1 || message.content.split("_").length > 1) || message.content.includes(":")) { //if the message contains an emoji or is more than one word
@@ -171,14 +179,14 @@ bot.on("message", async message => { //Someone sends a message in a channel
     if (!message.content.startsWith(prefix)) return; //if it doesn't start with the prefix
 
     if (message.guild.id == botconfig.RTSServer) { //if said in the rts server
-        const AllowedRTSCommands = [".status"]
+        const AllowedRTSCommands = [".status", ".8ball", ".ud", ".hello"]
 
         var commandfile = bot.RTSCommands.get(cmd.slice(prefix.length)); //Trys to get a rts command with the specified cmd without the prefix
         if (commandfile && (message.channel.id != botconfig.RTSPublicBotCommandsChannel && message.channel.id != botconfig.RTSBotCommandsChannel && message.channel.id != botconfig.RTSBennysChannel) && !message.member.hasPermission("KICK_MEMBERS") && !AllowedRTSCommands.includes(cmd)) return message.channel.send(`Do this in <#${botconfig.RTSPublicBotCommandsChannel}> or <#${botconfig.RTSBotCommandsChannel}>`) //if theres a command but its not in one of the allowed channels
         if (commandfile) console.log("RTS", commandfile.help.name, args) //if theres a command file then log that its rts and then the name and args
         else if (cmd.slice(prefix.length) == "vouchers") commandfile = bot.RTSCommands.get("voucher")
     } else if (message.guild.id == botconfig.PIGSServer) { //if said in the pigs server
-        const AllowedPIGSCommands = [".status"]
+        const AllowedPIGSCommands = [".status", ".8ball", ".ud", ".hello"]
 
         var commandfile = bot.PIGSCommands.get(cmd.slice(prefix.length)); // try to get a pigs command with the specified cmd without the prefix
         if (commandfile && (message.channel.id != "511853214858084364" && message.channel.id != botconfig.PIGSBotCommandsChannel && message.channel.id != botconfig.PIGSVoucherChannel) && !message.member.hasPermission("KICK_MEMBERS") && !AllowedPIGSCommands.includes(cmd)) return message.channel.send("Do this in <#" + botconfig.PIGSBotCommandsChannel + "> instead") //if theres a command but its said in the wrong channel
@@ -195,12 +203,12 @@ bot.on("message", async message => { //Someone sends a message in a channel
         await commandfile.run(bot, message, args); //if there is a command in the bot it runs the module.exports.run part of the file.
         message.channel.stopTyping(true) //stops typing in the channel after the command finishes
     }
-});
+}
 
 bot.on("presenceUpdate", (oldMember, newMember) => { //When a guild member's presence changes (online/offline or games)
-    if (oldMember.hasPermission("KICK_MEMBERS") && newMember.guild.id == botconfig.PIGSServer) { //if its a pigs manager and the update is triggered in the pigs server
+    if (oldMember.hasPermission("KICK_MEMBERS") && newMember.guild.id == botconfig.PIGSServer && !newMember.bot) { //if its a pigs manager and the update is triggered in the pigs server
         if (newMember.presence.status == "offline" && !newMember.roles.has(botconfig.PIGSUnavailableRole)) return newMember.addRole(botconfig.PIGSUnavailableRole) // if they are now offline and don't have the pigs unavailable role, add the unavailable role
-        else if (newMember.presence.status == "online" && newMember.roles.has(botconfig.PIGSUnavailableRole) && (newMember.id == botconfig.AltTabsID || newMember.id == "330015505211457551")) return newMember.removeRole(botconfig.PIGSUnavailableRole) //If they are now online and have the unavailable role and are alt tabs or solid 2 hours it will auto make em available
+        else if (newMember.presence.status == "online" && newMember.roles.has(botconfig.PIGSUnavailableRole) && (newMember.id == botconfig.AltTabsID || newMember.id == "330015505211457551" || newMember.id == "164326090825793536")) return newMember.removeRole(botconfig.PIGSUnavailableRole) //If they are now online and have the unavailable role and are alt tabs or solid 2 hours it will auto make em available
     } else if (oldMember.hasPermission("KICK_MEMBERS") && newMember.guild.id == botconfig.RTSServer) { //if its a rts manager and the update is triggered in the rts server
         if (newMember.presence.status == "offline" && !newMember.roles.has(botconfig.RTSUnavailableRole)) return newMember.addRole(botconfig.RTSUnavailableRole) //If they are offline now and don't have the unavailable role it adds it
     }
