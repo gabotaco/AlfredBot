@@ -20,7 +20,7 @@
     "node-addon-api": "^1.6.2",
     "node-gyp": "^5.0.1",
     "node-opus": "^0.2.9",
-    "npm": "^6.10.0",
+    "npm": "^6.13.4",
     "open": "^6.1.0",
     "opusscript": "0.0.6",
     "protobufjs": "^6.8.6",
