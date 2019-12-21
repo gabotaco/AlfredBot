@@ -50,7 +50,7 @@ module.exports.run = async (bot, message, args) => {
     const InGameID = args[args.length - 1] //in game ID is last arg
 
     if (!DiscordID || !InGameName || !InGameID) { //Invalid use of command
-      return message.channel.send(".hire [discord id] \"in game id\" [in game id]")
+      return message.channel.send(".hire [discord id] \"in game name\" [in game id]")
     }
 
 
@@ -66,7 +66,7 @@ module.exports.run = async (bot, message, args) => {
     });
     const CurrentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-    bot.con.query(`UPDATE members SET in_game_id = '${InGameID}', discord_id = '${DiscordID}', in_game_name = '${InGameName}', deadline = '${date}', fire_reason = NULL, company = '${CompanyName}', last_turnin = '${CurrentDate}' WHERE in_game_id = '${InGameID}' OR discord_id = '${DiscordID}'`, function (err, result, fields) { //try to find if member was perviously hired and hire em back
+    bot.con.query(`UPDATE members SET in_game_id = '${InGameID}', discord_id = '${DiscordID}', in_game_name = '${InGameName}', deadline = '${date}', fire_reason = NULL, company = '${CompanyName}', last_turnin = '${CurrentDate}' WHERE in_game_id = '${InGameID}'`, function (err, result, fields) { //try to find if member was perviously hired and hire em back
       if (err) {
         if (err.errno == 1366) {
           return message.channel.send("Invalid characters.")

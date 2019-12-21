@@ -24,9 +24,14 @@ module.exports.run = async (bot, message, args) => {
 
   bot.con.query(`UPDATE members SET company = 'fired', fire_reason = '${leaveReason}', deadline = '${new Date().toISOString().slice(0, 19).replace('T', ' ')}' WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) { //update their company to fired and add fire reason and set deadline to the fired date
     if (err) return console.log(err)
-
     if (result.affectedRows == 0) return message.channel.send("Unable to find that member")
-    else message.channel.send("Fired.")
+    else {
+      message.channel.send("Fired.")
+      bot.con.query(`SELECT discord_id FROM members WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) {
+        if (err) return console.log(err)
+        bot.BothCommands.get("roles").run(bot, message, [result[0].discord_id])
+      })
+    }
   })
 }
 
