@@ -10,7 +10,7 @@
 </h4>
 <p align="center">
   <img src="https://img.shields.io/badge/Status-Badass-brightgreen?style=for-the-badge" alt="Badass">
-  <img src="https://img.shields.io/badge/IQ-215-important?style=for-the-badge">
+  <img src="https://img.shields.io/badge/IQ-215-important?style=for-the-badge" alt="Smart">
 </p>
 <p align="center">
   <a href="#breakdown">Breakdown</a> •
@@ -330,8 +330,125 @@ Inside the repository create botconfig.json. Obviously I can't show you exactly 
 
 ```json
 {
-    "token": "YOUR-BOT-TOKEN",
-    "prefixes": {}
+    
+    "YesResponses": [
+        "Yes.",
+        "Most likely",
+        "There is a small chance",
+        "Yes- definitely",
+        "You may rely on it",
+        "It is decidedly so.",
+        "Signs point to yes.",
+        "Without a doubt.",
+        "As I see it yes.",
+        "Outlook good.",
+        "Well yes. You didn't know that? 😂",
+        "Of course."
+    ],    "NoResponses": [
+        "No.",
+        "Never ever ever",
+        "Very doubtful",
+        "Don't count on it.",
+        "No. Nonononononono FUCK NO!",
+        "You wish.",
+        "Nah fam",
+        "My reply is no.",
+        "My sources say no."
+    ],
+    "PIGSServer": "487285826544205845",
+    "RTSServer": "447157938390433792",
+    "PIGSSignMeUpIndex": 13,
+    "RTSSignMeUpIndex": 14,
+    "ApplicationInGameIDIndex": 5,
+    "ApplicationStartingRow": 900,
+    "ApplicationWhyIndex": 16,
+    "ApplicationAnythingIndex": 18,
+    "ApplicationPlayTimeIndex": 10,
+    "ApplicationDiscordIndex": 3,
+    "ApplicationInGameNameIndex": 4,
+    "GoogleAssistantKeyFile": "FILENAMETOGOOGLEASSISTANTFILE",
+    "RCSheet": "RCSHEETGOOGLESHEETID",
+    "PIGSManagementCatagoryID": "487289620804141088",
+    "RTSManagementCatagoryID": "454231796905803776",
+    "GaboID": "330000865215643658",
+    "RockID": "404650985529540618",
+    "ActiveServers": [
+        [
+            "server.tycoon.community",
+            "30122"
+        ],
+        [
+            "server.tycoon.community",
+            "30123"
+        ],
+        [
+            "server.tycoon.community",
+            "30124"
+        ],
+        [
+            "na.tycoon.community",
+            "30120"
+        ],
+        [
+            "na.tycoon.community",
+            "30122"
+        ],
+        [
+            "na.tycoon.community",
+            "30123"
+        ],
+        [
+            "na.tycoon.community",
+            "30124"
+        ],
+        [
+            "na.tycoon.community",
+            "30125"
+        ]
+    ],
+    "PIGSGuestRole": "526487757695090691",
+    "RTSGuestRole": "483292098976546819",
+    "PIGSInactiveRole": "576784981024571412",
+    "RTSInactiveRole": "583745333591277590",
+    "PIGSUnavailableRole": "573159277817233418",
+    "RTSUnavailableRole": "576787272142422021",
+    "PIGSEdgyRole": "498885132468486175",
+    "RTSModsSheet": "RTSMODGOOGLESHEETID",
+    "Applications": "APPLICATIONGOOGLESHEETID",
+    "ApplicationRange": "A900:S1600",
+    "token": "DISCORDBOTTOKEN",
+    "RTSCEOSpamChannel": "536639000463540256",
+    "PIGSLogs": "569674770816172043",
+    "RTSLogs": "569683812028645386",
+    "RTSBotRole": "455014608810541068",
+    "PIGSBotRole": "487289216968032256",
+    "RTSWelcome": "447500215357014026",
+    "PIGSWelcome": "487285826544205849",
+    "PIGSOneWordStory": "576434701124894735",
+    "prefix": {
+        "PIGS": ".",
+        "RTS": "."
+    },
+    "RTSPublicBotCommandsChannel": "483312512217907220",
+    "RTSBotCommandsChannel": "472054525172383744",
+    "RTSBennysChannel": "472410321475338246",
+    "PIGSBotCommandsChannel": "488149666249048064",
+    "PIGSVoucherChannel": "487621053494067200",
+    "RTSManagers": [
+        "225564356140728320",
+        "440831788240338944",
+        "266153125507891200",
+        "221228768461586442",
+        "298433145928286209"
+    ],
+    "PIGSManagers": [
+        "209736326432423937",
+        "203930869847687177",
+        "330015505211457551",
+        "394694336127696897"
+    ],
+    "RTSFiveMRole": "475029760930611200",
+    "GlitchDetectorID": "71676578244857856",
+    "BabySheet": "GOOGLESHEETID"
 }
 ```
-
