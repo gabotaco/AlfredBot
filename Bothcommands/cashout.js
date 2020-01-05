@@ -49,8 +49,11 @@ module.exports.run = async (bot, message, args) => {
     let cashoutEmbed = new Discord.RichEmbed()
       .setColor("RANDOM")
       .setTitle(`Cashout for ${cashoutUser.displayName}`)
-      .addField("Vouchers", functions.numberWithCommas(result[0][`${CompanyName}_cashout`])) //add their cashout data
-      .addField("Cash", "$" + functions.numberWithCommas(result[0][`${CompanyName}_cashout_worth`]))
+      .addField("Cashout Value", "$" + functions.numberWithCommas(result[0][`${CompanyName}_cashout_worth`]), true)
+      .addField("Total Vouchers", functions.numberWithCommas(result[0][`${CompanyName}_cashout`]), true)
+      .addField("Total Value", "$" + functions.numberWithCommas(result[0][`${CompanyName}_cashout`] * 10000), true)
+      .addField("Manager's Pay", "$" + functions.numberWithCommas(Math.floor(((result[0][`${CompanyName}_cashout`] * 10000) - result[0][`${CompanyName}_cashout_worth`]) * 0.5)), true)
+      .addField("Rock Owes You", "$" + functions.numberWithCommas(Math.floor(((result[0][`${CompanyName}_cashout`] * 10000) - result[0][`${CompanyName}_cashout_worth`]) * 0.5) + result[0][`${CompanyName}_cashout_worth`]), true)
 
     message.channel.send(cashoutEmbed) //send
   })
