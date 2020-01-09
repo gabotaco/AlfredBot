@@ -168,7 +168,7 @@ module.exports = {
             sheets.spreadsheets.values.get({ //get spreadsheet range
                 spreadsheetId: SpreadsheetID,
                 range: Range,
-            }, (err, res) => {
+            }, async (err, res) => {
                 if (err) {
                     channel.send('The API returned an ' + err);
                     return;
@@ -176,8 +176,8 @@ module.exports = {
 
                 const rows = res.data.values;
                 if (rows.length) {
-                    rows.map((row) => { //for each row in rows run the callback function with the row
-                        callback(row)
+                    rows.map(async (row) => { //for each row in rows run the callback function with the row
+                        await callback(row)
                     })
                     resolve();
                 }
@@ -256,20 +256,21 @@ module.exports = {
      * @param {String} ID The ID of the applicant
      * @param {Number} CompanyIndex The sign me up column index
      * @param {String} Status What to change their status too
+     * @param {String} [Column=A] What column the status is
      */
-    UpdateApplicantStatus: function (auth, channel, ID, CompanyIndex, Status) {
+    UpdateApplicantStatus: function (auth, channel, ID, CompanyIndex, Status, Column) {
+        if (!Column) Column = "A";
         return new Promise(async resolve => {
             const sheets = google.sheets({
                 version: 'v4',
                 auth
             });
-
             await this.FindApplicant(auth, channel, ID, botconfig.ApplicationInGameIDIndex, CompanyIndex, async function (row, RowIndex) { //Find all applicants with the ID
                 return new Promise(resolve => {
                     sheets.spreadsheets.values.update({
                         auth: auth,
                         spreadsheetId: botconfig.Applications,
-                        range: `A${RowIndex}:A${RowIndex}`,
+                        range: `${Column}${RowIndex}:${Column}${RowIndex}`,
                         valueInputOption: "USER_ENTERED",
                         resource: {
                             majorDimension: "COLUMNS",
@@ -374,5 +375,15 @@ module.exports = {
         const answer = Math.sqrt(whatToSqrt) //sqrt it
         
         return answer
+    },
+
+    GetInGameID: function (bot, DiscordID) {
+        return new Promise(async resolve => {
+            bot.con.query(`SELECT in_game_id FROM members WHERE discord_id = '${DiscordID}'`, function (err, result, fields) {
+                if (err) resolve(console.log(err))
+                else if (result.length < 1) resolve(undefined)
+                else resolve(result[0].in_game_id)
+            })
+        })
     }
 }
