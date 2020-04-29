@@ -238,7 +238,7 @@ module.exports = {
                                 await callback(row, rows.indexOf(row) + botconfig.ApplicationStartingRow)
                             }
                         } else {
-                            if (row[SearchColumn] == ID && row[CompanyIndex] == "Sign me up!") { //If its the right applicant for the right company
+                            if (row[SearchColumn].startsWith(ID) && row[CompanyIndex] == "Sign me up!") { //If its the right applicant for the right company
                                 await callback(row, rows.indexOf(row) + botconfig.ApplicationStartingRow);
                             }
                         }

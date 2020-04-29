@@ -39,7 +39,7 @@ module.exports.run = async (bot, message, args) => {
 }
 
 module.exports.help = {
-  name: "refferal",
+  name: "referral",
   usage: "",
   description: "Checks for refferals",
   permission: "KICK_MEMBERS"

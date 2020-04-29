@@ -2,6 +2,7 @@ const Discord = require("discord.js")
 const authentication = require("../authentication");
 const botconfig = require("../botconfig.json");
 const functions = require("../functions.js")
+const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 module.exports.run = async (bot, message, args) => {
   if (!message.member.hasPermission("MANAGE_NICKNAMES")) { //If can't manage nicknames
@@ -16,7 +17,8 @@ module.exports.run = async (bot, message, args) => {
   
   if (ID) { //if specified
     authentication.authenticate().then(async (auth) => {
-      functions.UpdateApplicantStatus(auth, message.channel, ID, SignmeUpIndex, "Contacted") //Updates
+      const today = new Date()
+      functions.UpdateApplicantStatus(auth, message.channel, ID, SignmeUpIndex, `Contacted as of ${months[today.getMonth()]} ${today.getDay()}`) //Updates
     });
   } else { //If nobody specified
     authentication.authenticate().then(async (auth) => {
@@ -25,7 +27,7 @@ module.exports.run = async (bot, message, args) => {
         .setColor("RANDOM")
 
       await functions.FindApplicant(auth, message.channel, "Contacted", 0, SignmeUpIndex, function (row) { //Finds all applicants that are Contacted
-        reqEmbed.addField(row[4] + "(" + row[2] + ")", row[5]) //Adds them to embed
+        reqEmbed.addField(row[4] + " (" + row[0] + ")", row[5]) //Adds them to embed
       })
 
       if (!reqEmbed.fields[0]) { //if there aren't any fields in the embed

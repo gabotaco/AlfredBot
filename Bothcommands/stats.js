@@ -8,7 +8,7 @@ Array.prototype.indexOfId = function (id) {
     return -1;
 }
 module.exports.run = async (bot, message, args) => {
-    if (message.author.id != "330000865215643658" && message.author.id != "404650985529540618") return message.channel.send("You can't do that")
+    if (message.channel.parentID != botconfig.PIGSManagementCatagoryID && message.channel.parentID != botconfig.RTSManagementCatagoryID) return message.channel.send("This command only is available in the management channels...")
 
     let company;
     if (args[0].toLowerCase() == "total") {
