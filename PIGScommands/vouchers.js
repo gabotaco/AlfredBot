@@ -17,13 +17,6 @@ module.exports.run = async (bot, message, args) => {
     const MemberDetails = await functions.GetMemberDetails(bot, SearchColumn, ID) //Get their member details
     if (!MemberDetails) return message.channel.send("You aren't hired") //Not hired
 
-    const VoucherPerson = message.guild.members.cache.get(MemberDetails.discord_id) //get discord member
-    if (VoucherPerson == message.member) { //If they are the same person
-        VoucherPerson.setNickname(MemberDetails.in_game_name) //Set their nickname
-    } else {
-        if (!message.member.hasPermission("KICK_MEMBERS")) return message.channel.send("You aren't allowed to check someone elses vouchers!")
-    }
-
     const InGameName = MemberDetails.in_game_name
     const InGameID = MemberDetails.in_game_id
 
@@ -152,7 +145,7 @@ module.exports.run = async (bot, message, args) => {
         const image = await inputElement.screenshot();
     
         // send image reply to discord channel
-        const localFileAttachment = new Discord.Attachment(image)
+        const localFileAttachment = new Discord.MessageAttachment(image)
         message.channel.send(localFileAttachment)
     
         await browser.close();

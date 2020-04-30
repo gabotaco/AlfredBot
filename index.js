@@ -20,8 +20,7 @@ con.connect(function (err) { //perform connection
 })
 
 const bot = new Discord.Client({
-    disableEveryone: true,
-    partials: ["REACTION"],
+    partials: ['REACTION', "MESSAGE"],
     presence: {status: "online", activity: {
         application: {id: "487059411001540618"},
         name: "Transport Tycoon",
@@ -100,7 +99,8 @@ bot.on("messageDeleteBulk", async messages => { //When multiple messages are del
     let DeletedMessages = new Discord.MessageEmbed()
         .setTitle("Deleted Messages")
         .setColor("RANDOM")
-    messages.forEach(message => { //loop through all the deleted messages
+    messages.forEach(async message => { //loop through all the deleted messages
+        if (message.partial) await message.fetch()
         if (message.content) DeletedMessages.addField(message.member.displayName, message.content, true)
     });
 
@@ -112,6 +112,7 @@ bot.on("messageDeleteBulk", async messages => { //When multiple messages are del
 })
 
 bot.on("messageDelete", async (message) => { //When a single message is deleted
+    if (message.partial) await message.fetch()
     let DeletedMessage = new Discord.MessageEmbed() //same as messageDeleteBulk except don't have to loop through multiple messages
         .setTitle("Deleted Message")
         .setColor("RANDOM")
@@ -152,10 +153,12 @@ bot.on("guildMemberRemove", async member => { //When someone leaves the server
 })
 
 bot.on("message", async message => { //Someone sends a message in a channel
+    if (message.partial) await message.fetch()
     ProcessMessage(message)
 });
 
 bot.on("messageUpdate", async (oldMessage, newMessage) => {
+    if (newMessage.partial) newMessage.fetch()
     ProcessMessage(newMessage)
 })
 
@@ -230,8 +233,8 @@ bot.on("presenceUpdate", (oldPresence, newPresence) => { //When a guild member's
 });
 
 bot.on("message", async message => { //When a message is sent to a channel. Not in the other bot.on message because its easier to read
-    if (message.author.bot || message.author.id == botconfig.GlitchDetectorID) return; //if its from a bot or is from glitch himself
-
+    if (message.partial) await message.fetch()
+    if (message.author.bot || message.author.id == botconfig.GlitchDetectorID || !message.mentions.members) return; //if its from a bot or is from glitch himself
     message.mentions.members.forEach(function (Mention) { //go through all the mentions in the message
         if (Mention.user.id == botconfig.GlitchDetectorID) { //if they mentioned glitch
             message.delete() //delete the message
@@ -251,6 +254,7 @@ bot.on("message", async message => { //When a message is sent to a channel. Not 
 })
 let LatestFeedID = 0;
 bot.on("message", async message => {
+    if (message.partial) await message.fetch()
     if (message.channel.id == "630947095456514077" && (message.author.id == "404650985529540618" || message.author.id == "330000865215643658" || message.author.id == "453742447483158539")) {
         if (parseInt(message.content)) {
             authentication.authenticate().then(async (auth) => {
@@ -348,10 +352,104 @@ bot.on("message", async message => {
 })
 
 bot.on("messageReactionAdd", async (reaction, user) => {
-    //if (reaction.message.partial) await reaction.message.fetch();
+    if (reaction.message.partial) await reaction.message.fetch();
+
+    const fakeMessage = {
+        "mentions": {
+            "members": new Discord.Collection()
+        },
+        "guild": reaction.message.guild,
+        "channel": user,
+        "member": reaction.message.guild.members.cache.get(user.id)
+    }
+    switch (reaction.message.id) {
+        case "705249775984836640":
+        case "705179916915834891":
+            //Refresh Roles
+            bot.BothCommands.get("roles").run(bot, fakeMessage, [])
+            break;
+        case "705179978706190467":
+            //ATS
+            bot.RTSCommands.get("ats").run(bot, fakeMessage, [])
+            break;
+        case "705180001229865001":
+            //ETS2
+            bot.RTSCommands.get("ets2").run(bot, fakeMessage, [])
+            break;
+        case "705180042644422696":
+            //NSFW
+            bot.RTSCommands.get("owo").run(bot, fakeMessage, [])
+            break;
+        case "705180148650999869":
+            //Warzone
+            bot.RTSCommands.get("warzone").run(bot, fakeMessage, [])
+            break;
+        case "705249848810799186":
+            //PIGS NSFW
+            bot.PIGSCommands.get("kys").run(bot, fakeMessage, [])
+            break;
+        case "705249920013303848":
+            //Warthogs
+            bot.PIGSCommands.get("warthogs").run(bot, fakeMessage, [])
+            break;
+        case "705251722557128725":
+            //Voucher
+            const botCommandsChannel = reaction.message.guild.channels.cache.get("483312512217907220")
+            fakeMessage.channel = botCommandsChannel
+            bot.RTSCommands.get("voucher").run(bot, fakeMessage, [])
+            reaction.remove()
+            botCommandsChannel.send(`${user}`)
+            break;
+        case "705253371468185651":
+            //Voucher
+            const pigsBotChannel = reaction.message.guild.channels.cache.get("487621053494067200")
+            fakeMessage.channel = pigsBotChannel
+            bot.PIGSCommands.get("vouchers").run(bot, fakeMessage, [])
+            reaction.remove()
+            pigsBotChannel.send(`${user}`)
+            break;
+    }
     //if (reaction.partial) await reaction.fetch()
-    console.log(reaction.emoji.id)
-    console.log(user.id)
+})
+
+bot.on("messageReactionRemove", async (reaction, user) => {
+    if (reaction.message.partial) await reaction.message.fetch();
+
+    const fakeMessage = {
+        "mentions": {
+            "members": new Discord.Collection()
+        },
+        "guild": reaction.message.guild,
+        "channel": user,
+        "member": reaction.message.guild.members.cache.get(user.id)
+    }
+    switch (reaction.message.id) {
+        case "705179978706190467":
+            //ATS
+            bot.RTSCommands.get("ats").run(bot, fakeMessage, [])
+            break;
+        case "705180001229865001":
+            //ETS2
+            bot.RTSCommands.get("ets2").run(bot, fakeMessage, [])
+            break;
+        case "705180042644422696":
+            //NSFW
+            bot.RTSCommands.get("owo").run(bot, fakeMessage, [])
+            break;
+        case "705180148650999869":
+            //Warzone
+            bot.RTSCommands.get("warzone").run(bot, fakeMessage, [])
+            break;
+        case "705249848810799186":
+            //PIGS NSFW
+            bot.PIGSCommands.get("kys").run(bot, fakeMessage, [])
+            break;
+        case "705249920013303848":
+            //Warthogs
+            bot.PIGSCommands.get("warthogs").run(bot, fakeMessage, [])
+            break;
+    }
+    //if (reaction.partial) await reaction.fetch()
 })
 
 bot.on("error", (error) => { //when theres a discord error

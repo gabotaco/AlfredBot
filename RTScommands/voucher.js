@@ -141,7 +141,7 @@ module.exports.run = async (bot, message, args) => {
         const image = await inputElement.screenshot();
 
         // send image reply to discord channel
-        const localFileAttachment = new Discord.Attachment(image)
+        const localFileAttachment = new Discord.MessageAttachment(image)
         message.channel.send(localFileAttachment)
 
         await browser.close();
