@@ -30,10 +30,10 @@ module.exports.run = async (bot, message, args) => {
             }
         }
 
-        const top10 = new Discord.RichEmbed()
+        const top10 = new Discord.MessageEmbed()
             .setColor("RANDOM")
             .setTitle("__*Top 10 Voucher Handins*__")
-            .setThumbnail(message.author.avatarURL)
+            .setThumbnail(message.author.avatarURL())
             .setFooter(`Your total vouchers: ${functions.numberWithCommas(MemberInfo[`${CompanyName}_total_vouchers`])}`) //add total vouchers
 
         for (let i = 0; i < 10 && i < vouchers.length; i++) { //loop through first 10 items in array

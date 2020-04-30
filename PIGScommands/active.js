@@ -60,7 +60,7 @@ module.exports.run = async (bot, message, args) => {
 
             body = JSON.parse(body)
 
-            let PlayersHeighsting = new Discord.RichEmbed()
+            let PlayersHeighsting = new Discord.MessageEmbed()
                 .setTitle(`Players currently heisting on server ${args[0]}`)
                 .setColor("RANDOM")
 

@@ -26,12 +26,12 @@ module.exports.run = async (bot, message, args) => {
       }
     })
     if (EligiblePeople.length < 1) return message.channel.send("No eligible people for money!")
-    let RefferEmbed = new Discord.RichEmbed()
+    let RefferEmbed = new Discord.MessageEmbed()
       .setTitle("Unpaid Bonus'")
       .setColor("RANDOM")
     for (let i = 0; i < EligiblePeople.length; i++) {
       Member = await functions.GetMemberDetails(bot, "in_game_id", EligiblePeople[i].in_game_id)
-      RefferEmbed.addField(`${Member.in_game_name} (${Member.discord_id}) ${Member.in_game_id}`, "$" + functions.numberWithCommas(10000000 * EligiblePeople[i].refferals))
+      if (Member) RefferEmbed.addField(`${Member.in_game_name} (${Member.discord_id}) ${Member.in_game_id}`, "$" + functions.numberWithCommas(10000000 * EligiblePeople[i].refferals))
     }
     message.channel.send(RefferEmbed)
   });

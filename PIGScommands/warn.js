@@ -29,7 +29,7 @@ module.exports.run = async (bot, message, args) => {
 
         warns++; //increase warns by 1
 
-        let WarnEmbed = new Discord.RichEmbed() //make embed
+        let WarnEmbed = new Discord.MessageEmbed() //make embed
             .setDescription("Warned")
             .setAuthor(message.author.username)
             .setColor("RANDOM")
@@ -37,7 +37,7 @@ module.exports.run = async (bot, message, args) => {
             .addField("Warned In", message.channel)
             .addField("Number of Warnings", warns)
             .addField("Reason", Reason)
-        const WarnChannel = message.guild.channels.get("527602243743252550") //get channel and send
+        const WarnChannel = message.guild.channels.cache.get("527602243743252550") //get channel and send
         WarnChannel.send(WarnEmbed)
 
         const DeadlineDate = new Date(Deadline)
@@ -54,7 +54,7 @@ module.exports.run = async (bot, message, args) => {
         functions.ChangeDeadline(bot, NewDeadline, SearchColumn, ID, message.channel) //Change their deadline
         message.channel.send(`This is warning number ${warns} for ${InGameName}`)
 
-        const warned = message.guild.members.get(DiscordID) //get discord member and then inform if in discord
+        const warned = message.guild.members.cache.get(DiscordID) //get discord member and then inform if in discord
         if (warned) warned.send(`Hello ${InGameName}, It has come to our attention that you've broken a rule and as a result, you've been issued a formal warning. Your voucher deadline has been reduced. Multiple warnings could lead to removal from the company.`)
         
         bot.con.query(`UPDATE members SET warnings = '${warns}' WHERE ${SearchColumn} = '${ID}'`, function (err, fields, result) { //set warnings to add one

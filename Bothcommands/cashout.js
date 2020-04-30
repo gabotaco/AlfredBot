@@ -3,7 +3,7 @@ const functions = require("../functions.js")
 const botconfig = require("../botconfig.json")
 
 module.exports.run = async (bot, message, args) => {
-  const cashoutUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]) || message.member) //either first mention or member with the discord ID or the message author
+  const cashoutUser = message.guild.member(message.mentions.users.first() || message.guild.members.cache.get(args[0]) || message.member) //either first mention or member with the discord ID or the message author
   
   if (cashoutUser == message.member && message.member.id == "404650985529540618") { //if its rock doing a cashout and nobody is specified
     
@@ -11,17 +11,17 @@ module.exports.run = async (bot, message, args) => {
       
       if (err) return console.log(err)
 
-      let PIGSEmbed = new Discord.RichEmbed() //pigs managers
+      let PIGSEmbed = new Discord.MessageEmbed() //pigs managers
       .setColor("LUMINOUS_VIVID_PINK")
-      let RTSEmbed = new Discord.RichEmbed() //rts managers
+      let RTSEmbed = new Discord.MessageEmbed() //rts managers
       .setColor("ORANGE")
 
       let RTSTotalVouchers = 0; //track total vouchers not collected per company
       let PIGSTotalVouchers = 0;
 
       result.forEach(manager => { //go through each manager
-        if (manager.rts_cashout > 0) RTSEmbed.addField(`${message.guild.members.get(manager.discord_id).displayName} (${manager.discord_id})`, `${functions.numberWithCommas(manager.rts_cashout)} ($${functions.numberWithCommas(manager.rts_cashout_worth)})`) //if they have collected at least one voucher add them to rts embed
-        if (manager.pigs_cashout > 0) PIGSEmbed.addField(`${message.guild.members.get(manager.discord_id).displayName} (${manager.discord_id})`, `${functions.numberWithCommas(manager.pigs_cashout)} ($${functions.numberWithCommas(manager.pigs_cashout_worth)})`) //if they have collected at least one voucher add them to pigs embed
+        if (manager.rts_cashout > 0) RTSEmbed.addField(`${message.guild.members.cache.get(manager.discord_id).displayName} (${manager.discord_id})`, `${functions.numberWithCommas(manager.rts_cashout)} ($${functions.numberWithCommas(manager.rts_cashout_worth)})`) //if they have collected at least one voucher add them to rts embed
+        if (manager.pigs_cashout > 0) PIGSEmbed.addField(`${message.guild.members.cache.get(manager.discord_id).displayName} (${manager.discord_id})`, `${functions.numberWithCommas(manager.pigs_cashout)} ($${functions.numberWithCommas(manager.pigs_cashout_worth)})`) //if they have collected at least one voucher add them to pigs embed
         
         RTSTotalVouchers += manager.rts_cashout; //add their vouchers to the total
         PIGSTotalVouchers += manager.pigs_cashout
@@ -46,7 +46,7 @@ module.exports.run = async (bot, message, args) => {
 
     if (result.length == 0) return message.channel.send(`Unable to find that manager!`) //if there isn't a result
     //there is a result
-    let cashoutEmbed = new Discord.RichEmbed()
+    let cashoutEmbed = new Discord.MessageEmbed()
       .setColor("RANDOM")
       .setTitle(`Cashout for ${cashoutUser.displayName}`)
       .addField("Cashout Value", "$" + functions.numberWithCommas(result[0][`${CompanyName}_cashout_worth`]), true)

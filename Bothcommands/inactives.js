@@ -24,12 +24,12 @@ module.exports.run = async (bot, message, args) => {
         if (err) return console.log(err)
         const discordIDS = []; //all discords of inavtive users
 
-        const last = new Discord.RichEmbed()
+        const last = new Discord.MessageEmbed()
             .setTitle("List of inactive users")
             .setColor("RANDOM")
-        const last2 = new Discord.RichEmbed().setColor("RANDOM")
-        const last3 = new Discord.RichEmbed().setColor("RANDOM")
-        const last4 = new Discord.RichEmbed().setColor("RANDOM")
+        const last2 = new Discord.MessageEmbed().setColor("RANDOM")
+        const last3 = new Discord.MessageEmbed().setColor("RANDOM")
+        const last4 = new Discord.MessageEmbed().setColor("RANDOM")
 
         let FieldsAdded = 0
         result.forEach(member => {
@@ -37,8 +37,8 @@ module.exports.run = async (bot, message, args) => {
 
             const D4 = D2 - new Date(member.last_turnin) //different between today and last turnin
             if (D4 >= 5184000000 || D3 >= 0) { //if past deadline or been 2 months since last turnin
-                const DiscordMember = message.guild.members.get((member.discord_id).toString()) //find member in discord
-                if (DiscordMember && !DiscordMember.roles.has(InactiveRole)) DiscordMember.addRole(InactiveRole) //if the member is in discord and doesn't have inactive role then add inactive role
+                const DiscordMember = message.guild.members.cache.get((member.discord_id).toString()) //find member in discord
+                if (DiscordMember && !DiscordMember.roles.cache.has(InactiveRole)) DiscordMember.roles.add(InactiveRole) //if the member is in discord and doesn't have inactive role then add inactive role
                 else if (!DiscordMember) message.channel.send("Couldn't find member with id <@" + (member.discord_id) + "> in this discord") //If member isn't in discord
 
                 if (FieldsAdded < 25) { //Less than 25 fields

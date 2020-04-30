@@ -9,8 +9,8 @@ module.exports.run = async (bot, message, args) => {
         var UnavailableRole = botconfig.RTSUnavailableRole
     }
 
-    if (message.member.roles.has(UnavailableRole)) { //if they have the role by ID
-        message.member.removeRole(UnavailableRole) //removes role
+    if (message.member.roles.cache.has(UnavailableRole)) { //if they have the role by ID
+        message.member.roles.remove(UnavailableRole) //removes role
         message.channel.send("Woop Woop")
     } else { //If they don't have the role
         message.channel.send("You are already available")

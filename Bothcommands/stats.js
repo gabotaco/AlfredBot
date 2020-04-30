@@ -25,7 +25,7 @@ module.exports.run = async (bot, message, args) => {
                     TotalValue += member.payed_money;
                 });
 
-                const statEmbed = new Discord.RichEmbed()
+                const statEmbed = new Discord.MessageEmbed()
                     .setTitle(`Total vouchers between now and ${parseInt(args[1])} days ago`)
                     .setColor("RANDOM")
                     .addField("Total Vouchers", functions.numberWithCommas(TotalVouchers), true)
@@ -46,7 +46,7 @@ module.exports.run = async (bot, message, args) => {
                     TotalValue += member.pigs_cashout_worth;
                 });
 
-                const statEmbed = new Discord.RichEmbed()
+                const statEmbed = new Discord.MessageEmbed()
                     .setTitle(`Total unpaid vouchers with managers`)
                     .setColor("RANDOM")
                     .addField("Total Vouchers", functions.numberWithCommas(TotalVouchers), true)
@@ -76,7 +76,7 @@ module.exports.run = async (bot, message, args) => {
                 TotalValue += member.payed_money;
             });
 
-            const statEmbed = new Discord.RichEmbed()
+            const statEmbed = new Discord.MessageEmbed()
                 .setTitle(`Total vouchers between now and ${parseInt(args[1])} days ago for ${company.toUpperCase()}`)
                 .setColor("RANDOM")
                 .addField("Total Vouchers", functions.numberWithCommas(TotalVouchers), true)
@@ -95,7 +95,7 @@ module.exports.run = async (bot, message, args) => {
                 TotalValue += member[`${company}_cashout_worth`];
             });
 
-            const statEmbed = new Discord.RichEmbed()
+            const statEmbed = new Discord.MessageEmbed()
                 .setTitle(`Total unpaid vouchers with ${company.toUpperCase()}'s managers`)
                 .setColor("RANDOM")
                 .addField("Total Vouchers", functions.numberWithCommas(TotalVouchers), true)
@@ -131,7 +131,7 @@ module.exports.run = async (bot, message, args) => {
                 return 0;
             });
 
-            const TopEmbed = new Discord.RichEmbed()
+            const TopEmbed = new Discord.MessageEmbed()
                 .setTitle("Top Turnins over the past " + NumOfDays + " days")
                 .setColor("RANDOM")
             for (let i = 0; i < NumOfPlayers && i < TopPlayers.length; i++) {

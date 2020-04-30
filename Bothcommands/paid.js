@@ -11,7 +11,7 @@ module.exports.run = async (bot, message, args) => {
     return message.channel.send(".paid [discord id]")
   }
 
-  const User = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0])); //get the member @'d or by discord id
+  const User = message.guild.member(message.mentions.users.first() || message.guild.members.cache.get(args[0])); //get the member @'d or by discord id
 
   functions.PayManager(bot, User.id, message.channel) //pay manager
 }

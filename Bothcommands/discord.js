@@ -20,7 +20,7 @@ module.exports.run = async (bot, message, args) => {
   authentication.authenticate().then(async (auth) => {
     const Discord = await functions.GetDiscordFromID(auth, message.channel, ID, SignMeUpIndex) //Gets discord ID or what they entered
     if (Discord) { //Found applicant
-      const user = message.guild.members.get(Discord) //Check if valid ID
+      const user = message.guild.members.cache.get(Discord) //Check if valid ID
       if (user) message.channel.send("<@" + Discord + ">") //if valid ID send the discord as an @
       else message.channel.send(Discord) //If not valid ID just send what they typed
     } else { //Didn't find applicant

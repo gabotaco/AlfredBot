@@ -135,7 +135,7 @@ module.exports = {
      * @returns {String} Sentence about how many players are on
      */
     SortPlayersOnServers: function (PlayersArray) {
-        let PlayersEmbed = new Discord.RichEmbed()
+        let PlayersEmbed = new Discord.MessageEmbed()
             .setColor("RANDOM")
             .setTitle("Players")
 
@@ -170,7 +170,7 @@ module.exports = {
                 range: Range,
             }, async (err, res) => {
                 if (err) {
-                    channel.send('The API returned an ' + err);
+                    channel.send(`The API returned an ${err}`);
                     return;
                 }
 
@@ -228,7 +228,7 @@ module.exports = {
                 spreadsheetId: botconfig.Applications,
                 range: botconfig.ApplicationRange,
             }, (err, res) => {
-                if (err) return channel.send('The API returned an ' + err);
+                if (err) return channel.send(`The API returned an ${err}`);
 
                 const rows = res.data.values;
                 if (rows.length) {
@@ -280,7 +280,7 @@ module.exports = {
                         }
                     }, (err, response) => {
                         if (err) {
-                            channel.send('The API returned an error: ' + err);
+                            channel.send(`The API returned an ${err}`);
                             return;
                         } else {
                             channel.send(`Marked applicant as ${Status}`)
@@ -309,7 +309,7 @@ module.exports = {
                     let Discriminator = row[botconfig.ApplicationDiscordIndex].split("#")[1] //Gets the discrim number
                     let Username = row[botconfig.ApplicationDiscordIndex].split("#")[0].replace(/\s/g, '') //Gets the username without any spaces
                     Discord = row[botconfig.ApplicationDiscordIndex] //sets discord variable
-                    channel.guild.members.forEach(element => { //search in server members
+                    channel.guild.members.cache.forEach(element => { //search in server members
                         if (element.user.discriminator == Discriminator && element.user.username.replace(/\s/g, '').toLowerCase() == Username.toLowerCase()) { //if the member discrim = app discrim and the username without spaces and lowercase = username lowercase
                             resolve(element.id) //resolves with ID
                         }

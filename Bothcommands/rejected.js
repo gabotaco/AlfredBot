@@ -28,7 +28,7 @@ module.exports.run = async (bot, message, args) => {
 
     if (Discord) { //if they have discord
       await functions.UpdateApplicantStatus(auth, message.channel, ID, SignMeUpIndex, `Rejected (${LeaveReason})`) //update status
-      const user = message.guild.members.get(Discord) //get server member
+      const user = message.guild.members.cache.get(Discord) //get server member
       if (user) { //if in server the message
         user.send(`Hello,
 

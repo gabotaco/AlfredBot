@@ -20,7 +20,13 @@ con.connect(function (err) { //perform connection
 })
 
 const bot = new Discord.Client({
-    disableEveryone: true
+    disableEveryone: true,
+    partials: ["REACTION"],
+    presence: {status: "online", activity: {
+        application: {id: "487059411001540618"},
+        name: "Transport Tycoon",
+        type: "PLAYING"
+    }}
 }) //declares new bot that can't @ everyone
 
 bot.con = con; //save connection to bot so i can access in commands
@@ -78,11 +84,11 @@ fs.readdir("./PIGScommands/", (err, files) => {
 });
 
 bot.on("ready", async () => { //When the bot logs in
-    bot.user.setActivity("Transport Tycoon", {
-        type: "PLAYING"
-    }); //sets the current game. Can be PLAYING STREAMING WATCHING LISTENING
+    // bot.user.setActivity("Transport Tycoon", {
+    //     type: "PLAYING"
+    // }); //sets the current game. Can be PLAYING STREAMING WATCHING LISTENING
 
-    bot.channels.get(botconfig.RTSCEOSpamChannel).send("Restarted."); //Send a message to a channel
+    bot.channels.cache.get(botconfig.RTSCEOSpamChannel).send("Restarted."); //Send a message to a channel
 
     console.clear(); //Remove all the loaded console logs
     console.log(`${bot.user.username} is online!`); //logs that the bot is online
@@ -91,7 +97,7 @@ bot.on("ready", async () => { //When the bot logs in
 });
 
 bot.on("messageDeleteBulk", async messages => { //When multiple messages are deleted (.clear)
-    let DeletedMessages = new Discord.RichEmbed()
+    let DeletedMessages = new Discord.MessageEmbed()
         .setTitle("Deleted Messages")
         .setColor("RANDOM")
     messages.forEach(message => { //loop through all the deleted messages
@@ -99,14 +105,14 @@ bot.on("messageDeleteBulk", async messages => { //When multiple messages are del
     });
 
     if (messages.array()[0].guild.id == botconfig.PIGSServer) { //if the first message is in the PIGS server (then all messages are in pigs server)
-        bot.channels.get(botconfig.PIGSLogs).send(DeletedMessages); //send to pigs logs channel
+        bot.channels.cache.get(botconfig.PIGSLogs).send(DeletedMessages); //send to pigs logs channel
     } else if (messages.array()[0].guild.id == botconfig.RTSServer) { //rts server
-        bot.channels.get(botconfig.RTSLogs).send(DeletedMessages); //send to rts logs channel
+        bot.channels.cache.get(botconfig.RTSLogs).send(DeletedMessages); //send to rts logs channel
     }
 })
 
 bot.on("messageDelete", async (message) => { //When a single message is deleted
-    let DeletedMessage = new Discord.RichEmbed() //same as messageDeleteBulk except don't have to loop through multiple messages
+    let DeletedMessage = new Discord.MessageEmbed() //same as messageDeleteBulk except don't have to loop through multiple messages
         .setTitle("Deleted Message")
         .setColor("RANDOM")
         .addField("Author", message.author)
@@ -114,34 +120,34 @@ bot.on("messageDelete", async (message) => { //When a single message is deleted
         .addField("Channel", message.channel)
 
     if (message.guild.id == botconfig.PIGSServer) {
-        bot.channels.get(botconfig.PIGSLogs).send(DeletedMessage)
+        bot.channels.cache.get(botconfig.PIGSLogs).send(DeletedMessage)
     } else if (message.guild.id == botconfig.RTSServer) {
-        bot.channels.get(botconfig.RTSLogs).send(DeletedMessage)
+        bot.channels.cache.get(botconfig.RTSLogs).send(DeletedMessage)
     }
 })
 
 bot.on("guildMemberAdd", async member => { //When someone joins the guild
     if (member.user.bot) { //if its a bot
         if (member.guild.id == botconfig.RTSServer) { //joined rts server
-            return member.addRole(botconfig.RTSBotRole) //Adds the rts bot role and ends
+            return member.roles.add(botconfig.RTSBotRole) //Adds the rts bot role and ends
         } else if (member.guild.id == botconfig.PIGSServer) { //joined pigs server
-            return member.addRole(botconfig.PIGSBotRole) //adds pigs bot role and ends
+            return member.roles.add(botconfig.PIGSBotRole) //adds pigs bot role and ends
         }
     }
     if (member.guild.id == botconfig.RTSServer) { //rts server and not bot
-        bot.channels.get(botconfig.RTSWelcome).send(`Welcome to ${member.guild.name} ${member}!`) //Says welcome in the rts server
-        member.addRole(botconfig.RTSGuestRole)
+        bot.channels.cache.get(botconfig.RTSWelcome).send(`Welcome to ${member.guild.name} ${member}!`) //Says welcome in the rts server
+        member.roles.add(botconfig.RTSGuestRole)
     } else if (member.guild.id == botconfig.PIGSServer) { //pigs commands
-        bot.channels.get(botconfig.PIGSWelcome).send(`Welcome to ${member.guild.name} ${member}!`) //Says welcome in the pigs server
-        member.addRole(botconfig.PIGSGuestRole)
+        bot.channels.cache.get(botconfig.PIGSWelcome).send(`Welcome to ${member.guild.name} ${member}!`) //Says welcome in the pigs server
+        member.roles.add(botconfig.PIGSGuestRole)
     }
 })
 
 bot.on("guildMemberRemove", async member => { //When someone leaves the server
     if (member.guild.id == botconfig.RTSServer) { //rts server
-        bot.channels.get(botconfig.RTSWelcome).send(`${member} (${member.displayName}) has left the server.`); //says that the username has left. Doesn't @ in case they change their name and also is glitchy sometimes
+        bot.channels.cache.get(botconfig.RTSWelcome).send(`${member} (${member.displayName}) has left the server.`); //says that the username has left. Doesn't @ in case they change their name and also is glitchy sometimes
     } else if (member.guild.id == botconfig.PIGSServer) {
-        bot.channels.get(botconfig.PIGSWelcome).send(`${member} (${member.displayName}) has left the server.`); //says that the username has left. Doesn't @ in case they change their name and also is glitchy sometimes
+        bot.channels.cache.get(botconfig.PIGSWelcome).send(`${member} (${member.displayName}) has left the server.`); //says that the username has left. Doesn't @ in case they change their name and also is glitchy sometimes
     }
 })
 
@@ -189,7 +195,7 @@ async function ProcessMessage(message) {
         const AllowedPIGSCommands = [".status", ".8ball", ".ud", ".hello"]
 
         var commandfile = bot.PIGSCommands.get(cmd.slice(prefix.length)); // try to get a pigs command with the specified cmd without the prefix
-        if (commandfile && (message.channel.id != "511853214858084364" && message.channel.id != botconfig.PIGSBotCommandsChannel && message.channel.id != botconfig.PIGSVoucherChannel) && !message.member.hasPermission("KICK_MEMBERS") && !AllowedPIGSCommands.includes(cmd)) return message.channel.send("Do this in <#" + botconfig.PIGSBotCommandsChannel + "> instead") //if theres a command but its said in the wrong channel
+        if (commandfile && (message.channel.id != "511853214858084364" && message.channel.id != botconfig.PIGSBotCommandsChannel && message.channel.id != botconfig.PIGSVoucherChannel) && !message.member.hasPermission("KICK_MEMBERS") && !AllowedPIGSCommands.includes(cmd)) return message.channel.send(`Do this in ${botconfig.PIGSBotCommandsChannel} instead`) //if theres a command but its said in the wrong channel
         if (commandfile) console.log("PIGS", commandfile.help.name, args) //if theres a command file then log that its pigs and then the name and args
         else if (cmd.slice(prefix.length) == "voucher") commandfile = bot.PIGSCommands.get("vouchers")
 
@@ -205,20 +211,21 @@ async function ProcessMessage(message) {
     }
 }
 
-bot.on("presenceUpdate", (oldMember, newMember) => { //When a guild member's presence changes (online/offline or games)
-    if (oldMember.hasPermission("KICK_MEMBERS") && newMember.guild.id == botconfig.PIGSServer && !newMember.bot) { //if its a pigs manager and the update is triggered in the pigs server
-        if (newMember.presence.status == "offline" && !newMember.roles.has(botconfig.PIGSUnavailableRole)) return newMember.addRole(botconfig.PIGSUnavailableRole) // if they are now offline and don't have the pigs unavailable role, add the unavailable role
-        else if (newMember.presence.status == "online" && newMember.roles.has(botconfig.PIGSUnavailableRole) && (newMember.id == botconfig.AltTabsID || newMember.id == "330015505211457551" || newMember.id == "164326090825793536")) return newMember.removeRole(botconfig.PIGSUnavailableRole) //If they are now online and have the unavailable role and are alt tabs or solid 2 hours it will auto make em available
-    } else if (oldMember.hasPermission("KICK_MEMBERS") && newMember.guild.id == botconfig.RTSServer) { //if its a rts manager and the update is triggered in the rts server
-        if (newMember.presence.status == "offline" && !newMember.roles.has(botconfig.RTSUnavailableRole)) return newMember.addRole(botconfig.RTSUnavailableRole) //If they are offline now and don't have the unavailable role it adds it
+bot.on("presenceUpdate", (oldPresence, newPresence) => { //When a guild member's presence changes (online/offline or games)
+    if (!oldPresence) return;
+    if (oldPresence.member.hasPermission("KICK_MEMBERS") && newPresence.guild.id == botconfig.PIGSServer && !newPresence.user.bot) { //if its a pigs manager and the update is triggered in the pigs server
+        if (newPresence.status == "offline" && !newPresence.member.roles.cache.has(botconfig.PIGSUnavailableRole)) return newPresence.member.roles.add(botconfig.PIGSUnavailableRole) // if they are now offline and don't have the pigs unavailable role, add the unavailable role
+        else if (newPresence.status == "online" && newPresence.member.roles.cache.has(botconfig.PIGSUnavailableRole) && (newPresence.member.id == botconfig.AltTabsID || newPresence.member.id == "330015505211457551" || newPresence.member.id == "164326090825793536")) return newPresence.member.roles.remove(botconfig.PIGSUnavailableRole) //If they are now online and have the unavailable role and are alt tabs or solid 2 hours it will auto make em available
+    } else if (oldPresence.member.hasPermission("KICK_MEMBERS") && newPresence.guild.id == botconfig.RTSServer) { //if its a rts manager and the update is triggered in the rts server
+        if (newPresence.status == "offline" && !newPresence.member.roles.cache.has(botconfig.RTSUnavailableRole)) return newPresence.member.roles.add(botconfig.RTSUnavailableRole) //If they are offline now and don't have the unavailable role it adds it
     }
 
-    if (oldMember.roles.has(botconfig.RTSGuestRole) || oldMember.guild.id == botconfig.PIGSServer) return; //if its a guest or is in the pigs server stop the command
+    if (oldPresence.member.roles.cache.has(botconfig.RTSGuestRole) || oldPresence.guild.id == botconfig.PIGSServer) return; //if its a guest or is in the pigs server stop the command
 
-    if (newMember.user.presence.game && newMember.user.presence.game.name == "Transport Tycoon") { //If they are playing a game and the games name is Transport Tycoon
-        oldMember.addRole(botconfig.RTSFiveMRole); //adds the fivem role
-    } else if (!newMember.user.presence.game && newMember.roles.has(botconfig.RTSFiveMRole)) { //If they aren't playing a game but have the fivem role
-        newMember.removeRole(botconfig.RTSFiveMRole); //removes role
+    if (newPresence.user.presence.activities[0] && newPresence.user.presence.activities[0].name == "Transport Tycoon") { //If they are playing a game and the games name is Transport Tycoon
+        oldPresence.member.roles.add(botconfig.RTSFiveMRole); //adds the fivem role
+    } else if (!newPresence.user.presence.activities && newPresence.member.roles.cache.has(botconfig.RTSFiveMRole)) { //If they aren't playing a game but have the fivem role
+        newPresence.member.roles.remove(botconfig.RTSFiveMRole); //removes role
     }
 });
 
@@ -229,7 +236,7 @@ bot.on("message", async message => { //When a message is sent to a channel. Not 
         if (Mention.user.id == botconfig.GlitchDetectorID) { //if they mentioned glitch
             message.delete() //delete the message
 
-            let GlitchEmbed = new Discord.RichEmbed() //make an embed with info about the message
+            let GlitchEmbed = new Discord.MessageEmbed() //make an embed with info about the message
                 .setColor("#bc0000")
                 .setTitle("Pinged Glitch")
                 .addField("Author", message.member.displayName)
@@ -237,8 +244,8 @@ bot.on("message", async message => { //When a message is sent to a channel. Not 
                 .addField("Date", message.createdAt)
                 .addField("In Channel", message.channel)
 
-            if (message.guild.id == botconfig.RTSServer) bot.channels.get(botconfig.RTSLogs).send(GlitchEmbed) //if its in rts send to rts logs
-            else if (message.guild.id == botconfig.PIGSServer) bot.channels.get(botconfig.PIGSLogs).send(GlitchEmbed) //if its in pigs send to pigs logs
+            if (message.guild.id == botconfig.RTSServer) bot.channels.cache.get(botconfig.RTSLogs).send(GlitchEmbed) //if its in rts send to rts logs
+            else if (message.guild.id == botconfig.PIGSServer) bot.channels.cache.get(botconfig.PIGSLogs).send(GlitchEmbed) //if its in pigs send to pigs logs
         }
     })
 })
@@ -277,7 +284,7 @@ bot.on("message", async message => {
                         auth: auth
                     }, (err, res) => {
                         if (err) {
-                            channel.send('The API returned an ' + err);
+                            channel.send(`The API returned an ${err}`);
                             return;
                         }
                         const FoodThresh = res.data.valueRanges[0].values[0]
@@ -316,13 +323,13 @@ bot.on("message", async message => {
                         range: "B3:D9999",
                     }, (err, res) => {
                         if (err) {
-                            channel.send('The API returned an ' + err);
+                            channel.send(`The API returned an ${err}`);
                             return;
                         }
 
                         const rows = res.data.values;
                         if (rows.length) {
-                            const BabyEmbed = new Discord.RichEmbed()
+                            const BabyEmbed = new Discord.MessageEmbed()
                                 .setTitle("Baby Food")
 
                             for (let i = rows.length - 1; i > rows.length - 6 && i > -1; i--) {
@@ -340,10 +347,17 @@ bot.on("message", async message => {
     }
 })
 
+bot.on("messageReactionAdd", async (reaction, user) => {
+    //if (reaction.message.partial) await reaction.message.fetch();
+    //if (reaction.partial) await reaction.fetch()
+    console.log(reaction.emoji.id)
+    console.log(user.id)
+})
+
 bot.on("error", (error) => { //when theres a discord error
     console.log(error)
 })
 
-bot.on("disconnect", () => { //when the bot disconnects
+bot.on("shardDisconnect", (event, shardID) => { //when the bot disconnects
     bot.login(botconfig.token) //reconnect
 })

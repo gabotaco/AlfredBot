@@ -11,8 +11,8 @@ module.exports.run = async (bot, message, args) => {
         var RoleID = botconfig.RTSUnavailableRole
     }
 
-    if (!message.member.roles.has(RoleID)) { //if they have the role by ID
-        message.member.addRole(RoleID) //adds role
+    if (!message.member.roles.cache.has(RoleID)) { //if they have the role by ID
+        message.member.roles.add(RoleID) //adds role
         message.channel.send("Enjoy your break.")
         return;
     } else {

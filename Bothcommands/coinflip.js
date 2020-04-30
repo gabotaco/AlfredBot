@@ -3,7 +3,7 @@ const coin = ['https://www.dhresource.com/0x0s/f2-albu-g4-M01-CB-6B-rBVaEFf172SA
 
 module.exports.run = async (bot, message, args) => {
     let flip = Math.floor((Math.random() * coin.length)); //gets what coin to flip
-    let coinembed = new Discord.RichEmbed()
+    let coinembed = new Discord.MessageEmbed()
         .setImage(coin[flip]) //sets embed image to pic of correct coin
     message.channel.send(coinembed)
 }

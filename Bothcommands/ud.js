@@ -21,7 +21,7 @@ module.exports.run = async (bot, message, args) => {
   const urbanExample = res.example.replace(/\[/g, '')
   const bestUrbanExample = urbanExample.replace(/\]/g, '')
 
-  const urbanEmbed = new Discord.RichEmbed()
+  const urbanEmbed = new Discord.MessageEmbed()
     .setColor("RANDOM")
     .setTitle(res.word) //uses the word returned because sometimes it will return the definition of a sorta similar word
     .setURL(res.urbanURL)

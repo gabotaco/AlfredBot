@@ -12,12 +12,12 @@ module.exports.run = async (bot, message, args) => {
         if (err) message.channel.send(err);
 
         const jsfile = files.filter(f => f.split(".").pop() == "js") //Removes non js files from the array
-        let help1 = new Discord.RichEmbed() //2 different embeds cause lots of commands
-            .setTitle(`Alfreds Commands that ${message.member.displayName} can use`, bot.user.displayAvatarURL)
+        let help1 = new Discord.MessageEmbed() //2 different embeds cause lots of commands
+            .setTitle(`Alfreds Commands that ${message.member.displayName} can use`, bot.user.displayAvatarURL())
             .setDescription("Things in {} are optional. Things in [] are required")
-            .setThumbnail(bot.user.displayAvatarURL)
+            .setThumbnail(bot.user.displayAvatarURL())
             .setColor("RANDOM")  //random color
-        let help2 = new Discord.RichEmbed()
+        let help2 = new Discord.MessageEmbed()
 
         let i = 0 //track how many times i've added to an embed
 

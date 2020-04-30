@@ -13,7 +13,7 @@ module.exports.run = async (bot, message, args) => {
   if (!ID) return message.channel.send("Must specify their id") //if no id
 
   authentication.authenticate().then(async (auth) => {
-    let AnswersEmbed = new Discord.RichEmbed()
+    let AnswersEmbed = new Discord.MessageEmbed()
       .setColor("RANDOM")
 
     if (message.guild.id == botconfig.PIGSServer) var SignMeUpIndex = botconfig.PIGSSignMeUpIndex //Get the index of signmeup based on the guild the message is in

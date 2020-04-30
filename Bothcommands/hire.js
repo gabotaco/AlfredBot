@@ -25,7 +25,7 @@ module.exports.run = async (bot, message, args) => {
       const InGameID = args[0] //in game id is first arg
 
       const response = await functions.GetDiscordFromID(auth, message.channel, InGameID, SignMeUpIndex)
-      const Discord = message.guild.members.get(response); //get discord member from id
+      const Discord = message.guild.members.cache.get(response); //get discord member from id
 
       if (Discord) { //if its a valid discord member
         const DiscordID = response
@@ -60,7 +60,7 @@ module.exports.run = async (bot, message, args) => {
   }
 
   async function Hire(DiscordID, InGameName, InGameID) {
-    if (!message.guild.members.has(DiscordID)) return message.channel.send("That person isn't in the discord!")
+    if (!message.guild.members.cache.has(DiscordID)) return message.channel.send("That person isn't in the discord!")
     authentication.authenticate().then(async (auth) => {
       functions.UpdateApplicantStatus(auth, message.channel, InGameID, SignMeUpIndex, "Hired")
     });

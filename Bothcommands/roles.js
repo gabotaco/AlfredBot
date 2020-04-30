@@ -17,7 +17,7 @@ const pigsfamilyID = "526203890639699968"
 
 module.exports.run = async (bot, message, args) => {
     if (message) { //if theres a message
-        var person = message.mentions.members.first() || message.guild.members.get(args[0]) || message.member; //get person by first mention or first arg or message author
+        var person = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || message.member; //get person by first mention or first arg or message author
         if (!person) return message.channel.send("You must specify a discord member.")
         if (args[0] && person == message.member) return message.channel.send("Couldn't find specified member")
         if (message.guild.id == botconfig.PIGSServer) {
@@ -39,12 +39,12 @@ module.exports.run = async (bot, message, args) => {
 
     if (person.roles) { //person has roles
         await person.roles.forEach(async element => { //go through all roles
-            if (!alwaysKeep.includes(element.id)) await person.removeRole(element.id) //If the current role isn't in the always keep array then remove it 
+            if (!alwaysKeep.includes(element.id)) await person.roles.remove(element.id) //If the current role isn't in the always keep array then remove it 
         });
     }
 
 
-    await person.addRole(GuestRole) //add guest role
+    await person.roles.add(GuestRole) //add guest role
 
     var MemberDetails = await functions.GetMemberDetails(bot, "discord_id", person.id) //get member details with message.channel
 
@@ -56,80 +56,80 @@ module.exports.run = async (bot, message, args) => {
         const D2 = new Date()
         const D3 = D2 - D1 //difference between two dates
         if (D3 <= 0) { //if its not past their deadline
-            if (person.roles.has(InactiveRole)) await person.removeRole(InactiveRole) //if they have inactive role remove it
+            if (person.roles.cache.has(InactiveRole)) await person.roles.remove(InactiveRole) //if they have inactive role remove it
         } else { //past their deadline
-            if (!person.roles.has(InactiveRole)) await person.addRole(InactiveRole) //if they don't have inactive role add it
+            if (!person.roles.cache.has(InactiveRole)) await person.roles.add(InactiveRole) //if they don't have inactive role add it
         }
 
         if (person.id != "404650985529540618") await person.setNickname(MemberDetails.in_game_name) //set nickname to in game name
 
-        if (person.roles.has(GuestRole)) await person.removeRole(GuestRole) //if they have guest role remove it
+        if (person.roles.cache.has(GuestRole)) await person.roles.remove(GuestRole) //if they have guest role remove it
 
-        await person.addRole(employeeID) //add employee role
+        await person.roles.add(employeeID) //add employee role
 
         //If they are a rank then add the rank role
         if (message.guild.id == botconfig.PIGSServer) { //in pigs server
             if (MemberDetails.company == "rts") { //rts
-                await person.addRole(FamilyID)
+                await person.roles.add(FamilyID)
                 if (message) await message.channel.send(`Gave ${person} the RTS family role`)
 
-            } else if (MemberDetails.pigs_total_vouchers < 6000 && !person.roles.has(hustlerID)) { //hustler
+            } else if (MemberDetails.pigs_total_vouchers < 6000 && !person.roles.cache.has(hustlerID)) { //hustler
                 foundRole = true;
-                await person.addRole(hustlerID)
+                await person.roles.add(hustlerID)
 
                 if (message) await message.channel.send(`Gave ${person} the hustler role`)
-            } else if (MemberDetails.pigs_total_vouchers < 18000 && !person.roles.has(pickpocketID)) {
+            } else if (MemberDetails.pigs_total_vouchers < 18000 && !person.roles.cache.has(pickpocketID)) {
                 foundRole = true;
-                await person.addRole(pickpocketID)
+                await person.roles.add(pickpocketID)
 
                 if (message) await message.channel.send(`Gave ${person} the pickpocket role`)
-            } else if (MemberDetails.pigs_total_vouchers < 38000 && !person.roles.has(thiefID)) {
+            } else if (MemberDetails.pigs_total_vouchers < 38000 && !person.roles.cache.has(thiefID)) {
                 foundRole = true;
-                await person.addRole(thiefID)
+                await person.roles.add(thiefID)
 
                 if (message) await message.channel.send(`Gave ${person} the thief role`)
-            } else if (MemberDetails.pigs_total_vouchers < 68000 && !person.roles.has(lawlessID)) {
+            } else if (MemberDetails.pigs_total_vouchers < 68000 && !person.roles.cache.has(lawlessID)) {
                 foundRole = true;
-                await person.addRole(lawlessID)
+                await person.roles.add(lawlessID)
 
                 if (message) await message.channel.send(`Gave ${person} the lawless role`)
-            } else if (MemberDetails.pigs_total_vouchers < 150000 && !person.roles.has(mastermindID)) {
+            } else if (MemberDetails.pigs_total_vouchers < 150000 && !person.roles.cache.has(mastermindID)) {
                 foundRole = true;
-                await person.addRole(mastermindID)
+                await person.roles.add(mastermindID)
 
                 if (message) await message.channel.send(`Gave ${person} the mastermind role`)
-            } else if (!person.roles.has(overlordID)) {
+            } else if (!person.roles.cache.has(overlordID)) {
                 foundRole = true;
-                await person.addRole(overlordID)
+                await person.roles.add(overlordID)
                 if (message) await message.channel.send(`Gave ${person} the overlord role`)
             }
         } else { //rts discord
             if (MemberDetails.company == "pigs") { //in pigs
-                await person.addRole(FamilyID)
+                await person.roles.add(FamilyID)
                 if (message) await message.channel.send(`Gave ${person} the PIGS family role`)
-            } else if (MemberDetails.rts_total_vouchers < 9600 && !person.roles.has(initiateID)) {
+            } else if (MemberDetails.rts_total_vouchers < 9600 && !person.roles.cache.has(initiateID)) {
                 foundRole = true;
-                await person.addRole(initiateID)
+                await person.roles.add(initiateID)
                 if (message) await message.channel.send(`Gave ${person} the initiate role`)
 
-            } else if (MemberDetails.rts_total_vouchers < 24000 && !person.roles.has(leadfootID)) {
+            } else if (MemberDetails.rts_total_vouchers < 24000 && !person.roles.cache.has(leadfootID)) {
                 foundRole = true;
-                await person.addRole(leadfootID)
+                await person.roles.add(leadfootID)
 
                 if (message) await message.channel.send(`Gave ${person} the lead foot role`)
-            } else if (MemberDetails.rts_total_vouchers < 52800 && !person.roles.has(wheelman)) {
+            } else if (MemberDetails.rts_total_vouchers < 52800 && !person.roles.cache.has(wheelman)) {
                 foundRole = true;
-                await person.addRole(wheelman)
+                await person.roles.add(wheelman)
 
                 if (message) await message.channel.send(`Gave ${person} the wheelman role`)
-            } else if (MemberDetails.rts_total_vouchers < 117600 && !person.roles.has(legendaryID)) {
+            } else if (MemberDetails.rts_total_vouchers < 117600 && !person.roles.cache.has(legendaryID)) {
                 foundRole = true;
-                await person.addRole(legendaryID)
+                await person.roles.add(legendaryID)
 
                 if (message) await message.channel.send(`Gave ${person} the legendary role`)
-            } else if (!person.roles.has(speeddemonID)) {
+            } else if (!person.roles.cache.has(speeddemonID)) {
                 foundRole = true;
-                await person.addRole(speeddemonID)
+                await person.roles.add(speeddemonID)
 
                 if (message) await message.channel.send(`Gave ${person} the speed demon role`)
             }

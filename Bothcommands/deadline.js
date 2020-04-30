@@ -15,7 +15,7 @@ module.exports.run = async (bot, message, args) => {
     const MemberInfo = await functions.GetMemberDetails(bot, SearchColumn, ID) //Get their member info
     if (!MemberInfo) return message.channel.send("Couldn't find that user") //no member data
 
-    message.channel.send("Deadline: " + MemberInfo.deadline) //get the deadline and send it
+    message.channel.send(`Deadline: ${MemberInfo.deadline}`) //get the deadline and send it
 }
 module.exports.help = {
     name: "deadline",

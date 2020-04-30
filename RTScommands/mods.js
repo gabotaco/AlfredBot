@@ -37,26 +37,25 @@ module.exports.run = async (bot, message, args) => {
         }
       }, (err, response) => {
         if (err) {
-          message.channel.send('The API returned an error: ' + err);
+          message.channel.send(`The API returned an ${err}`);
           return;
         } else { //no error
           sheets.spreadsheets.values.get({ //gets the search results
             spreadsheetId: botconfig.RTSModsSheet,
             range: "Search Engine!E26:H35",
           }, (err, res) => {
-            if (err) return message.channel.send('The API returned an ' + err);
+            if (err) return message.channel.send(`The API returned an ${err}`);
 
             const rows = res.data.values;
             if (!rows) { //if there aren't any values for the data
               message.channel.send("Couldn't find any mods for that car!")
             } else if (rows.length) { //there are rows
-              let carEmbed = new Discord.RichEmbed()
+              let carEmbed = new Discord.MessageEmbed()
               carEmbed.setTitle(`Mod results for "${car}"`)
               carEmbed.setColor("RANDOM")
               carEmbed.setThumbnail("https://cdn.discordapp.com/attachments/472135396407509024/476516142563852288/unknown.png") //RTS logo
 
               rows.map((row) => { //for each row 
-                carEmbed.addBlankField() //adds a space to make it easier to read
                 carEmbed.addField("Car Name:", row[0]) //adds the car name
                 carEmbed.addField("Class", row[1]) //class
                 carEmbed.addField("Code", row[2]) //code

@@ -4,7 +4,7 @@ const botconfig = require("../botconfig.json")
 const functions = require("../functions.js");
 
 module.exports.run = async (bot, message, args) => {
-       const ServerStatus = new Discord.RichEmbed()
+       const ServerStatus = new Discord.MessageEmbed()
        .setTitle("Uptime of all servers")
        .setColor("RANDOM")
 

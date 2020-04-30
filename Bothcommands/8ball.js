@@ -18,7 +18,7 @@ module.exports.run = async (bot, message, args) => {
         var answer = botconfig.NoResponses[Math.floor(Math.random() * botconfig.NoResponses.length)] //answer is no
     }
 
-    const ballembed = new Discord.RichEmbed() 
+    const ballembed = new Discord.MessageEmbed()
             .setColor("#FF9900") 
             .addField("Question", question) 
             .addField("Answer", answer) //pick a random response

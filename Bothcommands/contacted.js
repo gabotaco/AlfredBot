@@ -22,7 +22,7 @@ module.exports.run = async (bot, message, args) => {
     });
   } else { //If nobody specified
     authentication.authenticate().then(async (auth) => {
-      let reqEmbed = new Discord.RichEmbed()
+      let reqEmbed = new Discord.MessageEmbed()
         .setTitle("Contacted Applications")
         .setColor("RANDOM")
 

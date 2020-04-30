@@ -52,7 +52,7 @@ module.exports.run = async (bot, message, args) => {
         });
 
         if (playerNames.length < 1) return message.channel.send("No players on that server.") //if less than 1 player then no players
-        let nameEmbed = new Discord.RichEmbed()
+        let nameEmbed = new Discord.MessageEmbed()
           .setColor("RANDOM")
           .setTitle(`Players on server ${args[0]}`)
 

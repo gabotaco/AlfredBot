@@ -265,7 +265,7 @@ module.exports.run = async (bot, message, args) => {
     const Money = VoucherWorth(MemberDetails);
     const DoRank = RankUp(MemberDetails);
 
-    const payoutEmbed = new Discord.RichEmbed()
+    const payoutEmbed = new Discord.MessageEmbed()
         .setTitle(`Payout for ${MemberDetails.in_game_name}`)
         .addField(`Money`, `$${functions.numberWithCommas(Money)}`)
 

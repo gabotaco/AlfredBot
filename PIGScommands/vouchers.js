@@ -17,7 +17,7 @@ module.exports.run = async (bot, message, args) => {
     const MemberDetails = await functions.GetMemberDetails(bot, SearchColumn, ID) //Get their member details
     if (!MemberDetails) return message.channel.send("You aren't hired") //Not hired
 
-    const VoucherPerson = message.guild.members.get(MemberDetails.discord_id) //get discord member
+    const VoucherPerson = message.guild.members.cache.get(MemberDetails.discord_id) //get discord member
     if (VoucherPerson == message.member) { //If they are the same person
         VoucherPerson.setNickname(MemberDetails.in_game_name) //Set their nickname
     } else {

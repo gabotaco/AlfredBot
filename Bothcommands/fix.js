@@ -14,7 +14,7 @@ module.exports.run = async (bot, message, args) => {
   }
 
 
-  if (!message.guild.members.has(DiscordID)) return message.channel.send("That person isn't in the discord!") //check if they are in the discord
+  if (!message.guild.members.cache.has(DiscordID)) return message.channel.send("That person isn't in the discord!") //check if they are in the discord
 
   bot.con.query(`UPDATE members SET in_game_id = '${InGameID}', discord_id = '${DiscordID}', in_game_name = '${InGameName}' WHERE in_game_id = '${InGameID}' OR discord_id = '${DiscordID}'`, function (err, result, fields) { //change persons info without changing deadline
     if (err) {

@@ -1,20 +1,20 @@
 const Discord = require("discord.js")
 
 module.exports.run = async (bot, message, args) => {
-    const bicon = bot.user.displayAvatarURL; //bot profile pic
+    const bicon = bot.user.displayAvatarURL(); //bot profile pic
 
     const used = process.memoryUsage().heapUsed / 1024 / 1024; //get used
     const memberused = Math.round(used * 100) / 100 //then round
 
 
-    const botembed = new Discord.RichEmbed()
+    const botembed = new Discord.MessageEmbed()
         .setDescription("***Bot Information***")
         .setColor("#15f153")
         .setThumbnail(bicon)
         .addField("Created By", "Gabo")
         .addField("Created On", bot.user.createdAt)
         .addField("Memery Used in MB", memberused)
-        .addField("Ping", bot.ping)
+        .addField("Ping", bot.ws.ping)
         .addField("Minutes online", Math.round((bot.uptime / 60) / 60)) //Convert to minutes
         .addField("GitHub", "https://github.com/Gabolicious/AlfredBot")
 
