@@ -158,11 +158,12 @@ bot.on("message", async message => { //Someone sends a message in a channel
 });
 
 bot.on("messageUpdate", async (oldMessage, newMessage) => {
-    if (newMessage.partial) newMessage.fetch()
+    if (newMessage.partial) await newMessage.fetch()
     ProcessMessage(newMessage)
 })
 
 async function ProcessMessage(message) {
+    if (message.partial) await message.fetch()
     if (message.author.bot || message.channel.type == "dm") return; //if message is from a bot or is in a DM with the bot
     if (message.channel.id == botconfig.PIGSOneWordStory) { //If its in the one word story channel
         if ((message.content.split(" ").length > 1 || message.content.split("-").length > 1 || message.content.split("_").length > 1) || message.content.includes(":")) { //if the message contains an emoji or is more than one word

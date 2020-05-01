@@ -36,7 +36,7 @@ module.exports.run = async (bot, message, args) => {
             const D3 = D2 - new Date(member.deadline) //difference between deadline and today
 
             const D4 = D2 - new Date(member.last_turnin) //different between today and last turnin
-            if (D4 >= 5184000000 || D3 >= 0) { //if past deadline or been 2 months since last turnin
+            if (D3 >= 0) { //if past deadline or been 2 months since last turnin
                 const DiscordMember = message.guild.members.cache.get((member.discord_id).toString()) //find member in discord
                 if (DiscordMember && !DiscordMember.roles.cache.has(InactiveRole)) DiscordMember.roles.add(InactiveRole) //if the member is in discord and doesn't have inactive role then add inactive role
                 else if (!DiscordMember) message.channel.send("Couldn't find member with id <@" + (member.discord_id) + "> in this discord") //If member isn't in discord
@@ -83,7 +83,7 @@ module.exports.run = async (bot, message, args) => {
         } else if (args[0].toLowerCase() == "notify") { //If first arg is notify
             let notified = 0; //track how many notified
 
-            message.guild.members.forEach(element => { //go through all members in discord
+            message.guild.members.cache.forEach(element => { //go through all members in discord
                 if (discordIDS.includes(element.id)) { //If member is in array
                     notified++ //Increase notify
                     element.send("Greetings. \n \n It's come to my attention that you have not met your required voucher deadline. I'm reaching out to notify you that you have 7 days left until you're removed for inactivity. \n \n If you have any questions, please reach out to Rock or Gabo. \n \n Have a wonderful day")
