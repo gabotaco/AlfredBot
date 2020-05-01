@@ -222,11 +222,12 @@ module.exports.run = async (bot, message, args) => {
         }
 
         var NewDeadline = function (MemberDetails) {
-            const CurrentDeadline = new Date(MemberDetails.deadline)
+            let CurrentDeadline = new Date(MemberDetails.deadline)
             const D2 = new Date()
             let D3 = D2 - CurrentDeadline //difference between two dates
             if (D3 >= 0) {
-                CurrentDeadline.setDate(new Date().getDate() + 7)
+                console.log("OLD DATE")
+                CurrentDeadline = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
             }
             if (D3 <= 45) {
                 if (voucherAmount > 1200000) {
