@@ -10,7 +10,7 @@ module.exports.run = async (bot, message, args) => {
   const InGameID = args[args.length - 1] //in game ID is last arg
 
   if (!DiscordID || !InGameName || !InGameID) { //Invalid use of command
-    return message.channel.send(".fix [discord id] \"in game id\" [in game id]")
+    return message.channel.send(".fix [discord id] \"in game name\" [in game id]")
   }
 
 
@@ -36,6 +36,6 @@ module.exports.run = async (bot, message, args) => {
 module.exports.help = {
   name: "fix",
   usage: "{discord ID} \"{In game name}\" [in-game ID]",
-  description: "Add another person to the PIGS family",
+  description: "Reset in game name",
   permission: "MANAGE_NICKNAMES"
 }
