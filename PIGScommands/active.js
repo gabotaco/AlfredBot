@@ -23,7 +23,12 @@ module.exports.run = async (bot, message, args) => {
                     return;
                 }
 
-                const JSONBody = JSON.parse(body); //convert to json so we can use it
+                try {
+                    var JSONBody = JSON.parse(body); //convert to json so we can use it
+                } catch (e) {
+                    //Handle or naw
+                    return
+                }
 
                 let CurrentServerPoints = 0 //start at 0 people playing
                 JSONBody.players.forEach(player => {
