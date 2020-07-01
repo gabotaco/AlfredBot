@@ -29,7 +29,12 @@ module.exports.run = async (bot, message, args) => {
     const startConversation = (conversation) => {
         // setup the conversation
         conversation
-            .on('response', text => {if (!text) message.channel.send("Sorry, I don't understand"); else message.channel.send(text);})
+            .on('response', text => {
+                if (!text || text.length <= 1) message.channel.send("Sorry, I don't understand")
+                else {
+                    message.channel.send(text)
+                }
+            })
             // if we've requested a volume level change, get the percentage of the new level
             .on('volume-percent', percent => message.channel.send(`I can't change my volume to ${percent}% cause I'm a Discord bot`))
             // the device needs to complete an action

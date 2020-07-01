@@ -103,7 +103,7 @@ module.exports.run = async (bot, message, args) => {
             message.channel.send(statEmbed)
         })
     } else if (args[1].toLowerCase() == "top") {
-        const NumOfPlayers = parseInt(args[2])
+        const NumOfPlayers = parseInt(args[2]);
         const NumOfDays = parseInt(args[3]);
         if (!NumOfDays || !NumOfPlayers) return message.channel.send(".stats [company] top [num of players] [num of days]")
         if (NumOfPlayers > 25) return message.channel.send("Too many players")

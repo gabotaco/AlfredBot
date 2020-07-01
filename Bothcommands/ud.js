@@ -26,7 +26,7 @@ module.exports.run = async (bot, message, args) => {
     .setTitle(res.word) //uses the word returned because sometimes it will return the definition of a sorta similar word
     .setURL(res.urbanURL)
     .addField("Definition", bestUrbanDefinition)
-    .addField("Example", bestUrbanExample)
+    if (bestUrbanExample) urbanEmbed.addField("Example", bestUrbanExample)
 
   message.channel.send(urbanEmbed);
 }

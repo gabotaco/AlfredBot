@@ -13,7 +13,6 @@ module.exports.run = async (bot, message, args) => {
     const ID = Response[1]
     const SearchColumn = Response[0]
 
-
     const MemberDetails = await functions.GetMemberDetails(bot, SearchColumn, ID) //Get member details
     if (!MemberDetails) return message.channel.send("You aren't hired")
 
@@ -27,7 +26,7 @@ module.exports.run = async (bot, message, args) => {
     const InGameName = MemberDetails.in_game_name
     const InGameID = MemberDetails.in_game_id
 
-    const TotalVouchers =functions.numberWithCommas(MemberDetails.rts_total_vouchers) 
+    const TotalVouchers = functions.numberWithCommas(MemberDetails.rts_total_vouchers)
 
     if (MemberDetails.rts_total_vouchers < 9600) {
         var NextRank = "Lead Foot"

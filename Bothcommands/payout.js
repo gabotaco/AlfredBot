@@ -114,8 +114,8 @@ module.exports.run = async (bot, message, args) => {
             const D2 = new Date()
             const D3 = D2 - CurrentDeadline //difference between two dates
             if (D3 >= 0) { //if past deadline
-                CurrentDeadline.setDate(new Date().getDate() + 7) //add a week
-            }
+                CurrentDeadline = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
+              }
             if (D3 <= 45) { //45 days till deadline
                 if (voucherAmount > 1200000) { //turnin in a lot
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000) + 9) //add 9
@@ -225,10 +225,9 @@ module.exports.run = async (bot, message, args) => {
             let CurrentDeadline = new Date(MemberDetails.deadline)
             const D2 = new Date()
             let D3 = D2 - CurrentDeadline //difference between two dates
-            if (D3 >= 0) {
-                console.log("OLD DATE")
+            if (D3 >= 0) { //if past deadline
                 CurrentDeadline = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
-            }
+              }
             if (D3 <= 45) {
                 if (voucherAmount > 1200000) {
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000) + 9)
