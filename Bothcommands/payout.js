@@ -117,12 +117,18 @@ module.exports.run = async (bot, message, args) => {
                 CurrentDeadline = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
                 D3 = D2 - CurrentDeadline //difference between two dates
             }
-            if (D3 <= 45 * 24 * 60 * 1000) { //45 days till deadline
-                if (voucherAmount > 1200000) { //turnin in a lot
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000) + 9) //add 9
+            if (D3 >= -45 * 24 * 60 * 60 * 1000) { //45 days till deadline
+                if (voucherAmount > 60000) { //turnin in a lot
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 8000) + 19) //add 9
                     return CurrentDeadline
-                } else if (voucherAmount <= 1200000 && voucherAmount >= 100000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 1000) + 3) //add 3 days
+                } else if (voucherAmount <= 60000 && voucherAmount > 30000) {
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 4000) + 15) //add 3 days
+                    return CurrentDeadline
+                } else if (voucherAmount <= 30000 && voucherAmount >= 15000) {
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2500) + 10) //add 3 days
+                    return CurrentDeadline
+                } else if (voucherAmount <= 15000 && voucherAmount >= 6000) {
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 750) + 14) //add 3 days
                     return CurrentDeadline
                 } else {
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 250))
@@ -130,16 +136,20 @@ module.exports.run = async (bot, message, args) => {
                     return CurrentDeadline
                 }
             } else { //plenty of time
-                if (voucherAmount > 1200000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 3000) + 2) //add 2
-
+                if (voucherAmount > 60000) { //turnin in a lot
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 8000) + 19) //add 9
                     return CurrentDeadline
-                } else if (voucherAmount <= 1200000 && voucherAmount >= 100000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000))
-
+                } else if (voucherAmount <= 60000 && voucherAmount > 30000) {
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 4000) + 15) //add 3 days
+                    return CurrentDeadline
+                } else if (voucherAmount <= 30000 && voucherAmount >= 15000) {
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2500) + 10) //add 3 days
+                    return CurrentDeadline
+                } else if (voucherAmount <= 15000 && voucherAmount >= 6000) {
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 750) + 4) //add 3 days
                     return CurrentDeadline
                 } else {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 1000))
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000))
 
                     return CurrentDeadline
                 }
@@ -230,12 +240,18 @@ module.exports.run = async (bot, message, args) => {
                 CurrentDeadline = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
                 D3 = D2 - CurrentDeadline //difference between two dates
             }
-            if (D3 <= 45 * 24 * 60 * 60 * 100) {
-                if (voucherAmount > 1200000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000) + 9)
+            if (D3 >= -45 * 24 * 60 * 60 * 1000) {
+                if (voucherAmount > 60000) { //turnin in a lot
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 8000) + 19) //add 9
                     return CurrentDeadline
-                } else if (voucherAmount <= 1200000 && voucherAmount >= 1000000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 1000) + 3)
+                } else if (voucherAmount <= 60000 && voucherAmount > 30000) {
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 4000) + 15) //add 3 days
+                    return CurrentDeadline
+                } else if (voucherAmount <= 30000 && voucherAmount >= 15000) {
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2500) + 10) //add 3 days
+                    return CurrentDeadline
+                } else if (voucherAmount <= 15000 && voucherAmount >= 6000) {
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 750) + 14) //add 3 days
                     return CurrentDeadline
                 } else {
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 250))
@@ -243,16 +259,20 @@ module.exports.run = async (bot, message, args) => {
                     return CurrentDeadline
                 }
             } else {
-                if (voucherAmount > 1200000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 3000) + 2)
-
+                if (voucherAmount > 60000) { //turnin in a lot
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 8000) + 19) //add 9
                     return CurrentDeadline
-                } else if (voucherAmount <= 1200000 && voucherAmount >= 100000) {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000))
-
+                } else if (voucherAmount <= 60000 && voucherAmount > 30000) {
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 4000) + 15) //add 3 days
+                    return CurrentDeadline
+                } else if (voucherAmount <= 30000 && voucherAmount >= 15000) {
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2500) + 10) //add 3 days
+                    return CurrentDeadline
+                } else if (voucherAmount <= 15000 && voucherAmount >= 6000) {
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 750) + 4) //add 3 days
                     return CurrentDeadline
                 } else {
-                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 1000))
+                    CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000))
 
                     return CurrentDeadline
                 }
@@ -322,7 +342,7 @@ module.exports.run = async (bot, message, args) => {
                         if (err) return console.log(err)
 
                         //update deadline
-                        bot.con.query(`UPDATE members SET deadline = '${NewDeadline(MemberDetails)}', last_turnin = '${CurrentDate}' WHERE in_game_id = '${MemberDetails.in_game_id}'`, function (err, result, fields) {
+                        bot.con.query(`UPDATE members SET deadline = '${NewDeadline(memberDetails).toISOString().slice(0, 19).replace('T', ' ')}', last_turnin = '${CurrentDate}' WHERE in_game_id = '${MemberDetails.in_game_id}'`, function (err, result, fields) {
                             if (err) return console.log(err)
                             message.channel.send("Success!")
                         })
