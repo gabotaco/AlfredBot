@@ -112,35 +112,36 @@ module.exports.run = async (bot, message, args) => {
         var NewDeadline = function (MemberDetails) { //calculate new deadline
             const CurrentDeadline = new Date(MemberDetails.deadline)
             const D2 = new Date()
-            const D3 = D2 - CurrentDeadline //difference between two dates
+            let D3 = D2 - CurrentDeadline //difference between two dates
             if (D3 >= 0) { //if past deadline
                 CurrentDeadline = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
-              }
-            if (D3 <= 45) { //45 days till deadline
+                D3 = D2 - CurrentDeadline //difference between two dates
+            }
+            if (D3 <= 45 * 24 * 60 * 1000) { //45 days till deadline
                 if (voucherAmount > 1200000) { //turnin in a lot
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000) + 9) //add 9
-                    return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
+                    return CurrentDeadline
                 } else if (voucherAmount <= 1200000 && voucherAmount >= 100000) {
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 1000) + 3) //add 3 days
-                    return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
+                    return CurrentDeadline
                 } else {
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 250))
 
-                    return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
+                    return CurrentDeadline
                 }
             } else { //plenty of time
                 if (voucherAmount > 1200000) {
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 3000) + 2) //add 2
 
-                    return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
+                    return CurrentDeadline
                 } else if (voucherAmount <= 1200000 && voucherAmount >= 100000) {
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000))
 
-                    return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
+                    return CurrentDeadline
                 } else {
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 1000))
 
-                    return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
+                    return CurrentDeadline
                 }
             }
         }
@@ -223,36 +224,37 @@ module.exports.run = async (bot, message, args) => {
 
         var NewDeadline = function (MemberDetails) {
             let CurrentDeadline = new Date(MemberDetails.deadline)
-            const D2 = new Date()
+            const D2 = Date.now()
             let D3 = D2 - CurrentDeadline //difference between two dates
             if (D3 >= 0) { //if past deadline
                 CurrentDeadline = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
-              }
-            if (D3 <= 45) {
+                D3 = D2 - CurrentDeadline //difference between two dates
+            }
+            if (D3 <= 45 * 24 * 60 * 60 * 100) {
                 if (voucherAmount > 1200000) {
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000) + 9)
-                    return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
+                    return CurrentDeadline
                 } else if (voucherAmount <= 1200000 && voucherAmount >= 1000000) {
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 1000) + 3)
-                    return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
+                    return CurrentDeadline
                 } else {
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 250))
 
-                    return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
+                    return CurrentDeadline
                 }
             } else {
                 if (voucherAmount > 1200000) {
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 3000) + 2)
 
-                    return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
+                    return CurrentDeadline
                 } else if (voucherAmount <= 1200000 && voucherAmount >= 100000) {
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 2000))
 
-                    return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
+                    return CurrentDeadline
                 } else {
                     CurrentDeadline.setDate(CurrentDeadline.getDate() + Math.ceil(voucherAmount / 1000))
 
-                    return CurrentDeadline.toISOString().slice(0, 19).replace('T', ' ');
+                    return CurrentDeadline
                 }
             }
         }
