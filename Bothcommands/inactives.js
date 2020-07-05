@@ -33,6 +33,8 @@ module.exports.run = async (bot, message, args) => {
 
         let FieldsAdded = 0
         result.forEach(member => {
+            const DiscordMember = message.guild.members.cache.get((member.discord_id).toString()) //find member in discord
+            if (!DiscordMember) message.channel.send("Couldn't find member with id <@" + (member.discord_id) + "> in this discord") //If member isn't in discord
             const D3 = D2 - new Date(member.deadline) //difference between deadline and today
 
             const D4 = D2 - new Date(member.last_turnin) //different between today and last turnin

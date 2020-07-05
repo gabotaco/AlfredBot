@@ -150,6 +150,13 @@ bot.on("guildMemberRemove", async member => { //When someone leaves the server
     } else if (member.guild.id == botconfig.PIGSServer) {
         bot.channels.cache.get(botconfig.PIGSWelcome).send(`${member} (${member.displayName}) has left the server.`); //says that the username has left. Doesn't @ in case they change their name and also is glitchy sometimes
     }
+
+    bot.con.query(`UPDATE members SET company = 'fired', reason = 'Left Discord (automatically)' WHERE discord_id = '${member.id}'`, function (err, result) {
+        if (err) console.log(err)
+        else if (result.affectedRows > 0) {
+            bot.channels.cache.get("727993411461841038").send(`Member ${member} (${member.displayName}) has been fired for leaving the server`)
+        }
+    })
 })
 
 bot.on("message", async message => { //Someone sends a message in a channel
