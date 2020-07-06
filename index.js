@@ -13,6 +13,8 @@ const con = mysql.createConnection({ //connect to database
     password: "admin",
     database: "rc"
 });
+const express = require("express")
+const app = express();
 
 con.connect(function (err) { //perform connection
     if (err) throw err;
@@ -36,7 +38,54 @@ bot.BothCommands = new Discord.Collection();
 
 bot.login(botconfig.token) //logs in the bot with the token found in botconfig.json
 
+app.get("/alfred/restart", function (req, res) {
+    if (!req.query.access_token) {
+        res.json({code: 404})
+        return;
+    }
 
+    if (req.query.access_token != botconfig.access_token) {
+        res.json({code: 404})
+        return;
+    }
+
+    bot.destroy();
+    bot.login(botconfig.token)
+    console.log("RESTARTED")
+    res.send("Success")
+})
+app.get("/roles/update", function (req, res) {
+    if (!req.query.access_token) {
+        res.json({code: 404})
+        return;
+    }
+
+    if (req.query.access_token != botconfig.access_token) {
+        res.json({code: 404})
+        return;
+    }
+
+    if (!req.query.server || !req.query.member) {
+        res.json({code: 404})
+        return;
+    }
+
+    const fakeMessage = {
+        "mentions": {
+            "members": new Discord.Collection()
+        },
+        "guild": bot.guilds.cache.get(req.query.server),
+        "channel": bot.guilds.cache.get("447157938390433792").channels.cache.get("727993411461841038"),
+        "member": bot.guilds.cache.get(req.query.server).members.cache.get(req.query.member)
+    }
+
+    bot.BothCommands.get("roles").run(bot, fakeMessage, [])
+    res.json({"success": "Yes"})
+})
+
+app.listen(726, function () {
+    console.log("Alfred is listening!")
+});
 
 fs.readdir("./Bothcommands/", (err, files) => { //Gets all files in the Bothcommands folder
     if (err) console.log(err);
@@ -146,16 +195,25 @@ bot.on("guildMemberAdd", async member => { //When someone joins the guild
 
 bot.on("guildMemberRemove", async member => { //When someone leaves the server
     if (member.guild.id == botconfig.RTSServer) { //rts server
+        var server = "rts"
         bot.channels.cache.get(botconfig.RTSWelcome).send(`${member} (${member.displayName}) has left the server.`); //says that the username has left. Doesn't @ in case they change their name and also is glitchy sometimes
     } else if (member.guild.id == botconfig.PIGSServer) {
+        var server = "pigs"
         bot.channels.cache.get(botconfig.PIGSWelcome).send(`${member} (${member.displayName}) has left the server.`); //says that the username has left. Doesn't @ in case they change their name and also is glitchy sometimes
     }
 
-    bot.con.query(`UPDATE members SET company = 'fired', reason = 'Left Discord (automatically)' WHERE discord_id = '${member.id}'`, function (err, result) {
-        if (err) console.log(err)
-        else if (result.affectedRows > 0) {
-            bot.channels.cache.get("727993411461841038").send(`Member ${member} (${member.displayName}) has been fired for leaving the server`)
-        }
+    bot.con.query(`SELECT company, welcome FROM members WHERE discord_id = '${member.id}'`, function (err, result) {
+        if (err) return console.log(err)
+        if (!result[0]) return;
+
+        if (result[0].company != server) return;
+
+        bot.con.query(`UPDATE members SET company = 'fired', fire_reason = 'Left Discord (automatically)' WHERE discord_id = '${member.id}'`, function (err, result) {
+            if (err) console.log(err)
+            else if (result.affectedRows > 0) {
+                bot.channels.cache.get("727993411461841038").send(`Member ${member} (${member.displayName}) has been fired for leaving the ${server.toUpperCase()} server.`)
+            }
+        })
     })
 })
 

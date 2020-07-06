@@ -20,7 +20,7 @@ module.exports.run = async (bot, message, args) => {
 
         var CompanyName = "rts"
     }
-    bot.con.query(`SELECT discord_id, deadline, in_game_name, last_turnin FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) { //get all hired members
+    bot.con.query(`SELECT discord_id, deadline, in_game_name FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) { //get all hired members
         if (err) return console.log(err)
         const discordIDS = []; //all discords of inavtive users
 
@@ -37,8 +37,7 @@ module.exports.run = async (bot, message, args) => {
             if (!DiscordMember) message.channel.send("Couldn't find member with id <@" + (member.discord_id) + "> in this discord") //If member isn't in discord
             const D3 = D2 - new Date(member.deadline) //difference between deadline and today
 
-            const D4 = D2 - new Date(member.last_turnin) //different between today and last turnin
-            if (D3 >= 0) { //if past deadline or been 2 months since last turnin
+            if (D3 >= 0) { //if past deadline
                 const DiscordMember = message.guild.members.cache.get((member.discord_id).toString()) //find member in discord
                 if (DiscordMember && !DiscordMember.roles.cache.has(InactiveRole)) DiscordMember.roles.add(InactiveRole) //if the member is in discord and doesn't have inactive role then add inactive role
                 else if (!DiscordMember) message.channel.send("Couldn't find member with id <@" + (member.discord_id) + "> in this discord") //If member isn't in discord
