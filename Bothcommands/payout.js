@@ -15,96 +15,76 @@ module.exports.run = async (bot, message, args) => {
     const voucherAmount = functions.ConvertNumber(args[1]); //to int
 
     if (!voucherAmount) return message.channel.send("Please specify the voucher amount")
+    
+    const MemberDetails = await functions.GetMemberDetails(bot, SearchColumn, ID); //get payout member
+    if (!MemberDetails) return message.channel.send("Couldn't find that member")
 
     if (message.guild.id == botconfig.PIGSServer) { //PIGS server
         var CompanyName = "pigs"
 
-        var VoucherWorth = function (MemberDetails) { //get how much to pay the person
-            if (MemberDetails.pigs_total_vouchers < 6000) { //Hustler
-                if (MemberDetails.pigs_total_vouchers + voucherAmount >= 6000) { //rank up
-                    const NextRankVouchers = ((MemberDetails.pigs_total_vouchers + voucherAmount) - 6000) * 6000
-                    const CurrentRankVouchers = (6000 - MemberDetails.pigs_total_vouchers) * 5000
-                    return NextRankVouchers + CurrentRankVouchers
-                } else { //don't rank up
-                    return voucherAmount * 5000
-                }
-            } else if (MemberDetails.pigs_total_vouchers < 18000) { //Pickpocket
-                if (MemberDetails.pigs_total_vouchers + voucherAmount >= 18000) {
-                    const NextRankVouchers = ((MemberDetails.pigs_total_vouchers + voucherAmount) - 18000) * 7000
-                    const CurrentRankVouchers = (18000 - MemberDetails.pigs_total_vouchers) * 6000
-                    return NextRankVouchers + CurrentRankVouchers
+        var voucherWorth = function (playerTotalVouchers, voucherAmount) { //get how much to pay the person
+            if (playerTotalVouchers < 6000) { //Hustler
+                var RankVouchers = 6000
+                var rankWorth = 5000
+            } else if (playerTotalVouchers < 18000) { //Pickpocket
+                var RankVouchers = 18000
+                var rankWorth = 6000
 
-                } else {
-                    return voucherAmount * 6000
-                }
-            } else if (MemberDetails.pigs_total_vouchers < 38000) { //Thief
-                if (MemberDetails.pigs_total_vouchers + voucherAmount >= 38000) {
-                    const NextRankVouchers = ((MemberDetails.pigs_total_vouchers + voucherAmount) - 38000) * 8000
-                    const CurrentRankVouchers = (38000 - MemberDetails.pigs_total_vouchers) * 7000
-                    return NextRankVouchers + CurrentRankVouchers
-
-                } else {
-                    return voucherAmount * 7000
-                }
-            } else if (MemberDetails.pigs_total_vouchers < 68000) { //Lawless
-                if (MemberDetails.pigs_total_vouchers + voucherAmount >= 68000) {
-                    const NextRankVouchers = ((MemberDetails.pigs_total_vouchers + voucherAmount) - 68000) * 9000
-                    const CurrentRankVouchers = (68000 - MemberDetails.pigs_total_vouchers) * 8000
-                    return NextRankVouchers + CurrentRankVouchers
-
-                } else {
-                    return voucherAmount * 8000
-                }
-            } else if (MemberDetails.pigs_total_vouchers < 150000) { //Mastermind
-                if (MemberDetails.pigs_total_vouchers + voucherAmount >= 150000) {
-                    const NextRankVouchers = ((MemberDetails.pigs_total_vouchers + voucherAmount) - 150000) * 9500
-                    const CurrentRankVouchers = (150000 - MemberDetails.pigs_total_vouchers) * 9000
-                    return NextRankVouchers + CurrentRankVouchers
-
-                } else {
-                    return voucherAmount * 9000
-                }
+            } else if (playerTotalVouchers < 38000) { //Thief
+                var RankVouchers = 38000
+                var rankWorth = 7000
+            } else if (playerTotalVouchers < 68000) { //Lawless
+                var RankVouchers = 68000
+                var rankWorth = 8000;
+            } else if (playerTotalVouchers < 150000) { //Mastermind
+                var RankVouchers = 150000
+                var rankWorth = 9000
             } else {
-                return voucherAmount * 9500;
+                var RankVouchers = Infinity
+                var rankWorth = 9500
+            }
+
+            rankVouchers = RankVouchers;
+
+            if (playerTotalVouchers + voucherAmount >= RankVouchers) { //rank up
+                const NextRankVouchers = voucherWorth(playerTotalVouchers + RankVouchers - playerTotalVouchers, voucherAmount - (RankVouchers - playerTotalVouchers))
+                const CurrentRankVouchers = (RankVouchers - playerTotalVouchers) * rankWorth
+                return NextRankVouchers + CurrentRankVouchers
+            } else { //don't rank up
+                return voucherAmount * rankWorth
             }
         }
 
-        var RankUp = function (MemberDetails) { //if they rank up
-            if (MemberDetails.pigs_total_vouchers < 6000) { //Hustler
-                if (MemberDetails.pigs_total_vouchers + voucherAmount >= 6000) { //yes
-                    return "Pickpocket";
-                } else {
-                    return false; //no
-                }
-            } else if (MemberDetails.pigs_total_vouchers < 18000) { //Pickpocket
-                if (MemberDetails.pigs_total_vouchers + voucherAmount >= 18000) {
-                    return "Thief";
+        var RankUp = function (playerTotalVouchers, voucherAmount) { //get how much to pay the person
+            if (playerTotalVouchers < 6000) { //Hustler
+                var RankVouchers = 6000
+                var nextRank = "Pickpocket"
+            } else if (playerTotalVouchers < 18000) { //Pickpocket
+                var RankVouchers = 18000
+                var nextRank = "Thief"
 
-                } else {
-                    return false;
-                }
-            } else if (MemberDetails.pigs_total_vouchers < 38000) { //Thief
-                if (MemberDetails.pigs_total_vouchers + voucherAmount >= 38000) {
-                    return "Lawless";
-
-                } else {
-                    return false;
-                }
-            } else if (MemberDetails.pigs_total_vouchers < 68000) { //Lawless
-                if (MemberDetails.pigs_total_vouchers + voucherAmount >= 68000) {
-                    return "Mastermind";
-
-                } else {
-                    return false;
-                }
-            } else if (MemberDetails.pigs_total_vouchers < 150000) { //Mastermind
-                if (MemberDetails.pigs_total_vouchers + voucherAmount >= 150000) {
-                    return "Overlord";
-
-                } else {
-                    return false;
-                }
+            } else if (playerTotalVouchers < 38000) { //Thief
+                var RankVouchers = 38000
+                var nextRank = "Lawless"
+            } else if (playerTotalVouchers < 68000) { //Lawless
+                var RankVouchers = 68000
+                var nextRank = "Mastermind";
+            } else if (playerTotalVouchers < 150000) { //Mastermind
+                var RankVouchers = 150000
+                var nextRank = "Overlord"
             } else {
+                var RankVouchers = Infinity
+                var nextRank = "Max"
+            }
+
+            if (playerTotalVouchers + voucherAmount >= RankVouchers) { //rank up
+                const rankUpAgain = RankUp(playerTotalVouchers + RankVouchers - playerTotalVouchers, voucherAmount - (RankVouchers - playerTotalVouchers))
+                if (!rankUpAgain) {
+                    return nextRank
+                } else {
+                    return rankUpAgain
+                }
+            } else { //don't rank up
                 return false;
             }
         }
@@ -155,79 +135,69 @@ module.exports.run = async (bot, message, args) => {
                 }
             }
         }
+
+        var Money = voucherWorth(MemberDetails.pigs_total_vouchers, voucherAmount)
+        var DoRank = RankUp(MemberDetails.pigs_total_vouchers, voucherAmount)
+
     } else if (message.guild.id == botconfig.RTSServer) { //RTS server
         var CompanyName = "rts"
 
-        var VoucherWorth = function (MemberDetails) {
-            if (MemberDetails.rts_total_vouchers < 9600) { //Initiate
-                if (MemberDetails.rts_total_vouchers + voucherAmount >= 9600) {
-                    const NextRankVouchers = ((MemberDetails.rts_total_vouchers + voucherAmount) - 9600) * 5500
-                    const CurrentRankVouchers = (9600 - MemberDetails.rts_total_vouchers) * 5000
-                    return NextRankVouchers + CurrentRankVouchers
-                } else {
-                    return voucherAmount * 5000
-                }
-            } else if (MemberDetails.rts_total_vouchers < 24000) { //Lead Foot
-                if (MemberDetails.rts_total_vouchers + voucherAmount >= 24000) {
-                    const NextRankVouchers = ((MemberDetails.rts_total_vouchers + voucherAmount) - 24000) * 6000
-                    const CurrentRankVouchers = (24000 - MemberDetails.rts_total_vouchers) * 5500
-                    return NextRankVouchers + CurrentRankVouchers
+        var voucherWorth = function (playerTotalVouchers, voucherAmount) { //get how much to pay the person
+            if (playerTotalVouchers < 9600) { //Initiate
+                var RankVouchers = 9600
+                var rankWorth = 5000
+            } else if (playerTotalVouchers < 24000) { //Lead Foot
+                var RankVouchers = 24000
+                var rankWorth = 5500
+            } else if (playerTotalVouchers < 52800) { //Wheelman
+                var RankVouchers = 52800
+                var rankWorth = 6000
+            } else if (playerTotalVouchers < 117600) { //Legendary
+                var RankVouchers = 117600
+                var rankWorth = 7500;
+            } else {
+                var RankVouchers = Infinity
+                var rankWorth = 8500
+            }
 
-                } else {
-                    return voucherAmount * 5500
-                }
-            } else if (MemberDetails.rts_total_vouchers < 52800) { //Wheelman
-                if (MemberDetails.rts_total_vouchers + voucherAmount >= 52800) {
-                    const NextRankVouchers = ((MemberDetails.rts_total_vouchers + voucherAmount) - 52800) * 7500
-                    const CurrentRankVouchers = (52800 - MemberDetails.rts_total_vouchers) * 6000
-                    return NextRankVouchers + CurrentRankVouchers
+            rankVouchers = RankVouchers;
 
-                } else {
-                    return voucherAmount * 6000
-                }
-            } else if (MemberDetails.rts_total_vouchers < 117600) { //Legendary
-                if (MemberDetails.rts_total_vouchers + voucherAmount >= 117600) {
-                    const NextRankVouchers = ((MemberDetails.rts_total_vouchers + voucherAmount) - 117600) * 8500
-                    const CurrentRankVouchers = (117600 - MemberDetails.rts_total_vouchers) * 7500
-                    return NextRankVouchers + CurrentRankVouchers
-
-                } else {
-                    return voucherAmount * 7500
-                }
-            } else { //speed demon
-                return voucherAmount * 8500
+            if (playerTotalVouchers + voucherAmount >= RankVouchers) { //rank up
+                const NextRankVouchers = voucherWorth(playerTotalVouchers + RankVouchers - playerTotalVouchers, voucherAmount - (RankVouchers - playerTotalVouchers))
+                const CurrentRankVouchers = (RankVouchers - playerTotalVouchers) * rankWorth
+                return NextRankVouchers + CurrentRankVouchers
+            } else { //don't rank up
+                return voucherAmount * rankWorth
             }
         }
 
-        var RankUp = function (MemberDetails) {
-            if (MemberDetails.rts_total_vouchers < 9600) { //Initiate
-                if (MemberDetails.rts_total_vouchers + voucherAmount >= 9600) {
-                    return "Lead Foot";
-                } else {
-                    return false;
-                }
-            } else if (MemberDetails.rts_total_vouchers < 24000) { //Lead Foot
-                if (MemberDetails.rts_total_vouchers + voucherAmount >= 24000) {
-                    return "Wheelman";
+        var RankUp = function (playerTotalVouchers, voucherAmount) { //get how much to pay the person
+            if (playerTotalVouchers < 9600) { //Initiate
+                var RankVouchers = 9600
+                var nextRank = "Lead Foot"
+            } else if (playerTotalVouchers < 24000) { //Lead Foot
+                var RankVouchers = 24000
+                var nextRank = "Wheelman"
 
-                } else {
-                    return false;
-                }
-            } else if (MemberDetails.rts_total_vouchers < 52800) { //Wheelman
-                if (MemberDetails.rts_total_vouchers + voucherAmount >= 52800) {
-                    return "Legendary";
+            } else if (playerTotalVouchers < 52800) { //Wheelman
+                var RankVouchers = 52800
+                var nextRank = "Legendary"
+            } else if (playerTotalVouchers < 117600) { //Legendary
+                var RankVouchers = 117600
+                var nextRank = "Speed Demon";
+            } else {
+                var RankVouchers = Infinity
+                var nextRank = "Max"
+            }
 
+            if (playerTotalVouchers + voucherAmount >= RankVouchers) { //rank up
+                const rankUpAgain = RankUp(playerTotalVouchers + RankVouchers - playerTotalVouchers, voucherAmount - (RankVouchers - playerTotalVouchers))
+                if (!rankUpAgain) {
+                    return nextRank
                 } else {
-                    return false
+                    return rankUpAgain
                 }
-            } else if (MemberDetails.rts_total_vouchers < 117600) { //Legendary
-                if (MemberDetails.rts_total_vouchers + voucherAmount >= 117600) {
-                    return "Speed Demon";
-
-                } else {
-                    return false;
-                }
-            } else { //speed demon
+            } else { //don't rank up
                 return false;
             }
         }
@@ -278,14 +248,12 @@ module.exports.run = async (bot, message, args) => {
                 }
             }
         }
+
+        var Money = voucherWorth(MemberDetails.rts_total_vouchers, voucherAmount)
+        var DoRank = RankUp(MemberDetails.rts_total_vouchers, voucherAmount)
     }
 
-    const MemberDetails = await functions.GetMemberDetails(bot, SearchColumn, ID); //get payout member
-    if (!MemberDetails) return message.channel.send("Couldn't find that member")
-
     //figure out voucher worth and rank up
-    const Money = VoucherWorth(MemberDetails);
-    const DoRank = RankUp(MemberDetails);
 
     const payoutEmbed = new Discord.MessageEmbed()
         .setTitle(`Payout for ${MemberDetails.in_game_name}`)

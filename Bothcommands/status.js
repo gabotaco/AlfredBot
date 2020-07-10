@@ -3,7 +3,7 @@ const botconfig = require("../botconfig.json");
 const functions = require("../functions.js")
 
 module.exports.run = async (bot, message, args) => {
-  con.query(`SELECT * FROM applications WHERE discord_id = '${message.author.id}'`, function (err, result, fields) {
+  bot.con.query(`SELECT * FROM applications WHERE discord_id = '${message.author.id}'`, function (err, result, fields) {
     if (err) {
         console.log(err)
         return;

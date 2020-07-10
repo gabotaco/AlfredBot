@@ -83,6 +83,64 @@ app.get("/roles/update", function (req, res) {
     res.json({"success": "Yes"})
 })
 
+app.get("/member/message", function (req, res) {
+    if (!req.query.access_token) {
+        res.json({code: 404})
+        return;
+    }
+
+    if (req.query.access_token != botconfig.access_token) {
+        res.json({code: 404})
+        return;
+    }
+
+    if (!req.query.member || !req.query.name) {
+        res.json({code: 404})
+        return;
+    }
+
+    let member = null;
+    member = bot.guilds.cache.get("447157938390433792").members.cache.get(req.query.member)
+    if (member == null) {
+        member = bot.guilds.cache.get("487285826544205845").members.cache.get(req.query.member)
+    }
+    if (!member) {
+        res.json({"Error": "Couldn't find member"})
+         console.log("COULDN'T FIND MEMBER")
+         return
+    }
+    member.send(`
+***Great news ${req.query.name}! You’re the newest member of RC!***
+
+**Getting Started Guide**
+We’ve compiled a few tips to help get you started.
+    
+**Vouchers**
+-Completing company runs will give you vouchers.
+-Heavy, Aviator, and RTS Vouchers all have equal value.
+-Meet a manager in-game and give them your vouchers - they will pay you.
+-Check http://payout.rockwelltransport.com to calculate how much you’ll make.
+    
+**Useful tools and links**
+Your profile: http://profile.rockwelltransport.com
+Contains:
+-Progress to the next rank in each company
+-Your past turnins
+    
+**Live map** of all current RC employees, including ongoing heists!
+http://map.rockwelltransport.com
+-PIGS = Pink
+-RTS = Orange
+-Management = Green
+Use the toggles on the left side to see points of interest for both companies.
+    
+**Dual enrollment**
+Also know that you can switch between PIGS and RTS any time. Find a manager from the company you’d like to change to in-game and ask. It’s really no trouble! Use the map to see all managers online.
+    `)
+
+    res.json({"success": "Yes"})
+})
+
 app.listen(726, function () {
     console.log("Alfred is listening!")
 });
