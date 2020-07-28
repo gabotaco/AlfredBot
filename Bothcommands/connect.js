@@ -2,7 +2,7 @@ const Discord = require("discord.js")
 const functions = require("../functions.js")
 
 module.exports.run = async (bot, message, args) => {
-  if (!args[0] || (args[0].toLowerCase() != 'a' && (args[0] < 1 || args[0] > 9))) return message.channel.send("You must provide a valid server number")
+  if (!args[0] || (args[0].toLowerCase() != 'a' && (isNaN(parseInt(args[0])) || args[0] < 1 || args[0] > 9))) return message.channel.send("You must provide a valid server number")
 
   const Response = functions.GetServerIPandPort(args[0]) //get server ip and port
   const ServerIP = Response[0]
