@@ -20,6 +20,8 @@ module.exports.run = async (bot, message, args) => {
         var untilnext = 68000 - MemberDetails.pigs_total_vouchers
     } else if (MemberDetails.pigs_total_vouchers < 150000) {
         var untilnext = 150000 - MemberDetails.pigs_total_vouchers
+    } else if (MemberDetails.pigs_total_vouchers < 1500000) {
+        var untilnext = 1500000 - MemberDetails.pigs_total_vouchers
     } else {
         return message.channel.send("You are at the top rank")
     }

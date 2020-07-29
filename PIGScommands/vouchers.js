@@ -65,10 +65,18 @@ module.exports.run = async (bot, message, args) => {
         var CurrentVouchers = MemberDetails.pigs_total_vouchers - 68000
 
         var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100)
-    } else {
+    } else if (MemberDetails.pigs_total_vouchers < 1500000) {
         var Rank = "Overlord"
+        var RequiredVouchers = 1500000 - MemberDetails.pigs_total_vouchers
+        var NextRank = "Swine"
+        var RankVouchers = 1350000
         var CurrentVouchers = MemberDetails.pigs_total_vouchers - 150000
-        var VoucherTextThing = "vouchers in Overlord"
+
+        var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100)
+    } else {
+        var Rank = "Swine"
+        var CurrentVouchers = MemberDetails.pigs_total_vouchers - 1500000
+        var VoucherTextThing = "vouchers in Swine"
         var RequiredVouchers = functions.numberWithCommas(CurrentVouchers)
         var Progress = 100
     }

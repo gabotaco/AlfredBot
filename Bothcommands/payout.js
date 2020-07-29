@@ -25,23 +25,25 @@ module.exports.run = async (bot, message, args) => {
         var voucherWorth = function (playerTotalVouchers, voucherAmount) { //get how much to pay the person
             if (playerTotalVouchers < 6000) { //Hustler
                 var RankVouchers = 6000
-                var rankWorth = 5000
+                var rankWorth = 3500
             } else if (playerTotalVouchers < 18000) { //Pickpocket
                 var RankVouchers = 18000
-                var rankWorth = 6000
-
+                var rankWorth = 4000
             } else if (playerTotalVouchers < 38000) { //Thief
                 var RankVouchers = 38000
-                var rankWorth = 7000
+                var rankWorth = 5000
             } else if (playerTotalVouchers < 68000) { //Lawless
                 var RankVouchers = 68000
-                var rankWorth = 8000;
+                var rankWorth = 6000;
             } else if (playerTotalVouchers < 150000) { //Mastermind
                 var RankVouchers = 150000
-                var rankWorth = 9000
+                var rankWorth = 7000
+            } else if (playerTotalVouchers < 1500000) { //Overlord
+                var RankVouchers = 1500000
+                var rankWorth = 8500
             } else {
                 var RankVouchers = Infinity
-                var rankWorth = 9500
+                var rankWorth = 9000
             }
 
             rankVouchers = RankVouchers;
@@ -72,6 +74,9 @@ module.exports.run = async (bot, message, args) => {
             } else if (playerTotalVouchers < 150000) { //Mastermind
                 var RankVouchers = 150000
                 var nextRank = "Overlord"
+            } else if (playerTotalVouchers < 1500000) { //Overlord
+                var RankVouchers = 1500000
+                var nextRank = "Swine"
             } else {
                 var RankVouchers = Infinity
                 var nextRank = "Max"
