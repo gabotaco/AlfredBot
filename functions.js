@@ -334,7 +334,7 @@ module.exports = {
             var CompanyName = "rts"
         }
 
-        bot.con.query(`UPDATE managers SET total_money = total_money + ${CompanyName}_cashout_worth WHERE discord_id = '${ID}'`, function (err, result, fields) { //add total money
+        bot.con.query(`UPDATE managers SET total_money = total_money + FLOOR(((${CompanyName}_cashout * 10000) - ${CompanyName}_cashout_worth) * 0.5) WHERE discord_id = '${ID}'`, function (err, result, fields) { //add total money
             if (err) return console.log(err)
 
             bot.con.query(`UPDATE managers SET ${CompanyName}_cashout = '0', ${CompanyName}_cashout_worth = '0' WHERE discord_id = '${ID}'`, function (err, result, fields) { //reset to 0
