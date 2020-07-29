@@ -322,7 +322,7 @@ async function ProcessMessage(message) {
         const AllowedPIGSCommands = [".status", ".8ball", ".ud", ".hello"]
 
         var commandfile = bot.PIGSCommands.get(cmd.slice(prefix.length)); // try to get a pigs command with the specified cmd without the prefix
-        if (commandfile && (message.channel.id != "511853214858084364" && message.channel.id != botconfig.PIGSBotCommandsChannel && message.channel.id != botconfig.PIGSVoucherChannel) && !message.member.hasPermission("KICK_MEMBERS") && !AllowedPIGSCommands.includes(cmd)) return message.channel.send(`Do this in ${botconfig.PIGSBotCommandsChannel} instead`) //if theres a command but its said in the wrong channel
+        if (commandfile && (message.channel.id != "511853214858084364" && message.channel.id != botconfig.PIGSBotCommandsChannel && message.channel.id != botconfig.PIGSVoucherChannel) && !message.member.hasPermission("KICK_MEMBERS") && !AllowedPIGSCommands.includes(cmd)) return message.channel.send(`Do this in <#${botconfig.PIGSBotCommandsChannel}> instead`) //if theres a command but its said in the wrong channel
         if (commandfile) console.log("PIGS", commandfile.help.name, args) //if theres a command file then log that its pigs and then the name and args
         else if (cmd.slice(prefix.length) == "voucher") commandfile = bot.PIGSCommands.get("vouchers")
 
