@@ -11,22 +11,18 @@ module.exports.run = async (bot, message, args) => {
   const ID = args[0]
   if (!ID) return message.channel.send("You must specify their id")
 
-  if (message.guild.id == botconfig.PIGSServer) { //pigs
-    var SignMeUpIndex = botconfig.PIGSSignMeUpIndex
-  } if (message.guild.id == botconfig.RTSServer) { //rts
-    var SignMeUpIndex = botconfig.RTSSignMeUpIndex
-  }
-
-  authentication.authenticate().then(async (auth) => {
-    const Discord = await functions.GetDiscordFromID(auth, message.channel, ID, SignMeUpIndex) //Gets discord ID or what they entered
-    if (Discord) { //Found applicant
-      const user = message.guild.members.cache.get(Discord) //Check if valid ID
-      if (user) message.channel.send("<@" + Discord + ">") //if valid ID send the discord as an @
-      else message.channel.send(Discord) //If not valid ID just send what they typed
-    } else { //Didn't find applicant
-      message.channel.send("Couldn't find that applicant")
+  bot.con.query(`SELECT discord_id, discord_username FROM applications WHERE in_game_id = '${ID}'`, function (err, result) {
+    if (err) {
+      console.log(err)
+      message.channel.send("There was an error")
+    } else {
+      if (result.length > 0) {
+        message.channel.send(`<@${result[0].discord_id}> (${result[0].discord_username})`)
+      } else {
+        message.channel.send("Couldn't find that applicant")
+      }
     }
-  });
+  })
 }
 
 module.exports.help = {

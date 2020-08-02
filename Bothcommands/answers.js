@@ -12,30 +12,29 @@ module.exports.run = async (bot, message, args) => {
   const ID = args[0]
   if (!ID) return message.channel.send("Must specify their id") //if no id
 
-  authentication.authenticate().then(async (auth) => {
-    let AnswersEmbed = new Discord.MessageEmbed()
-      .setColor("RANDOM")
+  let AnswersEmbed = new Discord.MessageEmbed()
+    .setColor("RANDOM")
 
-    if (message.guild.id == botconfig.PIGSServer) var SignMeUpIndex = botconfig.PIGSSignMeUpIndex //Get the index of signmeup based on the guild the message is in
-    else if (message.guild.id == botconfig.RTSServer) var SignMeUpIndex = botconfig.RTSSignMeUpIndex
-
-    await functions.FindApplicant(auth, message.channel, ID, botconfig.ApplicationInGameIDIndex, SignMeUpIndex, function (row) { //Find the applicant
-      AnswersEmbed.setTitle(`Answers for ${row[botconfig.ApplicationInGameNameIndex]}`) //Add answers
-      AnswersEmbed.addField("This sounds serious but it's totally not! Why should we choose you?", row[botconfig.ApplicationWhyIndex])
-      if (row[botconfig.ApplicationAnythingIndex]) AnswersEmbed.addField("Say anything! (Hobbies, interests, field of work, whatever makes you, you!)", row[botconfig.ApplicationAnythingIndex])
-      AnswersEmbed.addField("How much do you play per week right now?", row[botconfig.ApplicationPlayTimeIndex])
-      if (row[0] == "") { //If they don't have a status
-        functions.UpdateApplicantStatus(auth, message.channel, ID, SignMeUpIndex, "Under review") //Set it to Under review
-      }
-    })
-
-
-    if (!AnswersEmbed.fields[0]) { //no added fields
-      message.channel.send("Couldn't find that applicant")
-      return;
+  bot.con.query(`SELECT in_game_name, why, anything, play_per_week, app_id, status WHERE in_game_id = '${ID}'`, function (err, result, fields) {
+    if (err) {
+      console.log(err)
+      message.channel.send("There was an error")
     }
-    message.channel.send(AnswersEmbed)
-  });
+    result.forEach(applicant => {
+      AnswersEmbed.setTitle(`Answers for ${applicant.in_game_name}`) //Add answers
+      AnswersEmbed.addField("This sounds serious but it's totally not! Why should we choose you?", applicant.why)
+      if (applicant.anything) AnswersEmbed.addField("Say anything! (Hobbies, interests, field of work, whatever makes you, you!)", applicant.anything)
+      AnswersEmbed.addField("How much do you play per week right now?", applicant.play_per_week)
+      if (applicant.status == "Received") functions.UpdateApplicantStatus(bot.con, message.channel, applicant.app_id, "Under review") //Set it to Under review
+
+    });
+  })
+
+  if (!AnswersEmbed.fields[0]) { //no added fields
+    message.channel.send("Couldn't find that applicant")
+    return;
+  }
+  message.channel.send(AnswersEmbed)
 
 }
 

@@ -251,45 +251,19 @@ module.exports = {
 
     /**
      * @summary Updates the status of an applicant
-     * @param {OAuth2Client} auth Sheets
+     * @param {import("mysql").Connection} con Con
      * @param {Discord.GuildChannel} channel Discord channel
      * @param {String} ID The ID of the applicant
-     * @param {Number} CompanyIndex The sign me up column index
      * @param {String} Status What to change their status too
-     * @param {String} [Column=A] What column the status is
      */
-    UpdateApplicantStatus: function (auth, channel, ID, CompanyIndex, Status, Column) {
-        if (!Column) Column = "A";
-        return new Promise(async resolve => {
-            const sheets = google.sheets({
-                version: 'v4',
-                auth
-            });
-            await this.FindApplicant(auth, channel, ID, botconfig.ApplicationInGameIDIndex, CompanyIndex, async function (row, RowIndex) { //Find all applicants with the ID
-                return new Promise(resolve => {
-                    sheets.spreadsheets.values.update({
-                        auth: auth,
-                        spreadsheetId: botconfig.Applications,
-                        range: `${Column}${RowIndex}:${Column}${RowIndex}`,
-                        valueInputOption: "USER_ENTERED",
-                        resource: {
-                            majorDimension: "COLUMNS",
-                            values: [
-                                [Status]
-                            ] //Change column A in RowIndex to the status
-                        }
-                    }, (err, response) => {
-                        if (err) {
-                            channel.send(`The API returned an ${err}`);
-                            return;
-                        } else {
-                            channel.send(`Marked applicant as ${Status}`)
-                            resolve()
-                        }
-                    })
-                })
-            })
-            resolve();
+    UpdateApplicantStatus: function (con, channel, ID, Status, Reason = "") {
+        con.query(`UPDATE applications SET status = '${Status}', reason = '${Reason}' WHERE app_id = '${ID}' OR in_game_id = '${ID}'`, function (err, result, fields) {
+            if (err) {
+                console.log(err)
+                channel.send("There was an error")
+            } else {
+                channel.send(`Updated status to **${Status}**`)
+            }
         })
     },
 
