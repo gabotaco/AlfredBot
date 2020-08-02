@@ -14,7 +14,7 @@ module.exports.run = async (bot, message, args) => {
 
   if (ID) { //if specified
     const today = new Date()
-    functions.UpdateApplicantStatus(bot.con, message.channel, ID, `Contacted`, today) //Updates
+    functions.UpdateApplicantStatus(bot.con, message.channel, ID, `Contacted`, `${message.author.displayName}: ${today.toDateString()}`) //Updates
 
   } else { //If nobody specified
     bot.con.query(`SELECT * FROM applications WHERE status = 'Contacted'`, function (err, result, fields) {

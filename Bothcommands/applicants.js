@@ -10,7 +10,7 @@ module.exports.run = async (bot, message, args) => {
 
   let FoundOne = false //Keep track of if there is at least one applicant
 
-  bot.con.query(`SELECT in_game_name, in_game_id, country, cooldown WHERE status = 'Received'`, function (err, result, fields) {
+  bot.con.query(`SELECT in_game_name, in_game_id, country, cooldown FROM applications WHERE status = 'Received'`, function (err, result, fields) {
     if (err) {
       console.log(err)
       message.channel.send("There was an error")
