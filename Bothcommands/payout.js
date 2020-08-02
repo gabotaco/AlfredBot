@@ -315,7 +315,7 @@ module.exports.run = async (bot, message, args) => {
                         if (err) return console.log(err)
 
                         //update deadline
-                        bot.con.query(`UPDATE members SET deadline = '${NewDeadline(memberDetails).toISOString().slice(0, 19).replace('T', ' ')}', last_turnin = '${CurrentDate}' WHERE in_game_id = '${MemberDetails.in_game_id}'`, function (err, result, fields) {
+                        bot.con.query(`UPDATE members SET deadline = '${NewDeadline(MemberDetails).toISOString().slice(0, 19).replace('T', ' ')}', last_turnin = '${CurrentDate}' WHERE in_game_id = '${MemberDetails.in_game_id}'`, function (err, result, fields) {
                             if (err) return console.log(err)
                             message.channel.send("Success!")
                         })

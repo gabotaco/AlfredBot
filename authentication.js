@@ -3,7 +3,7 @@ let readline = require('readline');
 let { OAuth2Client } = require('google-auth-library');
 
 let SCOPES = ['https://www.googleapis.com/auth/spreadsheets']; //you can add more scopes according to your permission need. But in case you change the scope, make sure you deleted the ~/.credentials/sheets.googleapis.com-nodejs-quickstart.json file
-const TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + '/.creds/'; //the directory where we're going to save the token
+const TOKEN_DIR =  './creds/'; //the directory where we're going to save the token
 const TOKEN_PATH = TOKEN_DIR + 'sheets.googleapis.com-nodejs-quickstart.json'; //the file which will contain the token
 
 class Authentication {
@@ -53,6 +53,7 @@ class Authentication {
         input: process.stdin,
         output: process.stdout
       });
+      
       rl.question('\n\nEnter the code from that page here: ', (code) => {
         rl.close();
         oauth2Client.getToken(code, (err, token) => { //use code to get token
@@ -61,6 +62,7 @@ class Authentication {
             reject();
           }
           oauth2Client.credentials = token; //set token
+          console.log(token)
           this.storeToken(token); //store token
           resolve(oauth2Client);
         });
@@ -76,8 +78,13 @@ class Authentication {
         throw err;
       }
     }
-    fs.writeFile(TOKEN_PATH, JSON.stringify(token)); //write file
-    console.log('Token stored to ' + TOKEN_PATH);
+    fs.writeFile(TOKEN_PATH, JSON.stringify(token), function (err) {
+      if (err) console.log(err)
+      else {
+        console.log('Token stored to ' + TOKEN_PATH);
+
+      }
+    }); //write file
   }
 }
 

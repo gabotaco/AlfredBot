@@ -196,7 +196,7 @@ bot.on("ready", async () => { //When the bot logs in
 
     bot.channels.cache.get(botconfig.RTSCEOSpamChannel).send("Restarted."); //Send a message to a channel
 
-    console.clear(); //Remove all the loaded console logs
+  //  console.clear(); //Remove all the loaded console logs
     console.log(`${bot.user.username} is online!`); //logs that the bot is online
 
 

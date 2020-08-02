@@ -141,7 +141,7 @@ module.exports.run = async (bot, message, args) => {
     
         // browser object - render html with chromium
         const browser = await puppeteer.launch({
-            executablePath: './node_modules/chromium/lib/chromium/chrome-win/chrome.exe'
+            args: ['--no-sandbox']
         });
         const page = await browser.newPage();
     
