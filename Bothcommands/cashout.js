@@ -3,6 +3,8 @@ const functions = require("../functions.js")
 const botconfig = require("../botconfig.json")
 
 module.exports.run = async (bot, message, args) => {
+  if (!message.member.hasPermission("KICK_MEMBERS")) return message.channel.send("You can't check managers cashouts") //If can't kick members
+
   const cashoutUser = message.guild.member(message.mentions.users.first() || message.guild.members.cache.get(args[0]) || message.member) //either first mention or member with the discord ID or the message author
   
   if (cashoutUser == message.member && message.member.id == "404650985529540618") { //if its rock doing a cashout and nobody is specified
