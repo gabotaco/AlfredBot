@@ -15,7 +15,7 @@ module.exports.run = async (bot, message, args) => {
         .addField("Created On", bot.user.createdAt)
         .addField("Memery Used in MB", memberused)
         .addField("Ping", bot.ws.ping)
-        .addField("Minutes online", Math.round((bot.uptime / 60) / 60)) //Convert to minutes
+        .addField("Minutes online", Math.round(bot.uptime / 60000)) //Convert to minutes
         .addField("GitHub", "https://github.com/Gabolicious/AlfredBot")
 
     return message.channel.send(botembed);
