@@ -83,8 +83,11 @@ function Auth(config) {
   process.nextTick(() => {
     if (config.savedTokensPath) {
       try {
+        console.log("READING")
         const tokensFile = fs.readFileSync(config.savedTokensPath);
-        tokens = JSON.parse(tokensFile);
+        console.log(tokensFile.toString())
+        tokens = JSON.parse(tokensFile.toString());
+        console.log(tokens)
       } catch(error) {
         // we need to get the tokens
         getTokens();

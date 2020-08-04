@@ -8,7 +8,7 @@ const Discord = require("discord.js")
 const config = {
     auth: {
         keyFilePath: path.resolve(__dirname, "../" + botconfig.GoogleAssistantKeyFile),
-        savedTokensPath: path.resolve(__dirname, '../tokens.json'), // where you want the tokens to be saved
+        savedTokensPath: "/root/Dropbox/JavaScript/discordBots/alfredBot/tokens.json", // where you want the tokens to be saved
     },
     conversation: {
         lang: 'en-US', // defaults to en-US, but try other ones, it's fun!
