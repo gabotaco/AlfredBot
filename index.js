@@ -338,7 +338,7 @@ async function ProcessMessage(message) {
     }
 }
 
-const optOutUnavailable = [botconfig.AltTabsID, "330015505211457551", "164326090825793536", "362112365405143042", "589389819277344768"]
+const optOutUnavailable = [botconfig.AltTabsID, "330015505211457551", "164326090825793536", "362112365405143042", "589389819277344768", "275000667444215811"]
 bot.on("presenceUpdate", (oldPresence, newPresence) => { //When a guild member's presence changes (online/offline or games)
     if (!oldPresence) return;
     if (oldPresence.member.hasPermission("KICK_MEMBERS") && newPresence.guild.id == botconfig.PIGSServer && !newPresence.user.bot) { //if its a pigs manager and the update is triggered in the pigs server
