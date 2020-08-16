@@ -39,7 +39,7 @@ module.exports.run = async (bot, message, args) => {
       }
     }, 5000);
 
-    request(`http://${ServerIP}:3012${ServerPort}/status/map/positions.json`, function (error, response, body) { //get server players
+    request(`http://${ServerIP}:3012${ServerPort}/status/widget/players.json`, function (error, response, body) { //get server players
       if (!error) { //If no error
         SentMessage = true; //sent message
         body = JSON.parse(body) //parse body
@@ -47,7 +47,7 @@ module.exports.run = async (bot, message, args) => {
           if (CompanyMembers.includes(player[2].toString())) { //if the player is in company
             playerNames.push(player[0]) //add player name
             playerID.push(player[2].toString()) //add player ID
-            playerJobs.push(player[5].name) //add player job
+            playerJobs.push(player[5]) //add player job
           }
         });
 

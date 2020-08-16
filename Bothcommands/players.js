@@ -34,7 +34,7 @@ module.exports.run = async (bot, message, args) => {
       }, 1000);
     }
 
-    request(`http://${botconfig.ActiveServers[index][0]}:${botconfig.ActiveServers[index][1]}/status/map/positions.json`, function (error, response, body) { //url to get all players
+    request(`http://${botconfig.ActiveServers[index][0]}:${botconfig.ActiveServers[index][1]}/status/widget/players.json`, function (error, response, body) { //url to get all players
       if (error) { //server is offline
         return;
       }

@@ -1,10 +1,11 @@
+
+const botconfig = require("../botconfig.json")
+const Discord = require("discord.js")
+/*
 'use strict';
 
 const path = require('path');
 const GoogleAssistant = require('../google');
-const botconfig = require("../botconfig.json")
-const Discord = require("discord.js")
-
 const config = {
     auth: {
         keyFilePath: path.resolve(__dirname, "../" + botconfig.GoogleAssistantKeyFile),
@@ -23,9 +24,10 @@ assistant
     })
     .on('error', (error) => {
         console.log('Assistant Error:', error);
-    });
+    });*/
 
 module.exports.run = async (bot, message, args) => {
+    return message.channel.send(`I don't wanna talk to you anymore`)
     const startConversation = (conversation) => {
         // setup the conversation
         conversation
