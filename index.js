@@ -38,22 +38,6 @@ bot.BothCommands = new Discord.Collection();
 
 bot.login(botconfig.token) //logs in the bot with the token found in botconfig.json
 
-app.get("/alfred/restart", function (req, res) {
-    if (!req.query.access_token) {
-        res.json({code: 404})
-        return;
-    }
-
-    if (req.query.access_token != botconfig.access_token) {
-        res.json({code: 404})
-        return;
-    }
-
-    bot.destroy();
-    bot.login(botconfig.token)
-    console.log("RESTARTED")
-    res.send("Success")
-})
 app.get("/roles/update", function (req, res) {
     if (!req.query.access_token) {
         res.json({code: 404})
