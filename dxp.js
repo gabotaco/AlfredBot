@@ -3,6 +3,9 @@ const request = require("request")
 const Discord = require("discord.js")
 
 module.exports.run = async (bot, message, args) => {
+    if (!message.member.roles.cache.has("562991083882151937") && !message.member.roles.cache.has("483297370482933760")) {
+        return message.channel.send("Must be a company member to use this command.")
+    }
     let ServerPoints = [] //Keeps double xp status in each server
     
     checkServer(0); //Check server 1
@@ -82,7 +85,9 @@ module.exports.run = async (bot, message, args) => {
                             return;
                         }
 
-                        if (response.data.licenses.exp_week) {
+                     //   console.log(index, players[0][2], response.data.licenses)
+
+                        if (response.data.licenses.exp_ee) {
                             addServerPoint("**Yes**")
                         } else {
                             addServerPoint("No")
