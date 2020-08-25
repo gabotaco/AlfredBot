@@ -1,7 +1,18 @@
-const botconfig = require("./botconfig.json");
+const botconfig = require("../botconfig.json");
 const request = require("request")
 const Discord = require("discord.js")
-
+function toTimeFormat(ms_num) {
+        var sec_num = ms_num / 1000
+        var hours   = Math.floor(sec_num / 3600);
+        var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+        var seconds = sec_num - (hours * 3600) - (minutes * 60);
+    
+        if (hours   < 10) {hours   = "0"+hours;}
+        if (minutes < 10) {minutes = "0"+minutes;}
+        if (seconds < 10) {seconds = "0"+seconds;}
+        seconds = Math.round(seconds)
+        return hours + 'h ' + minutes + 'm ' + seconds + 's';
+}
 module.exports.run = async (bot, message, args) => {
     if (!message.member.roles.cache.has("562991083882151937") && !message.member.roles.cache.has("483297370482933760")) {
         return message.channel.send("Must be a company member to use this command.")
@@ -61,39 +72,10 @@ module.exports.run = async (bot, message, args) => {
                 return
             }
 
-            if (jsonBody.players.length < 1) {
+            if (!jsonBody.server.dxp[0]) {
                 addServerPoint("No")
             } else {
-                const options = {
-                    url: `http://${botconfig.ActiveServers[index][0]}:${botconfig.ActiveServers[index][1]}/status/dataadv/${jsonBody.players[0][2]}`,
-                    headers: botconfig.TTHeaders
-                }
-                request(options, function (err, res, html) {
-                    if (err) {
-                        console.log(err)
-                        addServerPoint("OFFLINE")
-                    } else {
-                        try {
-                            var response = JSON.parse(html)
-                        } catch (e) {
-
-                        }
-
-                        if (!response || response.code == "408") {
-                            console.log(response, html)
-                            addServerPoint("OFFLINE")
-                            return;
-                        }
-
-                     //   console.log(index, players[0][2], response.data.licenses)
-
-                        if (response.data.licenses.exp_ee) {
-                            addServerPoint("**Yes**")
-                        } else {
-                            addServerPoint("No")
-                        }
-                    }
-                })
+                addServerPoint(`**${toTimeFormat(jsonBody.server.dxp[2] + jsonBody.server.dxp[3])}**`)
             }
         });
     }
