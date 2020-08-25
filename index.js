@@ -1,6 +1,7 @@
 let LastPerson = "439959655448313866"; //Last person to send a message to the one word story channel in PIGS discord
 const botconfig = require("./botconfig.json");
 const Discord = require("discord.js");
+const request = require("request")
 const fs = require("fs");
 const mysql = require("mysql")
 const authentication = require("./authentication");
@@ -23,11 +24,16 @@ con.connect(function (err) { //perform connection
 
 const bot = new Discord.Client({
     partials: ['REACTION', "MESSAGE"],
-    presence: {status: "online", activity: {
-        application: {id: "487059411001540618"},
-        name: "Transport Tycoon",
-        type: "PLAYING"
-    }}
+    presence: {
+        status: "online",
+        activity: {
+            application: {
+                id: "487059411001540618"
+            },
+            name: "Transport Tycoon",
+            type: "PLAYING"
+        }
+    }
 }) //declares new bot that can't @ everyone
 
 bot.con = con; //save connection to bot so i can access in commands
@@ -40,17 +46,23 @@ bot.login(botconfig.token) //logs in the bot with the token found in botconfig.j
 
 app.get("/roles/update", function (req, res) {
     if (!req.query.access_token) {
-        res.json({code: 404})
+        res.json({
+            code: 404
+        })
         return;
     }
 
     if (req.query.access_token != botconfig.access_token) {
-        res.json({code: 404})
+        res.json({
+            code: 404
+        })
         return;
     }
 
     if (!req.query.server || !req.query.member) {
-        res.json({code: 404})
+        res.json({
+            code: 404
+        })
         return;
     }
 
@@ -64,22 +76,30 @@ app.get("/roles/update", function (req, res) {
     }
 
     bot.BothCommands.get("roles").run(bot, fakeMessage, [])
-    res.json({"success": "Yes"})
+    res.json({
+        "success": "Yes"
+    })
 })
 
 app.get("/member/message", function (req, res) {
     if (!req.query.access_token) {
-        res.json({code: 404})
+        res.json({
+            code: 404
+        })
         return;
     }
 
     if (req.query.access_token != botconfig.access_token) {
-        res.json({code: 404})
+        res.json({
+            code: 404
+        })
         return;
     }
 
     if (!req.query.member || !req.query.name) {
-        res.json({code: 404})
+        res.json({
+            code: 404
+        })
         return;
     }
 
@@ -89,9 +109,11 @@ app.get("/member/message", function (req, res) {
         member = bot.guilds.cache.get("487285826544205845").members.cache.get(req.query.member)
     }
     if (!member) {
-        res.json({"Error": "Couldn't find member"})
-         console.log("COULDN'T FIND MEMBER")
-         return
+        res.json({
+            "Error": "Couldn't find member"
+        })
+        console.log("COULDN'T FIND MEMBER")
+        return
     }
     member.send(`
 ***Great news ${req.query.name}! You’re the newest member of RC!***
@@ -122,7 +144,9 @@ Use the toggles on the left side to see points of interest for both companies.
 Also know that you can switch between PIGS and RTS any time. Find a manager from the company you’d like to change to in-game and ask. It’s really no trouble! Use the map to see all managers online.
     `)
 
-    res.json({"success": "Yes"})
+    res.json({
+        "success": "Yes"
+    })
 })
 
 app.listen(726, function () {
@@ -180,11 +204,64 @@ bot.on("ready", async () => { //When the bot logs in
 
     bot.channels.cache.get(botconfig.RTSCEOSpamChannel).send("Restarted."); //Send a message to a channel
 
-  //  console.clear(); //Remove all the loaded console logs
+    //  console.clear(); //Remove all the loaded console logs
     console.log(`${bot.user.username} is online!`); //logs that the bot is online
 
-
+    setInterval(checkForDxp, 30 * 60000)
+    checkForDxp()
 });
+
+function checkForDxp() {
+    function toTimeFormat(ms_num) {
+        var sec_num = ms_num / 1000
+        var hours = Math.floor(sec_num / 3600);
+        var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+        var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+        if (hours < 10) {
+            hours = "0" + hours;
+        }
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+        if (seconds < 10) {
+            seconds = "0" + seconds;
+        }
+        seconds = Math.round(seconds)
+        return hours + 'h ' + minutes + 'm ' + seconds + 's';
+    }
+
+    checkServer(0); //Check server 1
+
+    function checkServer(index) {
+        if (index < botconfig.ActiveServers.length - 1) { //if its not the last server
+            setTimeout(() => {
+                checkServer(index + 1) //check next one after 500 ms
+            }, 500);
+        } else { //last one
+            return;
+        }
+
+        request(`http://${botconfig.ActiveServers[index][0]}:${botconfig.ActiveServers[index][1]}/status/widget/players.json`, function (error, response, body) { //url to get all players
+            if (error) { //server is offline
+                return;
+            }
+
+            try {
+                var jsonBody = JSON.parse(body); //convert to json so we can use it
+            } catch (e) {
+                //Handle or naw
+                return
+            }
+
+            if (jsonBody.server.dxp[0]) {
+                const dxpMessage = `There's double experience on **server ${jsonBody.server.number}** for another **${toTimeFormat(jsonBody.server.dxp[2] + jsonBody.server.dxp[3])}** :eyes:`
+                bot.channels.cache.get("747859854424801401").send(dxpMessage)
+                bot.channels.cache.get("747859721922412736").send(dxpMessage)
+            }
+        });
+    }
+}
 
 bot.on("messageDeleteBulk", async messages => { //When multiple messages are deleted (.clear)
     let DeletedMessages = new Discord.MessageEmbed()
