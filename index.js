@@ -72,7 +72,8 @@ app.get("/roles/update", function (req, res) {
         },
         "guild": bot.guilds.cache.get(req.query.server),
         "channel": bot.guilds.cache.get("447157938390433792").channels.cache.get("727993411461841038"),
-        "member": bot.guilds.cache.get(req.query.server).members.cache.get(req.query.member)
+        "member": bot.guilds.cache.get(req.query.server).members.cache.get(req.query.member),
+        "fake": true
     }
 
     bot.BothCommands.get("roles").run(bot, fakeMessage, [])
@@ -548,7 +549,8 @@ bot.on("messageReactionAdd", async (reaction, user) => {
         },
         "guild": reaction.message.guild,
         "channel": user,
-        "member": reaction.message.guild.members.cache.get(user.id)
+        "member": reaction.message.guild.members.cache.get(user.id),
+        "fake": true
     }
     switch (reaction.message.id) {
         case "705249775984836640":
