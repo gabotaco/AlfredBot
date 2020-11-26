@@ -400,17 +400,16 @@ async function ProcessMessage(message) {
     }
 }
 
-const optOutUnavailable = [botconfig.AltTabsID, "330015505211457551", "164326090825793536", "362112365405143042", "589389819277344768", "275000667444215811"]
+//const optOutUnavailable = [botconfig.AltTabsID, "330015505211457551", "164326090825793536", "362112365405143042", "589389819277344768", "275000667444215811"]
 bot.on("presenceUpdate", (oldPresence, newPresence) => { //When a guild member's presence changes (online/offline or games)
     if (!oldPresence) return;
-    if (oldPresence.member.hasPermission("KICK_MEMBERS") && newPresence.guild.id == botconfig.PIGSServer && !newPresence.user.bot) { //if its a pigs manager and the update is triggered in the pigs server
-        if ((newPresence.status == "offline" || newPresence.status == "idle") && !newPresence.member.roles.cache.has(botconfig.PIGSUnavailableRole)) return newPresence.member.roles.add(botconfig.PIGSUnavailableRole) // if they are now offline and don't have the pigs unavailable role, add the unavailable role
-        else if ((newPresence.status == "online" || newPresence.status == "dnd") && newPresence.member.roles.cache.has(botconfig.PIGSUnavailableRole) && (optOutUnavailable.includes(newPresence.member.id))) return newPresence.member.roles.remove(botconfig.PIGSUnavailableRole) //If they are now online and have the unavailable role and are alt tabs or solid 2 hours it will auto make em available
-    } else if (oldPresence.member.hasPermission("KICK_MEMBERS") && newPresence.guild.id == botconfig.RTSServer) { //if its a rts manager and the update is triggered in the rts server
-        if ((newPresence.status == "offline" || newPresence.status == "idle") && !newPresence.member.roles.cache.has(botconfig.RTSUnavailableRole)) return newPresence.member.roles.add(botconfig.RTSUnavailableRole) //If they are offline now and don't have the unavailable role it adds it
-        else if ((newPresence.status == "online" || newPresence.status == "dnd") && newPresence.member.roles.cache.has(botconfig.RTSUnavailableRole) && (optOutUnavailable.includes(newPresence.member.id))) return newPresence.member.roles.remove(botconfig.RTSUnavailableRole) //If they are now online and have the unavailable role and are alt tabs or solid 2 hours it will auto make em available
-
-    }
+    // if (oldPresence.member.hasPermission("KICK_MEMBERS") && newPresence.guild.id == botconfig.PIGSServer && !newPresence.user.bot) { //if its a pigs manager and the update is triggered in the pigs server
+    //     if ((newPresence.status == "offline" || newPresence.status == "idle") && !newPresence.member.roles.cache.has(botconfig.PIGSUnavailableRole)) return newPresence.member.roles.add(botconfig.PIGSUnavailableRole) // if they are now offline and don't have the pigs unavailable role, add the unavailable role
+    //     else if ((newPresence.status == "online" || newPresence.status == "dnd") && newPresence.member.roles.cache.has(botconfig.PIGSUnavailableRole) && (optOutUnavailable.includes(newPresence.member.id))) return newPresence.member.roles.remove(botconfig.PIGSUnavailableRole) //If they are now online and have the unavailable role and are alt tabs or solid 2 hours it will auto make em available
+    // } else if (oldPresence.member.hasPermission("KICK_MEMBERS") && newPresence.guild.id == botconfig.RTSServer) { //if its a rts manager and the update is triggered in the rts server
+    //     if ((newPresence.status == "offline" || newPresence.status == "idle") && !newPresence.member.roles.cache.has(botconfig.RTSUnavailableRole)) return newPresence.member.roles.add(botconfig.RTSUnavailableRole) //If they are offline now and don't have the unavailable role it adds it
+    //     else if ((newPresence.status == "online" || newPresence.status == "dnd") && newPresence.member.roles.cache.has(botconfig.RTSUnavailableRole) && (optOutUnavailable.includes(newPresence.member.id))) return newPresence.member.roles.remove(botconfig.RTSUnavailableRole) //If they are now online and have the unavailable role and are alt tabs or solid 2 hours it will auto make em available
+    // }
 
     if (oldPresence.member.roles.cache.has(botconfig.RTSGuestRole) || oldPresence.guild.id == botconfig.PIGSServer) return; //if its a guest or is in the pigs server stop the command
 
