@@ -20,9 +20,10 @@ module.exports.run = async (bot, message, args) => {
 
         var CompanyName = "rts"
     }
-    bot.con.query(`SELECT discord_id, deadline, in_game_name FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) { //get all hired members
+    bot.con.query(`SELECT discord_id, deadline, in_game_name, last_turnin, company FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) { //get all hired members
         if (err) return console.log(err)
         const discordIDS = []; //all discords of inavtive users
+        let notified = 0; //track how many notified
 
         const last = new Discord.MessageEmbed()
             .setTitle("List of inactive users")
@@ -34,32 +35,31 @@ module.exports.run = async (bot, message, args) => {
         let FieldsAdded = 0
         result.forEach(member => {
             const DiscordMember = message.guild.members.cache.get((member.discord_id).toString()) //find member in discord
-            if (!DiscordMember) message.channel.send("Couldn't find member with id <@" + (member.discord_id) + "> in this discord") //If member isn't in discord
             const D3 = D2 - new Date(member.deadline) //difference between deadline and today
 
             if (D3 >= 0) { //if past deadline
-                const DiscordMember = message.guild.members.cache.get((member.discord_id).toString()) //find member in discord
-                if (DiscordMember && !DiscordMember.roles.cache.has(InactiveRole)) DiscordMember.roles.add(InactiveRole) //if the member is in discord and doesn't have inactive role then add inactive role
-                else if (!DiscordMember) message.channel.send("Couldn't find member with id <@" + (member.discord_id) + "> in this discord") //If member isn't in discord
-
+                if (!DiscordMember.roles.cache.has(InactiveRole)) DiscordMember.roles.add(InactiveRole) //if the member is in discord and doesn't have inactive role then add inactive role
+                notified++ //Increase notify
+                DiscordMember.send("Greetings. \n \n It's come to my attention that you have not met your required voucher deadline. I'm reaching out to notify you that you have 7 days left until you're removed for inactivity. \n \n If you have any questions, please reach out to Rock or Gabo. \n \n Have a wonderful day")
+                    .catch(() => message.reply(`Couldn't dm <@${DiscordMember.id}>`)); //notify and if can't tell us
                 if (FieldsAdded < 25) { //Less than 25 fields
                     FieldsAdded++ //add field
-                    last.addField(`${member.in_game_name} (${(member.discord_id)})`, member.last_turnin, false) //embed 1
+                    last.addField(`${member.in_game_name} (${(member.discord_id)})`, `Last turnin: ${member.last_turnin}`, false) //embed 1
 
                     discordIDS.push((member.discord_id)) //push discord id's
                 } else if (FieldsAdded >= 25 && FieldsAdded < 50) { //25 or more and less than 50
                     FieldsAdded++
-                    last2.addField(`${member.in_game_name} (${(member.discord_id)})`, member.last_turnin, false) //embed 2
+                    last2.addField(`${member.in_game_name} (${(member.discord_id)})`, `Last turnin: ${member.last_turnin}`, false) //embed 2
 
                     discordIDS.push((member.discord_id))
                 } else if (FieldsAdded >= 50 && FieldsAdded < 75) { //50 or more and less than 75
                     FieldsAdded++
-                    last3.addField(`${member.in_game_name} (${(member.discord_id)})`, member.last_turnin, false) //embed 3
+                    last3.addField(`${member.in_game_name} (${(member.discord_id)})`, `Last turnin: ${member.last_turnin}`, false) //embed 3
 
                     discordIDS.push((member.discord_id))
                 } else if (FieldsAdded >= 75) { //75 or more
                     FieldsAdded++
-                    last4.addField(`${member.in_game_name} (${(member.discord_id)})`, member.last_turnin, false) //embed 4
+                    last4.addField(`${member.in_game_name} (${(member.discord_id)})`, `Last turnin: ${member.last_turnin}`, false) //embed 4
 
                     discordIDS.push((member.discord_id))
                 }
@@ -82,15 +82,6 @@ module.exports.run = async (bot, message, args) => {
                 message.channel.send(last4) //send 4
             }
         } else if (args[0].toLowerCase() == "notify") { //If first arg is notify
-            let notified = 0; //track how many notified
-
-            message.guild.members.cache.forEach(element => { //go through all members in discord
-                if (discordIDS.includes(element.id)) { //If member is in array
-                    notified++ //Increase notify
-                    element.send("Greetings. \n \n It's come to my attention that you have not met your required voucher deadline. I'm reaching out to notify you that you have 7 days left until you're removed for inactivity. \n \n If you have any questions, please reach out to Rock or Gabo. \n \n Have a wonderful day")
-                        .catch(() => message.reply(`Couldn't dm <@${element.id}>`)); //notify and if can't tell us
-                }
-            });
             message.channel.send(`DM'd ${notified} people`) //inform
         }
     })

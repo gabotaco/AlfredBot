@@ -23,7 +23,7 @@ con.connect(function (err) { //perform connection
 })
 
 const bot = new Discord.Client({
-    partials: ['REACTION', "MESSAGE"],
+    partials: ['REACTION', "MESSAGE"], //emit these events
     presence: {
         status: "online",
         activity: {
@@ -33,8 +33,14 @@ const bot = new Discord.Client({
             name: "Transport Tycoon",
             type: "PLAYING"
         }
-    }
-}) //declares new bot that can't @ everyone
+    },
+    shards: "auto",
+    messageCacheMaxSize: -1, //Infinite messages
+    messageCacheLifetime: 86400, //1 day
+    messageSweepInterval: 3600, //every hour
+    messageEditHistoryMaxSize: 0, //don't hold past message edits
+    fetchAllMembers: true //cache all members
+})
 
 bot.con = con; //save connection to bot so i can access in commands
 
