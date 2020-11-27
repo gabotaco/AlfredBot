@@ -23,7 +23,7 @@ module.exports.run = async (bot, message, args) => {
             if (!message.fake) message.channel.send("You must specify a discord member.")
             return
         }
-        if (args[0] && person == message.member) return message.channel.send("Couldn't find specified member")
+        if (args[0] && person == message.member && args[0] != message.member.id) return message.channel.send("Couldn't find specified member")
         if (message.guild.id == botconfig.PIGSServer) {
             var alwaysKeep = ["487285826544205845", "576784981024571412", "487288337065836558", "572838338470346757", "546071134961926148", "529644127734988821", "539250396653289492", "518527151960752131", "520761019841118219", "511347144683290624", "498885132468486175", "495359477701410816", "493805677546831872", "511148681681174528", "487289181685678090", "491992119049977867", "490261228585746433", "526107078838714368", "489242068770619403", "510237061719261194", "513844670611193866", "516802932260470825", "516803056222994442", "487288297421406208", "487623401247342613", "492446479554838528", "487286418855428096", "495650147754311690", "499007548993568768", "487289216968032256", "539240789809692691", "501822882071052308", "530765121522499584", "487286138529120256"]
             var employeeID = "562991083882151937"
@@ -55,7 +55,6 @@ module.exports.run = async (bot, message, args) => {
     await person.roles.add(GuestRole) //add guest role
 
     var MemberDetails = await functions.GetMemberDetails(bot, "discord_id", person.id) //get member details with message.channel
-
 
     if (MemberDetails) { //if member is in database
         if (MemberDetails.company == "fired") return message.channel.send("Guest role."); //if fired stop
