@@ -44,7 +44,7 @@ module.exports.run = async (bot, message, args) => {
                 if (!DiscordMember.roles.cache.has(InactiveRole)) DiscordMember.roles.add(InactiveRole) //if the member is in discord and doesn't have inactive role then add inactive role
                 notified++ //Increase notify
                 DiscordMember.send("Greetings. \n \n It's come to my attention that you have not met your required voucher deadline. I'm reaching out to notify you that you have 7 days left until you're removed for inactivity. \n \n If you have any questions, please reach out to Rock or Gabo. \n \n Have a wonderful day")
-                    .catch(() => message.reply(`Couldn't dm <@${DiscordMember.id}>`)); //notify and if can't tell us
+                    .catch(() => message.channel.send(`Couldn't dm <@${DiscordMember.id}>. They probably disabled it.`)); //notify and if can't tell us
                 if (FieldsAdded < 25) { //Less than 25 fields
                     FieldsAdded++ //add field
                     last.addField(`${member.in_game_name} (${(member.discord_id)})`, `Last turnin: ${member.last_turnin}`, false) //embed 1
