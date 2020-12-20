@@ -36,7 +36,10 @@ module.exports.run = async (bot, message, args) => {
         result.forEach(member => {
             const DiscordMember = message.guild.members.cache.get((member.discord_id).toString()) //find member in discord
             const D3 = D2 - new Date(member.deadline) //difference between deadline and today
-
+            if (!DiscordMember) {
+                message.channel.send(`<@${member.discord_id}> ${member.in_game_name} is no longer in the server...`)
+                return;
+            }
             if (D3 >= 0) { //if past deadline
                 if (!DiscordMember.roles.cache.has(InactiveRole)) DiscordMember.roles.add(InactiveRole) //if the member is in discord and doesn't have inactive role then add inactive role
                 notified++ //Increase notify
