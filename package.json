@@ -17,7 +17,7 @@
     "grpc": "^1.24.3",
     "handlebars": "^4.7.6",
     "libsodium-wrappers": "^0.7.4",
-    "mathjs": "^7.0.2",
+    "mathjs": "^7.5.1",
     "mysql": "^2.17.1",
     "node-addon-api": "^1.6.2",
     "node-gyp": "^5.0.1",
