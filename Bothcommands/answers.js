@@ -1,6 +1,4 @@
 const Discord = require("discord.js")
-const authentication = require("../authentication");
-const botconfig = require("../botconfig.json");
 const functions = require("../functions.js")
 
 module.exports.run = async (bot, message, args) => {
@@ -20,7 +18,6 @@ module.exports.run = async (bot, message, args) => {
       console.log(err)
       message.channel.send("There was an error")
     }
-    console.log(result)
     result.forEach(applicant => {
       AnswersEmbed.setTitle(`Answers for ${applicant.in_game_name}`) //Add answers
       AnswersEmbed.addField("This sounds serious but it's totally not! Why should we choose you?", applicant.why)
@@ -34,9 +31,6 @@ module.exports.run = async (bot, message, args) => {
   }
   message.channel.send(AnswersEmbed)
   })
-
-
-
 }
 
 module.exports.help = {
