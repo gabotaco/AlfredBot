@@ -51,21 +51,7 @@ module.exports.run = async (bot, message, args) => {
         if (CompanyMembers.includes(player[2].toString())) CurrentServerPoints++ //if player is in company increase score
       });
 
-      if (botconfig.ActiveServers[index][0] == "na.tycoon.community") { //if the ip starts with na
-        if (botconfig.ActiveServers[index][1].endsWith("0")) { //if port ends with 0
-          ServerPoints.push([CurrentServerPoints, "6"]) //Add array into array [points, server num]
-        } else if (botconfig.ActiveServers[index][1].endsWith("5")) { //port ends with 5
-          ServerPoints.push([CurrentServerPoints, "A"]) //Server A
-        } else { //port ends with whatever is
-          ServerPoints.push([CurrentServerPoints, 5 + parseInt(botconfig.ActiveServers[index][1].charAt(botconfig.ActiveServers[index][1].length - 1))]) //Server num is last port num + 5
-        }
-      } else { //not na
-        if (botconfig.ActiveServers[index][1].endsWith("0")) { //port ends with 0
-          ServerPoints.push([CurrentServerPoints, "1"]) //server 1
-        } else { //port ends with something else
-          ServerPoints.push([CurrentServerPoints, botconfig.ActiveServers[index][1].charAt(botconfig.ActiveServers[index][1].length - 1)]) //server num is last num of port
-        }
-      }
+      ServerPoints.push([CurrentServerPoints, botconfig.ActiveServers[index][2]]) //Add array into array [points, server num]
     });
   }
 

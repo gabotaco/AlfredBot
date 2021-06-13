@@ -21,13 +21,13 @@ module.exports.run = async (bot, message, args) => {
 
             request(`http://${botconfig.ActiveServers[index][0]}:${botconfig.ActiveServers[index][1]}/info.json`, function (error, response, body) { //url to get all players
                 if (error) { //server is offline
-                    ServerStatus.addField(functions.GetServerNumber(botconfig.ActiveServers[index][0], botconfig.ActiveServers[index][1]), "OFFLINE", true)
+                    ServerStatus.addField(botconfig.ActiveServers[index][2], "OFFLINE", true)
                     return;
                 }
 
                 const JSONBody = JSON.parse(body); //convert to json so we can use it
 
-                ServerStatus.addField(functions.GetServerNumber(botconfig.ActiveServers[index][0], botconfig.ActiveServers[index][1]), JSONBody.vars.Uptime, true)
+                ServerStatus.addField(botconfig.ActiveServers[index][2], JSONBody.vars.Uptime, true)
               
             });
         }

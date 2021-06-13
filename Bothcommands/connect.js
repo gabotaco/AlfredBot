@@ -11,7 +11,7 @@ module.exports.run = async (bot, message, args) => {
   const ConnectEmbed = new Discord.MessageEmbed()
   .setTitle(`Connect to Server ${args[0]}`)
   .setColor("RANDOM")
-  .setDescription(`<fivem:\//connect/${ServerIP}:3012${ServerPort}>`)
+  .setDescription(`<fivem:\//connect/${ServerIP}:${ServerPort}>`)
   message.channel.send(ConnectEmbed)
 }
 

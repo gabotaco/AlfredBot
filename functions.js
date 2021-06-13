@@ -76,21 +76,23 @@ module.exports = {
 
         if (ServerNumber.toLowerCase() == "a") { //if the server number is A
             var serverIP = "na.tycoon.community" //ip is na
-            server = 5 //last port number is 5
+            server = 30125 //last port number is 5
+        } else if (server == 1) {
+            var serverIP = "server.tycoon.community" //server ip is server
+            server = 30169
         } else if (server > 1 && server < 6) { //if the server number is higher than 1 and less than 6
             var serverIP = "server.tycoon.community" //server ip is server. and last port number is the same provided in the servernumber
+            server += 30120
         } else if (server == 0) { //if they say server 0
             var serverIP = "server.tycoon.community" //server ip is server.
-            server = 1 //last port number is 1
+            server = 30121 //last port number is 1
         } else if (server > 6) { //if the number is higher than 6
             var serverIP = "na.tycoon.community" //na.
             server -= 5 //last port number is that number minues 5
-        } else if (server == 1) {
-            var serverIP = "server.tycoon.community";
-            server = 0;
+            server += 30120
         } else { //any other server
             var serverIP = "na.tycoon.community" //na.
-            server = 0 //server port is 0
+            server = 30120 //server port is 0
         }
 
         return [serverIP, server]
@@ -104,7 +106,7 @@ module.exports = {
      */
     GetServerNumber: function (serverIP, serverPort) {
         switch (`${serverIP}:${serverPort}`) {
-            case "server.tycoon.community:30120":
+            case "server.tycoon.community:30169":
                 return "1"
             case "server.tycoon.community:30122":
                 return "2"

@@ -35,21 +35,7 @@ module.exports.run = async (bot, message, args) => {
                     if (player[5] == "P.I.G.S. Robberrery") CurrentServerPoints++ //if theres someone with a pigs job increase points
                 });
 
-                if (botconfig.ActiveServers[index][0] == "na.tycoon.community") { //If its na
-                    if (botconfig.ActiveServers[index][1].endsWith("0")) { //if the port ends with 0
-                        ServerPoints.push([CurrentServerPoints, "6"]) //Server 6
-                    } else if (botconfig.ActiveServers[index][1].endsWith("5")) { //if port ends with 5
-                        ServerPoints.push([CurrentServerPoints, "A"]) //server 5
-                    } else {
-                        ServerPoints.push([CurrentServerPoints, 5 + parseInt(botconfig.ActiveServers[index][1].charAt(botconfig.ActiveServers[index][1].length - 1))]) //Server num is last num of port + 5
-                    }
-                } else { //if not na
-                    if (botconfig.ActiveServers[index][1].endsWith("0")) { //if the port ends with 0
-                        ServerPoints.push([CurrentServerPoints, "1"]) //Server 1
-                    } else {
-                        ServerPoints.push([CurrentServerPoints, botconfig.ActiveServers[index][1].charAt(botconfig.ActiveServers[index][1].length - 1)]) //Server num is last num of port
-                    }
-                }
+                ServerPoints.push([CurrentServerPoints, botconfig.ActiveServers[index][2]])
             });
         }
 

@@ -39,7 +39,7 @@ module.exports.run = async (bot, message, args) => {
       }
     }, 5000);
 
-    request(`http://${ServerIP}:3012${ServerPort}/status/widget/players.json`, function (error, response, body) { //get server players
+    request(`http://${ServerIP}:${ServerPort}/status/widget/players.json`, function (error, response, body) { //get server players
       if (!error) { //If no error
         SentMessage = true; //sent message
         body = JSON.parse(body) //parse body
