@@ -77,7 +77,7 @@ module.exports = {
         if (ServerNumber.toLowerCase() == "a") { //if the server number is A
             var serverIP = "na.tycoon.community" //ip is na
             server = 30125 //last port number is 5
-        } else if (server == 1) {
+        } else if (server == 1 || ServerNumber.toLowerCase() == "os") {
             var serverIP = "server.tycoon.community" //server ip is server
             server = 30169
         } else if (server > 1 && server < 6) { //if the server number is higher than 1 and less than 6
