@@ -11,7 +11,6 @@ module.exports.run = async (bot, message, args) => {
     const SearchColumn = Response[0]
     const ID = Response[1]
 
-
     const MemberInfo = await functions.GetMemberDetails(bot, SearchColumn, ID) //Get their member info
     if (!MemberInfo) return message.channel.send("Couldn't find that user") //no member data
 

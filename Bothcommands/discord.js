@@ -1,7 +1,3 @@
-const authentication = require("../authentication");
-const botconfig = require("../botconfig.json");
-const functions = require("../functions.js")
-
 module.exports.run = async (bot, message, args) => {
   if (!message.member.hasPermission("MANAGE_NICKNAMES")) { //If can't manage nicknames
     message.channel.send("You aren't allowed to do that")

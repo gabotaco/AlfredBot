@@ -28,7 +28,7 @@ module.exports.run = async (bot, message, args) => {
         if (user) { //if in server the message
           user.send(`Hello,
 
-This message is in regards to your recent application to PIGS. We'd like to thank you for your interest in our company and what we do.
+This message is in regards to your recent application to RC. We'd like to thank you for your interest in our company and what we do.
                           
 Here at the Rockwell Corporation, we strive to maintain a tight-knit community of helpful, happy, and active members. As such, we perform background checks with Transport Tycoon staff and check for everything from player reports, to kicks and bans, as well as general attitude, communication skills, and overall state of activity. 
                           

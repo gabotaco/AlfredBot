@@ -4,9 +4,7 @@ module.exports.run = async (bot, message, args) => {
     try {
         var answer = mathjs.evaluate(args.join(" "))
         message.channel.send(answer.toString())
-        console.log(answer, typeof answer)
     } catch (e) {
-        console.log(e)
         message.channel.send("Invalid equation.")
     }
     

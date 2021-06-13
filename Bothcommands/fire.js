@@ -20,7 +20,7 @@ module.exports.run = async (bot, message, args) => {
 
   if (leaveReason.length > 120) return message.channel.send(`Please shorten the leave reason to 120 characters`) //limit is 120 characters
 
-  if (leaveReason.includes("'")) return message.channel.send("Please no '") //can't have lil quotes
+  if (leaveReason.includes("'")) return message.channel.send("Please no ' characters") //can't have lil quotes
 
   bot.con.query(`UPDATE members SET company = 'fired', fire_reason = '${leaveReason}', deadline = '${new Date().toISOString().slice(0, 19).replace('T', ' ')}' WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) { //update their company to fired and add fire reason and set deadline to the fired date
     if (err) return console.log(err)

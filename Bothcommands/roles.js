@@ -44,9 +44,7 @@ module.exports.run = async (bot, message, args) => {
     if (person.roles) { //person has roles
         await person.roles.cache.forEach(async element => { //go through all roles
             if (!alwaysKeep.includes(element.id)) {
-                console.log(element.name, element.id)
                 await person.roles.remove(element.id) //If the current role isn't in the always keep array then remove it 
-                console.log("Removed")
             }
         });
     }

@@ -1,8 +1,5 @@
 const Discord = require("discord.js")
-const authentication = require("../authentication");
-const botconfig = require("../botconfig.json");
 const functions = require("../functions.js")
-const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 module.exports.run = async (bot, message, args) => {
   if (!message.member.hasPermission("MANAGE_NICKNAMES")) { //If can't manage nicknames
