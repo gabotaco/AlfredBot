@@ -21,7 +21,7 @@ module.exports.help = {
     name: "warnlevel-m",
     aliases: [""],
     usage: "<member>",
-    description: "Check how many warns an employee have",
+    description: "Check how many warns an employee has",
     args: [{
             name: "id",
             description: "Get the warnlevels of an employee using their id",

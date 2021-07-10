@@ -18,7 +18,7 @@ module.exports.help = {
   name: "deadline-m",
   aliases: [],
   usage: "<discord id or in game id>",
-  description: "Tells the user when was the last time they turned in vouchers",
+  description: "Gets the deadline of another user",
   args: [{
       name: "id",
       description: "Get a persons deadline using their id",

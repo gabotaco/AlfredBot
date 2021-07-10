@@ -71,7 +71,7 @@ module.exports.help = {
   name: "cashout-m",
   aliases: [],
   usage: "<in game id or discord>",
-  description: "Gets how many vouchers you owe rock and how much he owes you.",
+  description: "Gets how many vouchers a manager owes rock and how much he owes them.",
   permission: [...botconfig.OWNERS, ...botconfig.MANAGERS],
   args: [{
     name: "member",
