@@ -315,7 +315,6 @@ bot.on("messageDeleteBulk", async messages => { //When multiple messages are del
         .setTitle("Deleted Messages")
         .setColor("RANDOM")
     messages.forEach(async message => { //loop through all the deleted messages
-        if (message.partial) await message.fetch()
         if (message.content) DeletedMessages.addField(message.member.displayName, message.content, true)
     });
 
@@ -327,7 +326,6 @@ bot.on("messageDeleteBulk", async messages => { //When multiple messages are del
 })
 
 bot.on("messageDelete", async (message) => { //When a single message is deleted
-    if (message.partial) await message.fetch()
     let DeletedMessage = new Discord.MessageEmbed() //same as messageDeleteBulk except don't have to loop through multiple messages
         .setTitle("Deleted Message")
         .setColor("RANDOM")
@@ -414,11 +412,11 @@ async function ProcessMessage(message) {
     const messageArray = message.content.split(' '); //splits the message into an array for every space into an array
     const cmd = messageArray[0].toLowerCase(); //command is first word in lowercase
     const args = messageArray.slice(1); //args is everything after the first word
-    if (message.mentions.members.size > 0 && message.mentions.members.first().id == "472060657081122818") {
-        message.channel.startTyping(); //start type in the channel
-        await bot.BothCommands.get("ask").run(bot, message, args)
-        message.channel.stopTyping(true) //stops typing in the channel after the command finishes
-    }
+    // if (message.mentions.members.size > 0 && message.mentions.members.first().id == "472060657081122818") {
+    //     message.channel.startTyping(); //start type in the channel
+    //     await bot.BothCommands.get("ask").run(bot, message, args)
+    //     message.channel.stopTyping(true) //stops typing in the channel after the command finishes
+    // }
     if (!message.content.startsWith(prefix)) return; //if it doesn't start with the prefix
 
     if (message.guild.id == botconfig.RTSServer) { //if said in the rts server
@@ -439,7 +437,9 @@ async function ProcessMessage(message) {
         if (commandfile) console.log("BOTH", commandfile.help.name, args) //logs that theres a command file
     }
     if (commandfile) { //if theres a command file in both, rts, or pigs
-        message.channel.startTyping(); //start type in the channel
+        if (commandfile.help.slow) {
+            message.channel.startTyping(); //start type in the channel
+        }
         if (commandfile.help.slash) {
             let canUse = false;
             commandfile.help.permission.forEach(perm => {
@@ -503,7 +503,7 @@ async function ProcessMessage(message) {
                 if (typeof res == 'string') {
                     if (commandfile.help.hidden) {
                         message.author.send(res)
-                        message.react('👍')
+                        message.delete();
                     } else {
                         message.channel.send(res)
                     }
@@ -513,14 +513,14 @@ async function ProcessMessage(message) {
                             if (mes.messageOptions) {
                                 if (commandfile.help.hidden) {
                                     message.author.send(mes.message, mes.messageOptions)
-                                    message.react('👍')
+                                    message.delete();
                                 } else {
                                     message.channel.send(mes.message, mes.messageOptions)
                                 }
                             } else {
                                 if (commandfile.help.hidden) {
                                     message.author.send(mes)
-                                    message.react('👍')
+                                    message.delete();
                                 } else {
                                     message.channel.send(mes)
                                 }
@@ -530,14 +530,14 @@ async function ProcessMessage(message) {
                         if (res.messageOptions) {
                             if (commandfile.help.hidden) {
                                 message.author.send(res.message, res.messageOptions)
-                                message.react('👍')
+                                message.delete();
                             } else {
                                 message.channel.send(res.message, res.messageOptions)
                             }
                         } else {
                             if (commandfile.help.hidden) {
                                 message.author.send(res)
-                                message.react('👍')
+                                message.delete();
                             } else {
                                 message.channel.send(res)
                             }
@@ -552,8 +552,9 @@ async function ProcessMessage(message) {
         } else {
             await commandfile.run(bot, message, args); //if there is a command in the bot it runs the module.exports.run part of the file.
         }
-
-        message.channel.stopTyping(true) //stops typing in the channel after the command finishes
+        if (commandfile.help.slow) {
+            message.channel.stopTyping(true) //stops typing in the channel after the command finishes
+        }
     }
 }
 

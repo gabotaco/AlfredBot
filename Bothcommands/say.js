@@ -2,7 +2,8 @@ const botconfig = require('../botconfig')
 
 module.exports.run = async (bot, args) => {
     return new Promise((resolve, reject) => {
-        resolve(args.message); //sends whatever you said
+        bot.guilds.cache.get(args.guild_id).channels.cache.get(args.channel_id).send(args.message);
+        resolve(`Sent ${args.message}.`); //sends whatever you said
     })
 
 }
@@ -25,5 +26,6 @@ module.exports.help = {
         }
     ],
     permission: [...botconfig.OWNERS, ...botconfig.MANAGERS],
-    slash: true
+    slash: true,
+    hidden: true
 }
