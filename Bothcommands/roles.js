@@ -7,6 +7,7 @@ const thiefID = "488021491649085441"
 const lawlessID = "488021525233139724"
 const mastermindID = "488021546036625414"
 const overlordID = "526214202621427724"
+const swineID = "784872094307057705"
 const rtsfamilyID = "526160668882239508"
 const initiateID = "453564342290612251"
 const leadfootID = "453564406673047552"
@@ -102,10 +103,14 @@ module.exports.run = async (bot, args) => {
                     await person.roles.add(mastermindID)
 
                     resolve(`Gave ${person} the mastermind role`)
-                } else if (!person.roles.cache.has(overlordID)) {
+                } else if (MemberDetails.pigs_total_vouchers < 1500000 && !person.roles.cache.has(overlordID)) {
                     foundRole = true;
                     await person.roles.add(overlordID)
                     resolve(`Gave ${person} the overlord role`)
+                } else if (!person.roles.cache.has(swineID)) {
+                    foundRole = true;
+                    await person.roles.add(swineID)
+                    resolve(`Gave ${person} the swine role`)
                 }
             } else { //rts discord
                 if (MemberDetails.company == "pigs") { //in pigs
