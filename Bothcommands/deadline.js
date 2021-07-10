@@ -1,24 +1,66 @@
 const functions = require("../functions.js")
+const botconfig = require("../botconfig.json")
 
-module.exports.run = async (bot, message, args) => {
-    if (!message.member.hasPermission("KICK_MEMBERS")) { //if can't kick members
-        return message.channel.send("You aren't allowed to do that")
+module.exports.run = async (bot, args) => {
+  return new Promise(async (resolve, reject) => {
+    let user = args.id || args.member || args.author_id
+    if (!bot.guilds.cache.get(args.guild_id).members.cache.get(args.author_id).hasPermission("KICK_MEMBERS") && (args.id || args.member)) {
+      return resolve("You aren't allowed to specify another member.")
     }
 
-    if (!args[0]) args[0] = message.member.id //if nobody specified do themselves
+    const SearchColumn = functions.GetSearchColumn(user); //check if they used discord id or ingame id
 
-    const Response = functions.GetIDAndSearchColumn(message, args); //check if they used discord id or ingame id
-    const SearchColumn = Response[0]
-    const ID = Response[1]
+    const MemberInfo = await functions.GetMemberDetails(bot.con, SearchColumn, user) //Get their member info
+    if (!MemberInfo) return resolve("Couldn't find that user") //no member data
 
-    const MemberInfo = await functions.GetMemberDetails(bot, SearchColumn, ID) //Get their member info
-    if (!MemberInfo) return message.channel.send("Couldn't find that user") //no member data
-
-    message.channel.send(`Deadline: ${MemberInfo.deadline}`) //get the deadline and send it
+    return resolve(`Deadline: ${MemberInfo.deadline}`) //get the deadline and send it
+  })
 }
+
 module.exports.help = {
-    name: "deadline",
-    usage: "[id]",
-    description: "Tells the user when was the last time they turned in vouchers",
-    permission: "KICK_MEMBERS"
+  name: "deadline",
+  aliases: [],
+  usage: "[discord id or in game id]",
+  description: "Tells the user when was the last time they turned in vouchers",
+  args: [{
+      name: "id",
+      description: "MANAGERS Get a persons deadline using their id",
+      type: 1,
+      options: [{
+        name: "id",
+        description: "Their in game id or discord id",
+        type: 4,
+        required: true,
+        missing: "Please specify another employee",
+        parse: (bot, message, args) => {
+          if (message.mentions.members.first()) args[0] = message.mentions.members.first().id;
+          return args[0]
+        }
+      }],
+    },
+    {
+      name: "discord",
+      description: "MANAGERS Get a persons deadline using their discord",
+      type: 1,
+      options: [{
+        name: "member",
+        description: "the other discord user",
+        type: 6,
+        required: true,
+        missing: "Please specify another employee",
+        parse: (bot, message, args) => {
+          if (message.mentions.members.first()) args[0] = message.mentions.members.first().id;
+          return args[0]
+        }
+      }]
+    },
+    {
+      name: "self",
+      description: "Get your own deadline",
+      type: 1,
+      options: []
+    }
+  ],
+  permission: [...botconfig.OWNERS, ...botconfig.MANAGERS, ...botconfig.EMPLOYEES],
+  slash: true
 }

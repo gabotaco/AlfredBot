@@ -3,8 +3,9 @@ const request = require("request")
 const botconfig = require("../botconfig.json")
 const functions = require("../functions.js");
 
-module.exports.run = async (bot, message, args) => {
-       const ServerStatus = new Discord.MessageEmbed()
+module.exports.run = async (bot, args) => {
+    return new Promise((resolve, reject) => {
+        const ServerStatus = new Discord.MessageEmbed()
        .setTitle("Uptime of all servers")
        .setColor("RANDOM")
 
@@ -15,7 +16,7 @@ module.exports.run = async (bot, message, args) => {
                 }, 500);
             } else { //last one
                 setTimeout(() => {
-                    message.channel.send(ServerStatus)
+                    resolve(ServerStatus)
                 }, 1000);
             }
 
@@ -33,13 +34,16 @@ module.exports.run = async (bot, message, args) => {
         }
 
         checkServer(0); //Run recursive function starting at index 0
-
-    
+    })
 }
 
 module.exports.help = {
     name: "uptime",
-    usage: "{server}",
-    description: "Shows how many people are heisting",
-    permission: "SEND_MESSAGES"
+    aliases: [],
+    usage: "",
+    description: "Shows the uptime of each server",
+    args: [],
+    permission: [...botconfig.OWNERS, ...botconfig.MANAGERS, ...botconfig.EMPLOYEES, ...botconfig.MEMBERS],
+    slash: true,
+    slow: true
 }

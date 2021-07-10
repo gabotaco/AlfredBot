@@ -1,41 +1,106 @@
-module.exports.run = async (bot, message, args) => {
-  if (!message.member.hasPermission("MANAGE_NICKNAMES")) { //can't manage nicknames
-    message.reply("You can't do that dummie");
-    return;
-  }
+const botconfig = require("../botconfig.json"); //handy info
 
-  const messageArray = message.content.split("\"") //Split up discord id, name, and id
-  const DiscordID = args[0] //discord id is first arg
-  const InGameName = messageArray[1] //in game name is in between quotes
-  const InGameID = args[args.length - 1] //in game ID is last arg
-
-  if (!DiscordID || !InGameName || !InGameID) { //Invalid use of command
-    return message.channel.send(".fix [discord id] \"in game name\" [in game id]")
-  }
-
-
-  if (!message.guild.members.cache.has(DiscordID)) return message.channel.send("That person isn't in the discord!") //check if they are in the discord
-
-  bot.con.query(`UPDATE members SET in_game_id = '${InGameID}', discord_id = '${DiscordID}', in_game_name = '${InGameName}' WHERE in_game_id = '${InGameID}' OR discord_id = '${DiscordID}'`, function (err, result, fields) { //change persons info without changing deadline
-    if (err) {
-      if (err.errno == 1366) {
-        return message.channel.send("Invalid characters.")
-      } else {
-        return console.log(err)
+module.exports.run = async (bot, args) => {
+  return new Promise((resolve, reject) => {
+    bot.con.query(`UPDATE members SET in_game_id = '${args.in_game_id}', discord_id = '${args.discord}', in_game_name = '${args.name}' WHERE in_game_id = '${args.in_game_id}' OR discord_id = '${args.discord}'`, function (err, result, fields) { //change persons info without changing deadline
+      if (err) {
+        if (err.errno == 1366) {
+          return resolve("Invalid characters.")
+        } else {
+          console.log(err)
+          return reject("There was an error updating the database.")
+        }
       }
-    }
 
-    if (result.affectedRows > 0) {
-      return message.channel.send("Fixed!")
-    } else {
-      return message.channel.send("They aren't hired")
-    }
+      if (result.affectedRows > 0) {
+        return resolve("Fixed!")
+      } else {
+        return resolve("They aren't hired")
+      }
+    })
   })
 }
 
 module.exports.help = {
   name: "fix",
-  usage: "{discord ID} \"{In game name}\" [in-game ID]",
+  aliases: [],
+  usage: "<discord ID> \"<In game name>\" <in-game ID>",
   description: "Reset in game name",
-  permission: "MANAGE_NICKNAMES"
+  args: [{
+      name: "id",
+      description: "Fix a member using their discord id",
+      type: 1,
+      options: [{
+          name: "discord",
+          description: "Their discord id",
+          type: 3,
+          required: true,
+          missing: "Please specify another employee",
+          parse: (bot, message, args) => {
+            return args[0]
+          }
+        },
+        {
+          name: "name",
+          description: "Their in game name",
+          type: 3,
+          required: true,
+          missing: "Please specify another employee",
+          parse: (bot, message, args) => {
+            const messageArray = message.content.split("\"") //Split up discord id, name, and id
+            return messageArray[1];
+          }
+        },
+        {
+          name: "in_game_id",
+          description: "Their in game ID",
+          type: 4,
+          required: true,
+          missing: "Please specify another employee",
+          parse: (bot, message, args) => {
+            return args[args.length - 1];
+          }
+        }
+      ],
+    },
+    {
+      name: "discord",
+      description: "Fix a member using their discord user",
+      type: 1,
+      options: [{
+          name: "discord",
+          description: "Their discord",
+          type: 6,
+          required: true,
+          missing: "Please specify another employee",
+          parse: (bot, message, args) => {
+            return args[0]
+          }
+        },
+        {
+          name: "name",
+          description: "Their in game name",
+          type: 3,
+          required: true,
+          missing: "Please specify another employee",
+          parse: (bot, message, args) => {
+            const messageArray = message.content.split("\"") //Split up discord id, name, and id
+            return messageArray[1];
+          }
+        },
+        {
+          name: "in_game_id",
+          description: "Their in game ID",
+          type: 4,
+          required: true,
+          missing: "Please specify another employee",
+          parse: (bot, message, args) => {
+            return args[args.length - 1];
+          }
+        }
+      ]
+    }
+  ],
+  permission: [...botconfig.OWNERS, ...botconfig.MANAGERS],
+  slash: true
 }

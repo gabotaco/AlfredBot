@@ -1,23 +1,36 @@
 const Discord = require("discord.js")
 const functions = require("../functions.js")
+const botconfig = require("../botconfig.json")
 
-module.exports.run = async (bot, message, args) => {
-  if (!args[0] || (args[0].toLowerCase() != 'a' && (isNaN(parseInt(args[0])) || args[0] < 1 || args[0] > 9))) return message.channel.send("You must provide a valid server number")
+module.exports.run = async (bot, args) => {
+  return new Promise((resolve, reject) => {
+    const Server = functions.GetServerIPandPort(args.server) //get server ip and port
+    if (!Server) return resolve("Invalid server. [1 or OS, 2, 3, 4, 5, 6, 7, 8, 9, A]")
 
-  const Response = functions.GetServerIPandPort(args[0]) //get server ip and port
-  const ServerIP = Response[0]
-  const ServerPort = Response[1]
 
-  const ConnectEmbed = new Discord.MessageEmbed()
-  .setTitle(`Connect to Server ${args[0]}`)
-  .setColor("RANDOM")
-  .setDescription(`<fivem:\//connect/${ServerIP}:${ServerPort}>`)
-  message.channel.send(ConnectEmbed)
+    const ConnectEmbed = new Discord.MessageEmbed()
+      .setTitle(`Connect to Server ${args.server}`)
+      .setColor("RANDOM")
+      .setDescription(`<fivem:\//connect/${Server.ip}:${Server.port}>`)
+    return resolve(ConnectEmbed)
+  })
 }
 
 module.exports.help = {
   name: "connect",
-  usage: "[server port]",
+  aliases: ["con"],
+  usage: "<server number>",
   description: "Get a direct connect link for a server",
-  permission: "SEND_MESSAGES"
+  args: [{
+      type: 3,
+      name: "server",
+      description: "The server number",
+      required: true,
+      missing: "Please specify a server number [1 or OS, 2, 3, 4, 5, 6, 7, 8, 9, A]",
+      parse: (bot, message, args) => {
+          return args[0]
+      }
+  }],
+  permission: [...botconfig.OWNERS, ...botconfig.MANAGERS, ...botconfig.EMPLOYEES, ...botconfig.MEMBERS],
+  slash: true
 }

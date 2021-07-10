@@ -4,6 +4,8 @@ module.exports.run = async (bot, message, args) => {
 }
 
 module.exports.help = {
+    disabled: true,
+
     name: "divide",
     usage: "",
     description: "Divides the messages",

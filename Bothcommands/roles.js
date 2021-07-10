@@ -15,138 +15,151 @@ const legendaryID = "453564453628280835"
 const speeddemonID = "453564481075806219"
 const pigsfamilyID = "526203890639699968"
 
-module.exports.run = async (bot, message, args) => {
-    if (message) { //if theres a message
-        var person = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || message.member; //get person by first mention or first arg or message author
-        if (!person) {
-            
-            if (!message.fake) message.channel.send("You must specify a discord member.")
-            return
+module.exports.run = async (bot, args) => {
+    return new Promise(async (resolve, reject) => {
+        if (!bot.guilds.cache.get(args.guild_id).members.cache.get(args.author_id).hasPermission("KICK_MEMBERS") && (args.member)) {
+            return resolve("You aren't allowed to specify another member.")
         }
-        if (args[0] && person == message.member && args[0] != message.member.id) return message.channel.send("Couldn't find specified member")
-        if (message.guild.id == botconfig.PIGSServer) {
-            var alwaysKeep = ["487624439668670464", "487286138529120256", "565188247592894466", "530765121522499584", "833350039690543114", "692738808399134731", "501822882071052308", "539240789809692691", "656927314277564417", "823223094239952917", "487288337065836558", "529644127734988821", "487286418855428096", "487289216968032256", "499007548993568768", "495650147754311690", "572838338470346757", "561718455007445012", "487623401247342613", "487288297421406208", "516803056222994442", "516802932260470825", "513844670611193866", "510237061719261194", "489242068770619403" ,"629518731093082115" ,"490261228585746433", "491992119049977867", "492446479554838528", "487289181685678090", "493805677546831872" ,"495359477701410816" ,"498885132468486175", "511347144683290624", "520761019841118219", "695623000925405214", "708301305382305862", "518527151960752131", "611198469734137857", "539250396653289492", "546071134961926148", "589163520134742020", "619927554400321557", "720962661352996888", "743968134016401510", "784095349882224701", "823222964609876012", "853769094876102663"]
+        
+        var person = bot.guilds.cache.get(args.guild_id).members.cache.get(args.member ? args.member : args.author_id) //get person by first mention or first arg or message author
+
+        if (args.member && person.id == args.author_id && args.member != args.author_id) return resolve("Couldn't find specified member.")
+        if (args.guild_id == botconfig.PIGSServer) {
+            var alwaysKeep = ["487624439668670464", "487286138529120256", "565188247592894466", "530765121522499584", "833350039690543114", "692738808399134731", "501822882071052308", "539240789809692691", "656927314277564417", "823223094239952917", "487288337065836558", "529644127734988821", "487286418855428096", "487289216968032256", "499007548993568768", "495650147754311690", "572838338470346757", "561718455007445012", "487623401247342613", "487288297421406208", "516803056222994442", "516802932260470825", "513844670611193866", "510237061719261194", "489242068770619403", "629518731093082115", "490261228585746433", "491992119049977867", "492446479554838528", "487289181685678090", "493805677546831872", "495359477701410816", "498885132468486175", "511347144683290624", "520761019841118219", "695623000925405214", "708301305382305862", "518527151960752131", "611198469734137857", "539250396653289492", "546071134961926148", "589163520134742020", "619927554400321557", "720962661352996888", "743968134016401510", "784095349882224701", "823222964609876012", "853769094876102663"]
             var employeeID = "562991083882151937"
-            var GuestRole = botconfig.PIGSGuestRole
-            var InactiveRole = botconfig.PIGSInactiveRole
+            var GuestRole = botconfig.PIGSRoles.GuestRole
+            var InactiveRole = botconfig.PIGSRoles.InactiveRole
             var FamilyID = rtsfamilyID
-        } else if (message.guild.id == botconfig.RTSServer) {
+        } else if (args.guild_id == botconfig.RTSServer) {
             var alwaysKeep = ["447494569173712898", "472145541091033123", "455014608810541068", "472133586745688075", "453744160923713548", "453999831434919948", "447493627791409173", "482902573179731969", "472143712655245322", "453563912097497110", "662781507995172874", "453982220907184128", "529643022866972684", "448681738953162752", "453570994985238528", "458376796921004052", "453917732254121997", "477463794965020673", "479082117154996235", "843228442898989107", "635487264834715648", "454474803529646111", "454190936843354113", "471671084392120351", "449404264545255446", "472386249341272064", "475393112915574821", "477115908888723467", "478393609540861952", "478393923656482827", "705247928125489212", "478955377619370004", "480730660105879580", "629518335935119360", "472023222674784259", "503224065906180106", "599300469281783853", "629518677636546585", "648966486383394827", "705180161850474578", "843226962390417419", ""]
             var employeeID = "483297370482933760"
-            var GuestRole = botconfig.RTSGuestRole
-            var InactiveRole = botconfig.RTSInactiveRole
+            var GuestRole = botconfig.RTSRoles.GuestRole
+            var InactiveRole = botconfig.RTSRoles.InactiveRole
             var FamilyID = pigsfamilyID
         }
-    } else { // no message
-        return;
-    }
 
-    if (person.roles) { //person has roles
-        await person.roles.cache.forEach(async element => { //go through all roles
-            if (!alwaysKeep.includes(element.id)) {
-                await person.roles.remove(element.id) //If the current role isn't in the always keep array then remove it 
-            }
-        });
-    }
-
-
-    await person.roles.add(GuestRole) //add guest role
-
-    var MemberDetails = await functions.GetMemberDetails(bot, "discord_id", person.id) //get member details with message.channel
-
-    if (MemberDetails) { //if member is in database
-        if (MemberDetails.company == "fired") return message.channel.send("Guest role."); //if fired stop
-
-        const D1 = new Date(MemberDetails.deadline) //check deadline
-        const D2 = new Date()
-        const D3 = D2 - D1 //difference between two dates
-        if (D3 <= 0) { //if its not past their deadline
-            if (person.roles.cache.has(InactiveRole)) await person.roles.remove(InactiveRole) //if they have inactive role remove it
-        } else { //past their deadline
-            if (!person.roles.cache.has(InactiveRole)) await person.roles.add(InactiveRole) //if they don't have inactive role add it
+        if (person.roles.cache) { //person has roles
+            await person.roles.cache.forEach(async element => { //go through all roles
+                if (!alwaysKeep.includes(element.id)) {
+                    try {
+                        await person.roles.remove(element.id) //If the current role isn't in the always keep array then remove it 
+                    } catch (e) {
+                        // ignore
+                    }
+                }
+            });
         }
 
-        if (person.id != "404650985529540618") await person.setNickname(MemberDetails.in_game_name) //set nickname to in game name
+        await person.roles.add(GuestRole) //add guest role
 
-        if (person.roles.cache.has(GuestRole)) await person.roles.remove(GuestRole) //if they have guest role remove it
+        var MemberDetails = await functions.GetMemberDetails(bot.con, "discord_id", person.id) //get member details with message.channel
 
-        await person.roles.add(employeeID) //add employee role
+        if (MemberDetails) { //if member is in database
+            if (MemberDetails.company == "fired") return resolve("Guest role."); //if fired stop
 
-        //If they are a rank then add the rank role
-        if (message.guild.id == botconfig.PIGSServer) { //in pigs server
-            if (MemberDetails.company == "rts") { //rts
-                await person.roles.add(FamilyID)
-                if (message) await message.channel.send(`Gave ${person} the RTS family role`)
-
-            } else if (MemberDetails.pigs_total_vouchers < 6000 && !person.roles.cache.has(hustlerID)) { //hustler
-                foundRole = true;
-                await person.roles.add(hustlerID)
-
-                if (message) await message.channel.send(`Gave ${person} the hustler role`)
-            } else if (MemberDetails.pigs_total_vouchers < 18000 && !person.roles.cache.has(pickpocketID)) {
-                foundRole = true;
-                await person.roles.add(pickpocketID)
-
-                if (message) await message.channel.send(`Gave ${person} the pickpocket role`)
-            } else if (MemberDetails.pigs_total_vouchers < 38000 && !person.roles.cache.has(thiefID)) {
-                foundRole = true;
-                await person.roles.add(thiefID)
-
-                if (message) await message.channel.send(`Gave ${person} the thief role`)
-            } else if (MemberDetails.pigs_total_vouchers < 68000 && !person.roles.cache.has(lawlessID)) {
-                foundRole = true;
-                await person.roles.add(lawlessID)
-
-                if (message) await message.channel.send(`Gave ${person} the lawless role`)
-            } else if (MemberDetails.pigs_total_vouchers < 150000 && !person.roles.cache.has(mastermindID)) {
-                foundRole = true;
-                await person.roles.add(mastermindID)
-
-                if (message) await message.channel.send(`Gave ${person} the mastermind role`)
-            } else if (!person.roles.cache.has(overlordID)) {
-                foundRole = true;
-                await person.roles.add(overlordID)
-                if (message) await message.channel.send(`Gave ${person} the overlord role`)
+            const D1 = new Date(MemberDetails.deadline) //check deadline
+            const D2 = new Date()
+            const D3 = D2 - D1 //difference between two dates
+            if (D3 <= 0) { //if its not past their deadline
+                if (person.roles.cache.has(InactiveRole)) await person.roles.remove(InactiveRole) //if they have inactive role remove it
+            } else { //past their deadline
+                if (!person.roles.cache.has(InactiveRole)) await person.roles.add(InactiveRole) //if they don't have inactive role add it
             }
-        } else { //rts discord
-            if (MemberDetails.company == "pigs") { //in pigs
-                await person.roles.add(FamilyID)
-                if (message) await message.channel.send(`Gave ${person} the PIGS family role`)
-            } else if (MemberDetails.rts_total_vouchers < 9600 && !person.roles.cache.has(initiateID)) {
-                foundRole = true;
-                await person.roles.add(initiateID)
-                if (message) await message.channel.send(`Gave ${person} the initiate role`)
 
-            } else if (MemberDetails.rts_total_vouchers < 24000 && !person.roles.cache.has(leadfootID)) {
-                foundRole = true;
-                await person.roles.add(leadfootID)
+            if (person.id != "404650985529540618") await person.setNickname(MemberDetails.in_game_name) //set nickname to in game name
 
-                if (message) await message.channel.send(`Gave ${person} the lead foot role`)
-            } else if (MemberDetails.rts_total_vouchers < 52800 && !person.roles.cache.has(wheelman)) {
-                foundRole = true;
-                await person.roles.add(wheelman)
+            if (person.roles.cache.has(GuestRole)) await person.roles.remove(GuestRole) //if they have guest role remove it
+            await person.roles.add(employeeID) //add employee role
 
-                if (message) await message.channel.send(`Gave ${person} the wheelman role`)
-            } else if (MemberDetails.rts_total_vouchers < 117600 && !person.roles.cache.has(legendaryID)) {
-                foundRole = true;
-                await person.roles.add(legendaryID)
+            //If they are a rank then add the rank role
+            if (args.guild_id == botconfig.PIGSServer) { //in pigs server
+                if (MemberDetails.company == "rts") { //rts
+                    await person.roles.add(FamilyID)
+                    resolve(`Gave ${person} the RTS family role`)
 
-                if (message) await message.channel.send(`Gave ${person} the legendary role`)
-            } else if (!person.roles.cache.has(speeddemonID)) {
-                foundRole = true;
-                await person.roles.add(speeddemonID)
+                } else if (MemberDetails.pigs_total_vouchers < 6000 && !person.roles.cache.has(hustlerID)) { //hustler
+                    foundRole = true;
+                    await person.roles.add(hustlerID)
+                    resolve(`Gave ${person} the hustler role`)
 
-                if (message) await message.channel.send(`Gave ${person} the speed demon role`)
+                } else if (MemberDetails.pigs_total_vouchers < 18000 && !person.roles.cache.has(pickpocketID)) {
+                    foundRole = true;
+                    await person.roles.add(pickpocketID)
+
+                    resolve(`Gave ${person} the pickpocket role`)
+                } else if (MemberDetails.pigs_total_vouchers < 38000 && !person.roles.cache.has(thiefID)) {
+                    foundRole = true;
+                    await person.roles.add(thiefID)
+
+                    resolve(`Gave ${person} the thief role`)
+                } else if (MemberDetails.pigs_total_vouchers < 68000 && !person.roles.cache.has(lawlessID)) {
+                    foundRole = true;
+                    await person.roles.add(lawlessID)
+
+                    resolve(`Gave ${person} the lawless role`)
+                } else if (MemberDetails.pigs_total_vouchers < 150000 && !person.roles.cache.has(mastermindID)) {
+                    foundRole = true;
+                    await person.roles.add(mastermindID)
+
+                    resolve(`Gave ${person} the mastermind role`)
+                } else if (!person.roles.cache.has(overlordID)) {
+                    foundRole = true;
+                    await person.roles.add(overlordID)
+                    resolve(`Gave ${person} the overlord role`)
+                }
+            } else { //rts discord
+                if (MemberDetails.company == "pigs") { //in pigs
+                    await person.roles.add(FamilyID)
+                    resolve(`Gave ${person} the PIGS family role`)
+                } else if (MemberDetails.rts_total_vouchers < 9600 && !person.roles.cache.has(initiateID)) {
+                    foundRole = true;
+                    await person.roles.add(initiateID)
+                    resolve(`Gave ${person} the initiate role`)
+
+                } else if (MemberDetails.rts_total_vouchers < 24000 && !person.roles.cache.has(leadfootID)) {
+                    foundRole = true;
+                    await person.roles.add(leadfootID)
+
+                    resolve(`Gave ${person} the lead foot role`)
+                } else if (MemberDetails.rts_total_vouchers < 52800 && !person.roles.cache.has(wheelman)) {
+                    foundRole = true;
+                    await person.roles.add(wheelman)
+
+                    resolve(`Gave ${person} the wheelman role`)
+                } else if (MemberDetails.rts_total_vouchers < 117600 && !person.roles.cache.has(legendaryID)) {
+                    foundRole = true;
+                    await person.roles.add(legendaryID)
+
+                    resolve(`Gave ${person} the legendary role`)
+                } else if (!person.roles.cache.has(speeddemonID)) {
+                    foundRole = true;
+                    await person.roles.add(speeddemonID)
+
+                    resolve(`Gave ${person} the speed demon role`)
+                }
             }
+        } else {
+            return resolve("Guest role.")
         }
-    } else {
-        return message.channel.send("Guest role.")
-    }
+    })
 }
 
 module.exports.help = {
     name: "roles",
-    usage: "{person}",
+    aliases: [],
+    usage: "[discord member]",
     description: "Refresh roles",
-    permission: "SEND_MESSAGES"
+    args: [{
+        name: "member",
+        description: "MANAGERS An other discord member",
+        type: 6,
+        required: false,
+        parse: (bot, message, args) => {
+            const specifiedMember = message.mentions.members.first() || message.guild.members.cache.get(args[0])
+            return specifiedMember ? specifiedMember.id : null;
+        }
+    }],
+    permission: [...botconfig.OWNERS, ...botconfig.MANAGERS, ...botconfig.EMPLOYEES, ...botconfig.MEMBERS],
+    slash: true,
+    slow: true
 }

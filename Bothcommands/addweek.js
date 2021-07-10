@@ -1,22 +1,59 @@
 const functions = require("../functions.js")
+const botconfig = require("../botconfig.json")
 
-module.exports.run = async (bot, message, args) => {
-    if (!message.member.hasPermission("KICK_MEMBERS")) return message.channel.send("No can do.") //if can't kick members
+module.exports.run = async (bot, args) => {
+    return new Promise((resolve, reject) => {
+        const SearchColumn = functions.GetSearchColumn(args.id || args.member);
 
-    const Response = functions.GetIDAndSearchColumn(message, args);
-    if (Response.length == 0) return message.channel.send("You didn't specify a valid member") //if no args
-    const SearchColumn = Response[0]
-    const ID = Response[1]
-
-    bot.con.query(`UPDATE members SET deadline = DATE_ADD(deadline, INTERVAL 7 DAY) WHERE ${SearchColumn}='${ID}'`, function (err, result, fields) { //adds 7 days to deadline
-        if (err) console.log(err)
-        else message.channel.send(`Updated deadline.`)
+        bot.con.query(`UPDATE members SET deadline = DATE_ADD(deadline, INTERVAL 7 DAY) WHERE ${SearchColumn}='${args.id || args.member}'`, function (err, result, fields) { //adds 7 days to deadline
+            if (err) {
+                console.log(err)
+                return reject("There was an error updating the deadline")
+            } else {
+                return resolve(`Updated deadline.`)
+            }
+        })
     })
 }
 
 module.exports.help = {
     name: "addweek",
-    usage: "[in game id or discord]",
+    aliases: ['aw'],
+    usage: "<in game id OR discord>",
     description: "Add a week to a person's deadline",
-    permission: "KICK_MEMBERS"
+    args: [{
+            name: "id",
+            description: "Set a persons deadline using their id",
+            type: 1,
+            options: [{
+                name: "id",
+                description: "Their in game id or discord id",
+                type: 4,
+                required: true,
+                missing: "Please specify another employee",
+                parse: (bot, message, args) => {
+                    if (message.mentions.members.first()) args[0] = message.mentions.members.first().id;
+                    return args[0]
+                }
+            }],
+        },
+        {
+            name: "discord",
+            description: "Set a persons deadline using their discord",
+            type: 1,
+            options: [{
+                name: "member",
+                description: "the other discord user",
+                type: 6,
+                required: true,
+                missing: "Please specify another employee",
+                parse: (bot, message, args) => {
+                    if (message.mentions.members.first()) args[0] = message.mentions.members.first().id;
+                    return args[0]
+                }
+            }]
+        }
+    ],
+    permission: [...botconfig.OWNERS, ...botconfig.MANAGERS],
+    slash: true
 }

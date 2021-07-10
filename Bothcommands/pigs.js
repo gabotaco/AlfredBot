@@ -1,24 +1,63 @@
 const functions = require("../functions.js")
+const botconfig = require("../botconfig")
 
-module.exports.run = async (bot, message, args) => {
-    if (!message.member.hasPermission("KICK_MEMBERS")) return message.channel.send("Ask a manager to do this for you") //If can't kick members
+module.exports.run = async (bot, args) => {
+    return new Promise((resolve, reject) => {
+        const ID = args.id || args.member;
+        const SearchColumn = functions.GetSearchColumn(ID);
 
-    if (!args[0]) return message.channel.send("You must specify who you are transferring") //if no args
-
-    const Response = functions.GetIDAndSearchColumn(message, args);
-    if (Response.length == 0) return message.channel.send("Please specify who you are transferring")
-    const SearchColumn = Response[0]
-    const ID = Response[1];
-
-    bot.con.query(`UPDATE members SET company = 'pigs' WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) { //set company
-        if (err) console.log(err)
-        message.channel.send("Transferred to PIGS")
+        bot.con.query(`UPDATE members SET company = 'pigs' WHERE ${SearchColumn} = '${ID}' AND company != 'fired'`, function (err, result, fields) { //set company
+            if (err) {
+                console.log(err)
+                return reject("Unable to update the members table.")
+            }
+            if (result.affectedRows > 0) {
+                resolve("Transferred to PIGS")
+            } else {
+                resolve("Couldn't find a hired member with that id.")
+            }
+        })
     })
 }
 
 module.exports.help = {
     name: "pigs",
-    usage: "[member id]",
+    aliases: [],
+    usage: "<member>",
     description: "Transfer someone to pigs",
-    permission: "KICK_MEMBERS"
+    args: [{
+            name: "id",
+            description: "Transfer an employee using their id",
+            type: 1,
+            options: [{
+                name: "id",
+                description: "Their in game id or discord id",
+                type: 4,
+                required: true,
+                missing: "Please specify another employee",
+                parse: (bot, message, args) => {
+                    if (message.mentions.members.first()) args[0] = message.mentions.members.first().id;
+                    return args[0]
+                }
+            }],
+        },
+        {
+            name: "discord",
+            description: "Transfer an employee using their discord",
+            type: 1,
+            options: [{
+                name: "member",
+                description: "the other discord user",
+                type: 6,
+                required: true,
+                missing: "Please specify another employee",
+                parse: (bot, message, args) => {
+                    if (message.mentions.members.first()) args[0] = message.mentions.members.first().id;
+                    return args[0]
+                }
+            }]
+        }
+    ],
+    permission: [...botconfig.OWNERS, ...botconfig.MANAGERS],
+    slash: true
 }

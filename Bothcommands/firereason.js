@@ -1,26 +1,60 @@
 const functions = require("../functions.js")
+const botconfig = require("../botconfig.json"); //handy info
 
-module.exports.run = async (bot, message, args) => {
-    if (!message.member.hasPermission("KICK_MEMBERS")) return message.channel.send("No") //If can't kick members
+module.exports.run = async (bot, args) => {
+    return new Promise((resolve, reject) => {
+        const SearchColumn = functions.GetSearchColumn(args.id || args.member);
 
-    const Response = functions.GetIDAndSearchColumn(message, args);
-    if (Response.length == 0) return message.channel.send("Please specify who you want to check the fire reason of.")
-    const SearchColumn = Response[0]
-    const ID = Response[1]
-
-
-    bot.con.query(`SELECT fire_reason, company FROM members WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) { //get fire reason and company for the specified person
-        if (err) return console.log(err);
-
-        if (!result) message.channel.send("Unable to find that member") //no result
-        else if (result[0].company != "fired") message.channel.send("That person isn't fired") //if company isn't fired
-        else message.channel.send(result[0].fire_reason) //send fire reason if fired
+        bot.con.query(`SELECT fire_reason, company FROM members WHERE ${SearchColumn} = '${args.id || args.member}'`, function (err, result, fields) { //get fire reason and company for the specified person
+            if (err) {
+                console.log(err);
+                return reject("Unable to get the fire reason")
+            }
+            if (!result || !result[0]) return resolve("Unable to find that member") //no result
+            else if (result[0].company != "fired") return resolve("That person isn't fired") //if company isn't fired
+            else return resolve(result[0].fire_reason) //send fire reason if fired
+        })
     })
 }
 
 module.exports.help = {
     name: "firereason",
-    usage: "[in game id]",
+    aliases: [],
+    usage: "<member id>",
+    args: [{
+            name: "id",
+            description: "Get the firereason of a member using their id",
+            type: 1,
+            options: [{
+                name: "id",
+                description: "Their in game id or discord id",
+                type: 4,
+                required: true,
+                missing: "Please specify another employee",
+                parse: (bot, message, args) => {
+                    if (message.mentions.members.first()) args[0] = message.mentions.members.first().id;
+                    return args[0]
+                }
+            }],
+        },
+        {
+            name: "discord",
+            description: "Get the firereason of a member using their discord",
+            type: 1,
+            options: [{
+                name: "member",
+                description: "the other discord user",
+                type: 6,
+                required: true,
+                missing: "Please specify another employee",
+                parse: (bot, message, args) => {
+                    if (message.mentions.members.first()) args[0] = message.mentions.members.first().id;
+                    return args[0]
+                }
+            }]
+        }
+    ],
     description: "Get the reason why someone was fired",
-    permission: "KICK_MEMBERS"
+    permission: [...botconfig.OWNERS, ...botconfig.MANAGERS],
+    slash: true
 }

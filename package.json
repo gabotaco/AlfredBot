@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "chromium": "^2.1.1",
+    "chromium": "^2.2.0",
     "discord.js": "^12.3.1",
     "express": "^4.17.1",
     "google-auth-library": "^6.1.3",

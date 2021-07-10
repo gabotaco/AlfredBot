@@ -1,14 +1,29 @@
-module.exports.run = async (bot, message, args) => {
-    if (!message.member.hasPermission("MANAGE_MESSAGES")) return message.channel.send("no."); //if can't manage messages
-    
-    message.delete().catch(); //Deletes your message and catches whatever happens
-    message.channel.send(args.join(" ")); //sends whatever you said
+const botconfig = require('../botconfig')
+
+module.exports.run = async (bot, args) => {
+    return new Promise((resolve, reject) => {
+        resolve(args.message); //sends whatever you said
+    })
+
 }
 
 
 module.exports.help = {
     name: "say",
-    usage: "[message]",
+    aliases: [],
+    usage: "<message>",
     description: "Make the bot say something",
-    permission: "MANAGE_MESSAGES"
+    args: [{
+            name: "message",
+            description: "What Alfred should say",
+            type: 3,
+            required: true,
+            missing: "Please specify a message",
+            parse: (bot, message, args) => {
+                return args.join(" ")
+            }
+        }
+    ],
+    permission: [...botconfig.OWNERS, ...botconfig.MANAGERS],
+    slash: true
 }

@@ -1,43 +1,99 @@
 const functions = require("../functions.js")
+const botconfig = require("../botconfig.json"); //handy info
 
-module.exports.run = async (bot, message, args) => {
-  if (!message.member.hasPermission("MANAGE_NICKNAMES")) { //Can't manage nicknames
-    message.reply("You can't do that dummie");
-    return;
-  }
+module.exports.run = async (bot, args) => {
+  return new Promise((resolve, reject) => {
+    const FireMember = args.id || args.member
+    const SearchColumn = functions.GetSearchColumn(FireMember);
 
-  if (!args[0] || !args[1]) { //if there isn't ID or reason
-    return message.channel.send(".fire [member id] [reason]")
-  }
+    if (args.reason.length > 120) return resolve(`Please shorten the leave reason to 120 characters`) //limit is 120 characters
 
-  const Response = functions.GetIDAndSearchColumn(message, args); 
-  if (Response.length == 0) return message.channel.send("Please specify who you want to fire.")
+    if (args.reason.includes("'")) return resolve("Please no ' characters") //can't have lil quotes
 
-  const SearchColumn = Response[0]
-  const ID = Response[1]
-
-  const leaveReason = args.join(" ").slice(ID.length); //Reason is everything after ID
-
-  if (leaveReason.length > 120) return message.channel.send(`Please shorten the leave reason to 120 characters`) //limit is 120 characters
-
-  if (leaveReason.includes("'")) return message.channel.send("Please no ' characters") //can't have lil quotes
-
-  bot.con.query(`UPDATE members SET company = 'fired', fire_reason = '${leaveReason}', deadline = '${new Date().toISOString().slice(0, 19).replace('T', ' ')}' WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) { //update their company to fired and add fire reason and set deadline to the fired date
-    if (err) return console.log(err)
-    if (result.affectedRows == 0) return message.channel.send("Unable to find that member")
-    else {
-      message.channel.send("Fired.")
-      bot.con.query(`SELECT discord_id FROM members WHERE ${SearchColumn} = '${ID}'`, function (err, result, fields) {
-        if (err) return console.log(err)
-        bot.BothCommands.get("roles").run(bot, message, [result[0].discord_id])
-      })
-    }
+    bot.con.query(`UPDATE members SET company = 'fired', fire_reason = '${args.reason}', deadline = '${new Date().toISOString().slice(0, 19).replace('T', ' ')}' WHERE ${SearchColumn} = '${FireMember}'`, function (err, result, fields) { //update their company to fired and add fire reason and set deadline to the fired date
+      if (err) {
+        console.log(err)
+        return reject("Couldn't update member.")
+      }
+      if (result.affectedRows == 0) return resolve("Unable to find that member")
+      else {
+        resolve("Fired.")
+        bot.con.query(`SELECT discord_id FROM members WHERE ${SearchColumn} = '${FireMember}'`, function (err, result, fields) {
+          if (err) {
+            return console.log(err)
+          }
+          const roleArgs = {
+            "guild_id": args.guild_id,
+            "channel_id": args.channel_id,
+            "author_id": args.author_id,
+            "slash": args.slash,
+            "member": result[0].discord_id
+          }
+          bot.BothCommands.get("roles").run(bot, roleArgs)
+        })
+      }
+    })
   })
 }
 
 module.exports.help = {
   name: "fire",
-  usage: "[member id] [reason]",
+  aliases: [],
+  usage: "<member id> <reason>",
   description: "Fire a member",
-  permission: "MANAGE_NICKNAMES"
+  args: [{
+      name: "id",
+      description: "Fire an employee using their id",
+      type: 1,
+      options: [{
+        name: "id",
+        description: "Their in game id or discord id",
+        type: 4,
+        required: true,
+        missing: "Please specify another employee",
+        parse: (bot, message, args) => {
+          if (message.mentions.members.first()) args[0] = message.mentions.members.first().id;
+          return args[0]
+        }
+      },
+      {
+        name: "reason",
+        description: "Why they are getting fired.",
+        type: 3,
+        required: true,
+        missing: "Please specify a reason",
+        parse: (bot, message, args) => {
+          return args.join(" ").slice(args[0].length); 
+        }
+      }],
+    },
+    {
+      name: "discord",
+      description: "Fire an employee using their discord",
+      type: 1,
+      options: [{
+        name: "member",
+        description: "the other discord user",
+        type: 6,
+        required: true,
+        missing: "Please specify another employee",
+        parse: (bot, message, args) => {
+          if (message.mentions.members.first()) args[0] = message.mentions.members.first().id;
+          return args[0]
+        }
+      },
+      {
+        name: "reason",
+        description: "Why they are getting fired.",
+        type: 3,
+        required: true,
+        missing: "Please specify a reason",
+        parse: (bot, message, args) => {
+          return args.join(" ").slice(args[0].length); 
+        }
+      }]
+    }
+  ],
+  permission: [...botconfig.OWNERS, ...botconfig.MANAGERS],
+  slash: true
 }

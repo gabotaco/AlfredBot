@@ -72,8 +72,22 @@ module.exports.run = async (bot, message, args) => {
 }
 
 module.exports.help = {
+    disabled: true,
+
     name: "ask",
-    usage: "[question]",
+    aliases: [],
+    usage: "<question>",
+    args: [{
+        type: 3,
+        name: "question",
+        description: "Question to ask Alfred",
+        required: true,
+        missing: "Hey",
+        parse: (bot, message, args) => {
+            return args.join(" ");
+        }
+    }],
     description: "ask Alfred a question",
-    permission: "SEND_MESSAGES"
+    permission: [...botconfig.OWNERS, ...botconfig.MANAGERS, ...botconfig.EMPLOYEES, ...botconfig.MEMBERS],
+    slash: false
 }

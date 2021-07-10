@@ -11,6 +11,7 @@ module.exports = {
      * @returns {Number} Converted number
      */
     ConvertNumber: function (number) {
+        if (typeof number === 'number') return number;
         if (!number) number = "0"; //if its null then set to "0"
 
         if (number.includes(",")) { //if it has a comma
@@ -27,42 +28,37 @@ module.exports = {
     },
 
     /**
-     * @summary Gets the index of the search column and the id for use in spreadsheets
-     * @param {Discord.Message} message The original message
-     * @param {Array<String>} args args provided with command
-     * @returns {[Number, String]} [SearchColumn, ID]
+     * @summary Gets the search column
+     * @param {String} id ID of the user
+     * @returns {String} Search Column
      */
-    GetIDAndSearchColumn: function (message, args) {
-        const Response = [];
-        if (!args[0]) return Response
-        if (message.mentions.members.first()) args[0] = message.mentions.members.first().id; //If theres a message mention then the first arg is the mention id instead of the mention
-
-        if (args[0].length > 6) { //if the ID is longer than 6 chars
-            Response.push("discord_id"); //index 0 is the index of discord ids in the rts spreadsheet
-            Response.push(args[0]) //index 1 is the provided ID
-        } else if (args[0]) { //if its less than or equal to 6 chars and isn't null
-            Response.push("in_game_id"); //index 0 is the index of in game id's
-            Response.push(args[0])
+    GetSearchColumn: function (id) {
+        if (id.length > 6) { //if the ID is longer than 6 characters
+            return "discord_id"; //it's a discord id
+        } else { //otherwise
+            return "in_game_id"; //it's an in game id
         }
-
-        return Response;
     },
 
     /**
      * @summary Changes the deadline for a member
-     * @param {Discord.Client} bot The Discord bot
+     * @param {} con The query connection
      * @param {String} Deadline New deadline for the user
      * @param {String} column The column with the ID    
      * @param {String} ID The ID of the user
-     * @param {Discord.GuildChannel} channel Discord channel to send messages
      */
-    ChangeDeadline: function (bot, Deadline, column, id, channel) {
-        bot.con.query(`UPDATE members SET deadline = '${Deadline}' WHERE ${column}='${id}'`, function (err, result, fields) { //set the deadline to specified deadline for the member
-            if (err) return console.log(err)
-            else if (result.affectedRows == 0) return channel.send("Unable to find that member") //not found member
-            else {//found
-                channel.send(`Set deadline to ${Deadline}`)
-            }
+    ChangeDeadline: function (con, Deadline, column, id) {
+        return new Promise((resolve, reject) => {
+            con.query(`UPDATE members SET deadline = '${Deadline}' WHERE ${column}='${id}'`, function (err, result, fields) { //set the deadline to specified deadline for the member
+                if (err) {
+                    console.log(err)
+                    return reject("There was an error updating the database.")
+                }
+                else if (result.affectedRows == 0) return resolve("Unable to find that employee.") //not found member
+                else {//found
+                    return resolve(`Set deadline to ${Deadline} for user ${id}`)
+                }
+            })
         })
     },
 
@@ -72,6 +68,8 @@ module.exports = {
      * @returns {[String, Number]} [Server IP, Last server Port number]
      */
     GetServerIPandPort: function (ServerNumber) {
+        if (!ServerNumber || (ServerNumber.toLowerCase() != 'a' && (isNaN(parseInt(ServerNumber)) || ServerNumber < 1 || ServerNumber > 9))) return null;
+
         let server = parseInt(ServerNumber) //convert the string to an int
 
         if (ServerNumber.toLowerCase() == "a") { //if the server number is A
@@ -95,7 +93,7 @@ module.exports = {
             server = 30120 //server port is 0
         }
 
-        return [serverIP, server]
+        return {"ip": serverIP, "port": server}
     },
 
     /**
@@ -195,9 +193,9 @@ module.exports = {
      * @param {String} ID the id
      * @returns {Array<String>} All their info
      */
-    GetMemberDetails: function (bot, Column, ID) {
+    GetMemberDetails: function (con, Column, ID) {
         return new Promise(resolve => {
-            bot.con.query(`SELECT * FROM members, rts, pigs WHERE members.${Column} = '${ID}' AND members.in_game_id = pigs.in_game_id AND members.in_game_id = rts.in_game_id`, function (err, result, fields) { //get all their info into one array
+            con.query(`SELECT * FROM members, rts, pigs WHERE members.${Column} = '${ID}' AND members.in_game_id = pigs.in_game_id AND members.in_game_id = rts.in_game_id`, function (err, result, fields) { //get all their info into one array
                 if (err) return console.log(err)
                 resolve(result[0]) //return first found member
             })
@@ -254,18 +252,19 @@ module.exports = {
     /**
      * @summary Updates the status of an applicant
      * @param {import("mysql").Connection} con Con
-     * @param {Discord.GuildChannel} channel Discord channel
      * @param {String} ID The ID of the applicant
      * @param {String} Status What to change their status too
      */
-    UpdateApplicantStatus: function (con, channel, ID, Status, Reason = "") {
-        con.query(`UPDATE applications SET status = '${Status}', reason = '${Reason}' WHERE app_id = '${ID}' OR in_game_id = '${ID}'`, function (err, result, fields) {
-            if (err) {
-                console.log(err)
-                channel.send("There was an error")
-            } else {
-                channel.send(`Updated status to **${Status}**`)
-            }
+    UpdateApplicantStatus: function (con, ID, Status, Reason = "") {
+        return new Promise((resolve, reject) => {
+            con.query(`UPDATE applications SET status = '${Status}', reason = '${Reason}' WHERE app_id = '${ID}' OR in_game_id = '${ID}' OR discord_id = '${ID}'`, function (err, result, fields) {
+                if (err) {
+                    console.log(err)
+                    return reject("There was an error updating the applicants status.");
+                } else {
+                    return resolve(`Updated status to **${Status}**`)
+                }
+            })
         })
     },
 
@@ -299,27 +298,28 @@ module.exports = {
 
     /**
      * @summary Replaces all pending payouts with clear so that it doesn't show up in .cashout
-     * @param {Discord.Client} bot Alfred
+     * @param {} con Database connection
      * @param {String} ID Member ID
-     * @param {Discord.GuildChannel} channel Discord channel
+     * @param {String} CompanyName Name of the company to cashout for
      */
-    PayManager: async function (bot, ID, channel) {
-        if (channel.guild.id == "487285826544205845") { //if pigs server
-            var CompanyName = "pigs"
-        } else {
-            var CompanyName = "rts"
-        }
-
-        bot.con.query(`UPDATE managers SET total_money = total_money + FLOOR(((${CompanyName}_cashout * 10000) - ${CompanyName}_cashout_worth) * 0.5) WHERE discord_id = '${ID}'`, function (err, result, fields) { //add total money
-            if (err) return console.log(err)
-
-            bot.con.query(`UPDATE managers SET ${CompanyName}_cashout = '0', ${CompanyName}_cashout_worth = '0' WHERE discord_id = '${ID}'`, function (err, result, fields) { //reset to 0
-                if (err) return console.log(err)
-                if (result.affectedRows == 1) { //1 row
-                    channel.send("Paid.")
-                } else { //no row
-                    channel.send("Couldn't find that manager")
+    PayManager: async function (con, ID, CompanyName) {
+        return new Promise((resolve, reject) => {
+            con.query(`UPDATE managers SET total_money = total_money + FLOOR(((${CompanyName}_cashout * 10000) - ${CompanyName}_cashout_worth) * 0.5) WHERE discord_id = '${ID}'`, function (err, result, fields) { //add total money
+                if (err) {
+                    console.log(err)
+                    return reject("Unable to update total money for the manager.")
                 }
+                con.query(`UPDATE managers SET ${CompanyName}_cashout = '0', ${CompanyName}_cashout_worth = '0' WHERE discord_id = '${ID}'`, function (err, result, fields) { //reset to 0
+                    if (err) {
+                       console.log(err)
+                       return reject("Unable to remove cashout BUT calculated new total money")
+                    }
+                    if (result.affectedRows == 1) { //1 row
+                        resolve("Paid.")
+                    } else { //no row
+                        resolve("Couldn't find that manager")
+                    }
+                })
             })
         })
 

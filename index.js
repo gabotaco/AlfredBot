@@ -5,6 +5,7 @@ const request = require("request")
 const fs = require("fs");
 const mysql = require("mysql")
 const authentication = require("./authentication");
+const slashCommands = require('./slash');
 const {
     google
 } = require('googleapis'); //allows you to use googles api
@@ -72,17 +73,15 @@ app.get("/roles/update", function (req, res) {
         return;
     }
 
-    const fakeMessage = {
-        "mentions": {
-            "members": new Discord.Collection()
-        },
-        "guild": bot.guilds.cache.get(req.query.server),
-        "channel": bot.guilds.cache.get("447157938390433792").channels.cache.get("727993411461841038"),
-        "member": bot.guilds.cache.get(req.query.server).members.cache.get(req.query.member),
-        "fake": true
+    const roleArgs = {
+        "guild_id": req.query.server,
+        "channel_id": "727993411461841038",
+        "author_id": req.query.member,
+        "slash": false,
+        "member": null
     }
 
-    bot.BothCommands.get("roles").run(bot, fakeMessage, [])
+    bot.BothCommands.get("roles").run(bot, roleArgs)
     res.json({
         "success": "Yes"
     })
@@ -160,59 +159,100 @@ app.listen(726, function () {
     console.log("Alfred is listening!")
 });
 
-fs.readdir("./Bothcommands/", (err, files) => { //Gets all files in the Bothcommands folder
-    if (err) console.log(err);
-    const jsfile = files.filter(f => f.split(".").pop() == "js") //only finds files that are .js
-    if (jsfile.length <= 0) { //if there aren't any files in folder
-        console.log("Couldn't find any BOTH commands");
-        return;
-    }
-
-    jsfile.forEach((f, i) => { //For each js file in the folder
-        const props = require(`./Bothcommands/${f}`); //loads the file (module.exports)
-        console.log(`BOTH ${f} loaded!`); //Logs that it got the file correctly
-        bot.BothCommands.set(props.help.name, props); //adds to the discord collection with key props.help.name and then value props
-    });
-})
-fs.readdir("./RTScommands/", (err, files) => { //Gets all files in the RTScommands folder
-    if (err) console.log(err);
-    const jsfile = files.filter(f => f.split(".").pop() == "js") //only finds files that are .js
-    if (jsfile.length <= 0) { //if there aren't any files in folder
-        console.log("Couldn't find RTS commands");
-        return;
-    }
-
-    jsfile.forEach((f, i) => { //For each js file in the folder
-        const props = require(`./RTScommands/${f}`); //loads the file (module.exports)
-        console.log(`RTS ${f} loaded!`) //logs that it got the file correctly
-        bot.RTSCommands.set(props.help.name, props); //adds to the discord collection with key props.help.name and then value props
-    });
-});
-
-fs.readdir("./PIGScommands/", (err, files) => {
-    if (err) console.log(err);
-    const jsfile = files.filter(f => f.split(".").pop() == "js") //Only finds files that are .js
-    if (jsfile.length <= 0) { //if there aren't any files in folder
-        console.log("Couldn't find PIGS commands");
-        return;
-    }
-
-    jsfile.forEach((f, i) => { //For each js file in the folder
-        const props = require(`./PIGScommands/${f}`); //Loads the file (module.exports)
-        console.log(`PIGS ${f} loaded!`) //Logs that it got the file correctly
-        bot.PIGSCommands.set(props.help.name, props); //adds to the discord collection with key props.help.name and then value props
-    });
-});
-
 bot.on("ready", async () => { //When the bot logs in
-    // bot.user.setActivity("Transport Tycoon", {
-    //     type: "PLAYING"
-    // }); //sets the current game. Can be PLAYING STREAMING WATCHING LISTENING
+    console.log(`${bot.user.username} is online!`); //logs that the bot is online
+    await slashCommands.init(bot);
 
     bot.channels.cache.get(botconfig.RTSCEOSpamChannel).send("Restarted."); //Send a message to a channel
 
-    //  console.clear(); //Remove all the loaded console logs
-    console.log(`${bot.user.username} is online!`); //logs that the bot is online
+    fs.readdir("./Bothcommands/", (err, files) => { //Gets all files in the Bothcommands folder
+        const slashCmds = {"guild": "GLOBAL", "commands": []};
+        if (err) return console.log(err);
+        const jsfile = files.filter(f => f.split(".").pop() == "js") //only finds files that are .js
+        if (jsfile.length <= 0) { //if there aren't any files in folder
+            console.log("Couldn't find any BOTH commands");
+            return;
+        }
+
+        jsfile.forEach((f, i) => { //For each js file in the folder
+            const props = require(`./Bothcommands/${f}`); //loads the file (module.exports)
+            if (props.help.disabled) return;
+            bot.BothCommands.set(props.help.name, props); //adds to the discord collection with key props.help.name and then value props
+
+            if (props.help.aliases) {
+                props.help.aliases.forEach(alias => {
+                    bot.BothCommands.set(alias, props)
+                });
+            }
+
+            if (props.help.slash) {
+                slashCmds.commands.push(props)
+            }
+            console.log(`BOTH ${f} loaded!`); //Logs that it got the file correctly
+        });
+
+        slashCommands.addCommands(slashCmds)
+    })
+    fs.readdir("./RTScommands/", (err, files) => { //Gets all files in the RTScommands folder
+        const slashCmds = {"guild": "rts", "commands": []};
+
+        if (err) console.log(err);
+        const jsfile = files.filter(f => f.split(".").pop() == "js") //only finds files that are .js
+        if (jsfile.length <= 0) { //if there aren't any files in folder
+            console.log("Couldn't find RTS commands");
+            return;
+        }
+
+        jsfile.forEach((f, i) => { //For each js file in the folder
+            const props = require(`./RTScommands/${f}`); //loads the file (module.exports)
+            if (props.help.disabled) return;
+            bot.RTSCommands.set(props.help.name, props); //adds to the discord collection with key props.help.name and then value props
+
+            if (props.help.aliases) {
+                props.help.aliases.forEach(alias => {
+                    bot.RTSCommands.set(alias, props)
+                });
+            }
+
+            if (props.help.slash) {
+                slashCmds.commands.push(props)
+            }
+            console.log(`RTS ${f} loaded!`) //logs that it got the file correctly
+        });
+        slashCommands.addCommands(slashCmds)
+
+    });
+
+    fs.readdir("./PIGScommands/", (err, files) => {
+        const slashCmds = {"guild": "pigs", "commands": []};
+
+        if (err) console.log(err);
+        const jsfile = files.filter(f => f.split(".").pop() == "js") //Only finds files that are .js
+        if (jsfile.length <= 0) { //if there aren't any files in folder
+            console.log("Couldn't find PIGS commands");
+            return;
+        }
+
+        jsfile.forEach((f, i) => { //For each js file in the folder
+            const props = require(`./PIGScommands/${f}`); //Loads the file (module.exports)
+            if (props.help.disabled) return;
+            bot.PIGSCommands.set(props.help.name, props); //adds to the discord collection with key props.help.name and then value props
+
+            if (props.help.aliases) {
+                props.help.aliases.forEach(alias => {
+                    bot.PIGSCommands.set(alias, props)
+                });
+            }
+
+            if (props.help.slash) {
+                slashCmds.commands.push(props)
+
+            }
+            console.log(`PIGS ${f} loaded!`) //Logs that it got the file correctly
+        });
+        slashCommands.addCommands(slashCmds)
+
+    });
 
     setInterval(checkForDxp, 30 * 60000)
     checkForDxp()
@@ -305,17 +345,17 @@ bot.on("messageDelete", async (message) => { //When a single message is deleted
 bot.on("guildMemberAdd", async member => { //When someone joins the guild
     if (member.user.bot) { //if its a bot
         if (member.guild.id == botconfig.RTSServer) { //joined rts server
-            return member.roles.add(botconfig.RTSBotRole) //Adds the rts bot role and ends
+            return member.roles.add(botconfig.RTSRoles.BotRole) //Adds the rts bot role and ends
         } else if (member.guild.id == botconfig.PIGSServer) { //joined pigs server
-            return member.roles.add(botconfig.PIGSBotRole) //adds pigs bot role and ends
+            return member.roles.add(botconfig.PIGSRoles.BotRole) //adds pigs bot role and ends
         }
     }
     if (member.guild.id == botconfig.RTSServer) { //rts server and not bot
         bot.channels.cache.get(botconfig.RTSWelcome).send(`Welcome to ${member.guild.name} ${member}!`) //Says welcome in the rts server
-        member.roles.add(botconfig.RTSGuestRole)
+        member.roles.add(botconfig.RTSRoles.GuestRole)
     } else if (member.guild.id == botconfig.PIGSServer) { //pigs commands
         bot.channels.cache.get(botconfig.PIGSWelcome).send(`Welcome to ${member.guild.name} ${member}!`) //Says welcome in the pigs server
-        member.roles.add(botconfig.PIGSGuestRole)
+        member.roles.add(botconfig.PIGSRoles.GuestRole)
     }
 })
 
@@ -364,7 +404,9 @@ async function ProcessMessage(message) {
     }
     if (message.content.includes("https://discord.gg/") && !message.member.hasPermission("KICK_MEMBERS")) { //if the message has a discord invite and its not from a manager
         message.delete() //delete it
-        message.channel.send("No invites plz and thx")
+        message.channel.send("No invites plz and thx").then((msg) => {
+            msg.delete(1000)
+        })
     }
 
     if (message.guild.id == botconfig.PIGSServer) var prefix = botconfig.prefix.PIGS //in case of a different prefix for each server
@@ -380,20 +422,17 @@ async function ProcessMessage(message) {
     if (!message.content.startsWith(prefix)) return; //if it doesn't start with the prefix
 
     if (message.guild.id == botconfig.RTSServer) { //if said in the rts server
-        const AllowedRTSCommands = [".status", ".8ball", ".ud", ".hello"]
+        const AllowedRTSCommands = [".status", ".8ball", ".ud", ".hello"] // commands you can do outside of bot channels
 
         var commandfile = bot.RTSCommands.get(cmd.slice(prefix.length)); //Trys to get a rts command with the specified cmd without the prefix
         if (commandfile && (message.channel.id != botconfig.RTSPublicBotCommandsChannel && message.channel.id != botconfig.RTSBotCommandsChannel && message.channel.id != botconfig.RTSBennysChannel) && !message.member.hasPermission("KICK_MEMBERS") && !AllowedRTSCommands.includes(cmd)) return message.channel.send(`Do this in <#${botconfig.RTSPublicBotCommandsChannel}> or <#${botconfig.RTSBotCommandsChannel}>`) //if theres a command but its not in one of the allowed channels
         if (commandfile) console.log("RTS", commandfile.help.name, args) //if theres a command file then log that its rts and then the name and args
-        else if (cmd.slice(prefix.length) == "vouchers") commandfile = bot.RTSCommands.get("voucher")
     } else if (message.guild.id == botconfig.PIGSServer) { //if said in the pigs server
         const AllowedPIGSCommands = [".status", ".8ball", ".ud", ".hello"]
 
         var commandfile = bot.PIGSCommands.get(cmd.slice(prefix.length)); // try to get a pigs command with the specified cmd without the prefix
         if (commandfile && (message.channel.id != "511853214858084364" && message.channel.id != botconfig.PIGSBotCommandsChannel && message.channel.id != botconfig.PIGSVoucherChannel) && !message.member.hasPermission("KICK_MEMBERS") && !AllowedPIGSCommands.includes(cmd)) return message.channel.send(`Do this in <#${botconfig.PIGSBotCommandsChannel}> instead`) //if theres a command but its said in the wrong channel
         if (commandfile) console.log("PIGS", commandfile.help.name, args) //if theres a command file then log that its pigs and then the name and args
-        else if (cmd.slice(prefix.length) == "voucher") commandfile = bot.PIGSCommands.get("vouchers")
-
     }
     if (!commandfile) { //if theres isn't a pigs or rts command
         var commandfile = bot.BothCommands.get(cmd.slice(prefix.length)) //try to get a both server command with the specified cmd without the prefix
@@ -401,30 +440,122 @@ async function ProcessMessage(message) {
     }
     if (commandfile) { //if theres a command file in both, rts, or pigs
         message.channel.startTyping(); //start type in the channel
-        await commandfile.run(bot, message, args); //if there is a command in the bot it runs the module.exports.run part of the file.
+        if (commandfile.help.slash) {
+            let canUse = false;
+            commandfile.help.permission.forEach(perm => {
+                if (message.member.roles.cache.has(perm.id)) canUse = true;
+            });
+            if (!canUse) return message.channel.send("You are not allowed to use this command.")
+
+            const slashArgs = {
+                "guild_id": message.guild.id,
+                "channel_id": message.channel.id,
+                "author_id": message.author.id,
+                "slash": false,
+            }
+
+            function parseArgs(slashOptions) {
+                if (slashOptions.length == 0) return true;
+                let invalidArgs = true;
+                let hasAllRequiredArgs = true;
+                let hasAnyNonSub = false;
+
+                slashOptions.forEach(arg => {
+                    if (arg.type == 2) {
+                        if (arg.parse) {
+                            const sub_command_group = arg.parse(bot, message, args);
+                            if (sub_command_group) slashArgs.sub_command_group = sub_command_group
+                        }
+
+                        if (parseArgs(arg.options)) {
+                            invalidArgs = false;
+                        } else if (slashArgs.sub_command_group == arg.name) {
+                            invalidArgs = true
+                        }
+                    } else if (arg.type == 1) {
+                        if (arg.parse) {
+                            const sub_command = arg.parse(bot, message, args);
+                            if (sub_command) slashArgs.sub_command = sub_command
+                        }
+
+                        if (parseArgs(arg.options)) {
+                            invalidArgs = false;
+                        } else if (slashArgs.sub_command == arg.name) {
+                            invalidArgs = true
+                        }
+                    } else {
+                        hasAnyNonSub = true;
+                        slashArgs[arg.name] = arg.parse(bot, message, args);
+                        if (arg.required && (slashArgs[arg.name] === undefined || slashArgs[arg.name] === null)) {
+                            hasAllRequiredArgs = false;
+                        }
+                    }
+                });
+
+                if (invalidArgs && hasAllRequiredArgs && hasAnyNonSub) invalidArgs = false;
+                return !invalidArgs;
+            }
+
+            const validArgs = parseArgs(commandfile.help.args);
+            if (!validArgs) return message.channel.send(`Invalid supplied arguments. Usage: ${commandfile.help.usage}`);
+
+            commandfile.run(bot, slashArgs).then((res) => {
+                if (typeof res == 'string') {
+                    if (commandfile.help.hidden) {
+                        message.author.send(res)
+                        message.react('👍')
+                    } else {
+                        message.channel.send(res)
+                    }
+                } else {
+                    if (Array.isArray(res)) {
+                        res.forEach(mes => {
+                            if (mes.messageOptions) {
+                                if (commandfile.help.hidden) {
+                                    message.author.send(mes.message, mes.messageOptions)
+                                    message.react('👍')
+                                } else {
+                                    message.channel.send(mes.message, mes.messageOptions)
+                                }
+                            } else {
+                                if (commandfile.help.hidden) {
+                                    message.author.send(mes)
+                                    message.react('👍')
+                                } else {
+                                    message.channel.send(mes)
+                                }
+                            }
+                        });
+                    } else {
+                        if (res.messageOptions) {
+                            if (commandfile.help.hidden) {
+                                message.author.send(res.message, res.messageOptions)
+                                message.react('👍')
+                            } else {
+                                message.channel.send(res.message, res.messageOptions)
+                            }
+                        } else {
+                            if (commandfile.help.hidden) {
+                                message.author.send(res)
+                                message.react('👍')
+                            } else {
+                                message.channel.send(res)
+                            }
+                        }
+                    }
+
+                }
+            }).catch((err) => {
+                message.channel.send(`There was an error. Gabo says ${err}`)
+            });
+
+        } else {
+            await commandfile.run(bot, message, args); //if there is a command in the bot it runs the module.exports.run part of the file.
+        }
+
         message.channel.stopTyping(true) //stops typing in the channel after the command finishes
     }
 }
-
-const optInUnavailable = []
-bot.on("presenceUpdate", (oldPresence, newPresence) => { //When a guild member's presence changes (online/offline or games)
-    if (!oldPresence) return;
-    if (oldPresence.member.hasPermission("KICK_MEMBERS") && newPresence.guild.id == botconfig.PIGSServer && !newPresence.user.bot) { //if its a pigs manager and the update is triggered in the pigs server
-        if ((newPresence.status == "offline" || newPresence.status == "idle") && !newPresence.member.roles.cache.has(botconfig.PIGSUnavailableRole)) return newPresence.member.roles.add(botconfig.PIGSUnavailableRole) // if they are now offline and don't have the pigs unavailable role, add the unavailable role
-        else if ((newPresence.status == "online" || newPresence.status == "dnd") && newPresence.member.roles.cache.has(botconfig.PIGSUnavailableRole) && !(optInUnavailable.includes(newPresence.member.id))) return newPresence.member.roles.remove(botconfig.PIGSUnavailableRole) //If they are now online and have the unavailable role and are alt tabs or solid 2 hours it will auto make em available
-    } else if (oldPresence.member.hasPermission("KICK_MEMBERS") && newPresence.guild.id == botconfig.RTSServer) { //if its a rts manager and the update is triggered in the rts server
-        if ((newPresence.status == "offline" || newPresence.status == "idle") && !newPresence.member.roles.cache.has(botconfig.RTSUnavailableRole)) return newPresence.member.roles.add(botconfig.RTSUnavailableRole) //If they are offline now and don't have the unavailable role it adds it
-        else if ((newPresence.status == "online" || newPresence.status == "dnd") && newPresence.member.roles.cache.has(botconfig.RTSUnavailableRole) && !(optInUnavailable.includes(newPresence.member.id))) return newPresence.member.roles.remove(botconfig.RTSUnavailableRole) //If they are now online and have the unavailable role and are alt tabs or solid 2 hours it will auto make em available
-    }
-
-    if (oldPresence.member.roles.cache.has(botconfig.RTSGuestRole) || oldPresence.guild.id == botconfig.PIGSServer) return; //if its a guest or is in the pigs server stop the command
-
-    if (newPresence.user.presence.activities[0] && newPresence.user.presence.activities[0].name == "Transport Tycoon") { //If they are playing a game and the games name is Transport Tycoon
-        oldPresence.member.roles.add(botconfig.RTSFiveMRole); //adds the fivem role
-    } else if (!newPresence.user.presence.activities && newPresence.member.roles.cache.has(botconfig.RTSFiveMRole)) { //If they aren't playing a game but have the fivem role
-        newPresence.member.roles.remove(botconfig.RTSFiveMRole); //removes role
-    }
-});
 
 bot.on("message", async message => { //When a message is sent to a channel. Not in the other bot.on message because its easier to read
     if (message.partial) await message.fetch()
@@ -548,50 +679,62 @@ bot.on("message", async message => {
 bot.on("messageReactionAdd", async (reaction, user) => {
     if (reaction.message.partial) await reaction.message.fetch();
 
-    const fakeMessage = {
-        "mentions": {
-            "members": new Discord.Collection()
-        },
-        "guild": reaction.message.guild,
-        "channel": user,
-        "member": reaction.message.guild.members.cache.get(user.id),
-        "fake": true
+    const fakeArgs = {
+        "guild_id": reaction.message.guild.id,
+        "channel_id": "569683812028645386",
+        "author_id": user.id,
+        "slash": false
     }
+
     switch (reaction.message.id) {
         case "705249775984836640":
         case "705179916915834891":
             //Refresh Roles
-            bot.BothCommands.get("roles").run(bot, fakeMessage, [])
+            bot.BothCommands.get("roles").run(bot, fakeArgs).then((res) => {
+                user.send(res)
+            })
             break;
         case "705179978706190467":
             //ATS
-            bot.RTSCommands.get("ats").run(bot, fakeMessage, [])
+            bot.RTSCommands.get("ats").run(bot, fakeArgs).then((res) => {
+                user.send(res)
+            })
             break;
         case "705180001229865001":
             //ETS2
-            bot.RTSCommands.get("ets2").run(bot, fakeMessage, [])
+            bot.RTSCommands.get("ets2").run(bot, fakeArgs).then((res) => {
+                user.send(res)
+            })
             break;
         case "705180042644422696":
             //NSFW
-            bot.RTSCommands.get("owo").run(bot, fakeMessage, [])
+            bot.RTSCommands.get("owo").run(bot, fakeArgs).then((res) => {
+                user.send(res)
+            })
             break;
         case "705180148650999869":
             //Warzone
-            bot.RTSCommands.get("warzone").run(bot, fakeMessage, [])
+            bot.RTSCommands.get("warzone").run(bot, fakeArgs).then((res) => {
+                user.send(res)
+            })
             break;
         case "705249848810799186":
             //PIGS NSFW
-            bot.PIGSCommands.get("kys").run(bot, fakeMessage, [])
+            bot.PIGSCommands.get("kys").run(bot, fakeArgs).then((res) => {
+                user.send(res)
+            })
             break;
         case "705249920013303848":
             //Warthogs
-            bot.PIGSCommands.get("warthogs").run(bot, fakeMessage, [])
+            bot.PIGSCommands.get("warthogs").run(bot, fakeArgs).then((res) => {
+                user.send(res)
+            })
             break;
         case "705251722557128725":
             //Voucher
             const botCommandsChannel = reaction.message.guild.channels.cache.get("483312512217907220")
             fakeMessage.channel = botCommandsChannel
-            bot.RTSCommands.get("voucher").run(bot, fakeMessage, [])
+            bot.RTSCommands.get("voucher").run(bot, fakeArgs)
             reaction.remove()
             botCommandsChannel.send(`${user}`)
             break;
@@ -599,7 +742,7 @@ bot.on("messageReactionAdd", async (reaction, user) => {
             //Voucher
             const pigsBotChannel = reaction.message.guild.channels.cache.get("487621053494067200")
             fakeMessage.channel = pigsBotChannel
-            bot.PIGSCommands.get("vouchers").run(bot, fakeMessage, [])
+            bot.PIGSCommands.get("vouchers").run(bot, fakeArgs)
             reaction.remove()
             pigsBotChannel.send(`${user}`)
             break;
@@ -610,38 +753,48 @@ bot.on("messageReactionAdd", async (reaction, user) => {
 bot.on("messageReactionRemove", async (reaction, user) => {
     if (reaction.message.partial) await reaction.message.fetch();
 
-    const fakeMessage = {
-        "mentions": {
-            "members": new Discord.Collection()
-        },
-        "guild": reaction.message.guild,
-        "channel": user,
-        "member": reaction.message.guild.members.cache.get(user.id)
+    const fakeArgs = {
+        "guild_id": reaction.message.guild.id,
+        "channel_id": "569683812028645386",
+        "author_id": user.id,
+        "slash": false
     }
     switch (reaction.message.id) {
         case "705179978706190467":
             //ATS
-            bot.RTSCommands.get("ats").run(bot, fakeMessage, [])
+            bot.RTSCommands.get("ats").run(bot, fakeArgs).then((res) => {
+                user.send(res)
+            })
             break;
         case "705180001229865001":
             //ETS2
-            bot.RTSCommands.get("ets2").run(bot, fakeMessage, [])
+            bot.RTSCommands.get("ets2").run(bot, fakeArgs).then((res) => {
+                user.send(res)
+            })
             break;
         case "705180042644422696":
             //NSFW
-            bot.RTSCommands.get("owo").run(bot, fakeMessage, [])
+            bot.RTSCommands.get("owo").run(bot, fakeArgs).then((res) => {
+                user.send(res)
+            })
             break;
         case "705180148650999869":
             //Warzone
-            bot.RTSCommands.get("warzone").run(bot, fakeMessage, [])
+            bot.RTSCommands.get("warzone").run(bot, fakeArgs).then((res) => {
+                user.send(res)
+            })
             break;
         case "705249848810799186":
             //PIGS NSFW
-            bot.PIGSCommands.get("kys").run(bot, fakeMessage, [])
+            bot.PIGSCommands.get("kys").run(bot, fakeArgs).then((res) => {
+                user.send(res)
+            })
             break;
         case "705249920013303848":
             //Warthogs
-            bot.PIGSCommands.get("warthogs").run(bot, fakeMessage, [])
+            bot.PIGSCommands.get("warthogs").run(bot, fakeArgs).then((res) => {
+                user.send(res)
+            })
             break;
     }
     //if (reaction.partial) await reaction.fetch()

@@ -6,9 +6,9 @@ module.exports.run = async (bot, message, args) => {
     }
 
     if (message.guild.id == botconfig.PIGSServer) {
-        var RoleID = botconfig.PIGSUnavailableRole
+        var RoleID = botconfig.PIGSRoles.UnavailableRole
     } else if (message.guild.id == botconfig.RTSServer) {
-        var RoleID = botconfig.RTSUnavailableRole
+        var RoleID = botconfig.RTSRoles.UnavailableRole
     }
 
     if (!message.member.roles.cache.has(RoleID)) { //if they have the role by ID
@@ -22,6 +22,8 @@ module.exports.run = async (bot, message, args) => {
 }
 
 module.exports.help = {
+    disabled: true,
+    
     name: "unavailable",
     usage: "",
     description: "Marks you as unavailable",

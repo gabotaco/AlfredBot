@@ -2,64 +2,72 @@ const botconfig = require("../botconfig.json");
 const request = require("request")
 const functions = require("../functions.js")
 
-module.exports.run = async (bot, message, args) => {
-  let CompanyMembers = [] //Company members
-  let ServerPoints = [] //Keeps num of players in each server
+module.exports.run = async (bot, args) => {
+  return new Promise((resolve, reject) => {
+    let CompanyMembers = [] //Company members
+    let ServerPoints = [] //Keeps num of players in each server
 
-  if (message.guild.id == botconfig.PIGSServer) { //PIGS server
+    if (args.guild_id == botconfig.PIGSServer) { //PIGS server
 
-    var CompanyName = "pigs"
-  } else if (message.guild.id == botconfig.RTSServer) { //RTS server
+      var CompanyName = "pigs"
+    } else if (args.guild_id == botconfig.RTSServer) { //RTS server
 
-    var CompanyName = "rts"
-  }
-  bot.con.query(`SELECT (in_game_id) FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) { //get all members
-    if (err) return console.log(err)
-    result.forEach(member => {
-      CompanyMembers.push(member.in_game_id.toString())
-    });
-    checkServer(0); //Check server 1
-
-  })
-
-  function checkServer(index) { //Find people heisting in server
-    if (index < botconfig.ActiveServers.length - 1) { //if its not the last server
-      setTimeout(() => {
-        checkServer(index + 1) //check next one after 500 ms
-      }, 500);
-    } else { //last one
-      setTimeout(() => { //after 1000 ms
-        const ServerPlayersMessage = functions.SortPlayersOnServers(ServerPoints) //sort it into array
-        message.channel.send(ServerPlayersMessage) //send array
-      }, 1000);
+      var CompanyName = "rts"
     }
-
-    request(`http://${botconfig.ActiveServers[index][0]}:${botconfig.ActiveServers[index][1]}/status/widget/players.json`, function (error, response, body) { //url to get all players
-      if (error) { //server is offline
-        return;
+    bot.con.query(`SELECT (in_game_id) FROM members WHERE company = '${CompanyName}'`, function (err, result, fields) { //get all members
+      if (err) {
+        console.log(err)
+        return reject("Unable to get all company members.")
       }
-
-      try {
-        var jsonBody = JSON.parse(body); //convert to json so we can use it
-      } catch (e) {
-        //Handle or naw
-        return
-      }
-      let CurrentServerPoints = 0 //start at 0 people playing
-
-      jsonBody.players.forEach(player => { //loop through all players
-        if (CompanyMembers.includes(player[2].toString())) CurrentServerPoints++ //if player is in company increase score
+      result.forEach(member => {
+        CompanyMembers.push(member.in_game_id.toString())
       });
+      checkServer(0); //Check server 1
 
-      ServerPoints.push([CurrentServerPoints, botconfig.ActiveServers[index][2]]) //Add array into array [points, server num]
-    });
-  }
+    })
 
+    function checkServer(index) { //Find people heisting in server
+      if (index < botconfig.ActiveServers.length - 1) { //if its not the last server
+        setTimeout(() => {
+          checkServer(index + 1) //check next one after 500 ms
+        }, 500);
+      } else { //last one
+        setTimeout(() => { //after 1000 ms
+          const ServerPlayersMessage = functions.SortPlayersOnServers(ServerPoints) //sort it into array
+          resolve(ServerPlayersMessage) //send array
+        }, 1000);
+      }
+
+      request(`http://${botconfig.ActiveServers[index][0]}:${botconfig.ActiveServers[index][1]}/status/widget/players.json`, function (error, response, body) { //url to get all players
+        if (error) { //server is offline
+          return;
+        }
+
+        try {
+          var jsonBody = JSON.parse(body); //convert to json so we can use it
+        } catch (e) {
+          //Handle or naw
+          return
+        }
+        let CurrentServerPoints = 0 //start at 0 people playing
+
+        jsonBody.players.forEach(player => { //loop through all players
+          if (CompanyMembers.includes(player[2].toString())) CurrentServerPoints++ //if player is in company increase score
+        });
+
+        ServerPoints.push([CurrentServerPoints, botconfig.ActiveServers[index][2]]) //Add array into array [points, server num]
+      });
+    }
+  })
 }
 
 module.exports.help = {
   name: "players",
+  aliases: [],
   usage: "",
   description: "Get how many players are on every server",
-  permission: "SEND_MESSAGES"
+  args: [],
+  permission: [...botconfig.OWNERS, ...botconfig.MANAGERS, ...botconfig.EMPLOYEES, ...botconfig.MEMBERS],
+  slash: true,
+  slow: true
 }

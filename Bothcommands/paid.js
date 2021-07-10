@@ -1,24 +1,40 @@
 const botconfig = require("../botconfig.json");
 const functions = require("../functions.js")
 
-module.exports.run = async (bot, message, args) => {
-  if (!message.author.id == botconfig.RockID && !message.author.id == botconfig.GaboID) { //if not rock or gabo
-    message.reply("You can't do that")
-    return;
-  }
+module.exports.run = async (bot, args) => {
+  return new Promise((resolve, reject) => {
+    if (args.guild_id == botconfig.PIGSServer) { //if pigs server
+      var CompanyName = "pigs"
+    } else {
+      var CompanyName = "rts"
+    }
 
-  if (!args[0]) { //no discord id
-    return message.channel.send(".paid [discord id]")
-  }
-
-  const User = message.guild.member(message.mentions.users.first() || message.guild.members.cache.get(args[0])); //get the member @'d or by discord id
-
-  functions.PayManager(bot, User.id, message.channel) //pay manager
+    functions.PayManager(bot.con, args.manager, CompanyName).then((res) => {
+      resolve(res)
+    }).catch((err) => {
+      reject(err)
+    })
+  })
 }
 
 module.exports.help = {
   name: "paid",
-  usage: "[discord id]",
+  aliases: [],
+  usage: "<discord id>",
   description: "Clears all pending payouts",
-  permission: "ADMINISTRATOR"
+  args: [{
+    type: 6,
+    name: "manager",
+    description: "The manager you are paying",
+    required: true,
+    missing: "Please specify a manager",
+    parse: (bot, message, args) => {
+      const user = message.guild.member(message.mentions.users.first() || message.guild.members.cache.get(args[0]));
+      if (user) {
+        return user.id;
+      }
+    }
+  }],
+  permission: [...botconfig.OWNERS],
+  slash: true
 }

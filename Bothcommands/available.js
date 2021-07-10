@@ -1,25 +1,30 @@
 const botconfig = require("../botconfig.json")
 
-module.exports.run = async (bot, message, args) => {
-    if (!message.member.hasPermission("KICK_MEMBERS")) return message.channel.send("You are an employee. You are always available")
-
-    if (message.guild.id == botconfig.PIGSServer) { //Get correct unavailable role
-        var UnavailableRole = botconfig.PIGSUnavailableRole
-    } else if (message.guild.id == botconfig.RTSServer) {
-        var UnavailableRole = botconfig.RTSUnavailableRole
-    }
-
-    if (message.member.roles.cache.has(UnavailableRole)) { //if they have the role by ID
-        message.member.roles.remove(UnavailableRole) //removes role
-        message.channel.send("Woop Woop")
-    } else { //If they don't have the role
-        message.channel.send("You are already available")
-    }
+module.exports.run = async (bot, args) => {
+    return new Promise((resolve, reject) => {
+        if (args.guild_id == botconfig.PIGSServer) { //Get correct unavailable role
+            var UnavailableRole = botconfig.PIGSRoles.UnavailableRole
+        } else if (args.guild_id == botconfig.RTSServer) {
+            var UnavailableRole = botconfig.RTSRoles.UnavailableRole
+        }
+    
+        const member = bot.guilds.cache.get(args.guild_id).members.cache.get(args.author_id)
+        if (member.roles.cache.has(UnavailableRole)) { //if they have the role by ID
+            member.roles.remove(UnavailableRole) //removes role
+            return resolve("Woop Woop")
+        } else { //If they don't have the role
+            return resolve("You are already available")
+        }
+    })
 }
 
 module.exports.help = {
+    disabled: true,
     name: "available",
+    aliases: ["avail"],
     usage: "",
+    args: [],
     description: "Marks you as available",
-    permission: "KICK_MEMBERS"
+    permission: [...botconfig.OWNERS, ...botconfig.MANAGERS],
+    slash: true
 }
