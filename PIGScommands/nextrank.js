@@ -3,15 +3,9 @@ const botconfig = require("../botconfig")
 
 module.exports.run = async (bot, args) => {
     return new Promise(async (resolve, reject) => {
-        let ID = args.id || args.member
-        if (!bot.guilds.cache.get(args.guild_id).members.cache.get(args.author_id).hasPermission("KICK_MEMBERS") && ID) {
-            return resolve("You aren't allowed to specify another member.")
-        }
-        if (!ID) ID = args.author_id //No args then set first arg to message author id
+        const searchColumn = functions.GetSearchColumn(args.author_id)
 
-        const searchColumn = functions.GetSearchColumn(ID)
-
-        const MemberDetails = await functions.GetMemberDetails(bot.con, searchColumn, ID)
+        const MemberDetails = await functions.GetMemberDetails(bot.con, searchColumn, args.author_id)
         if (!MemberDetails) return resolve("Unable to find that member") //not in PIGS
 
         if (MemberDetails.pigs_total_vouchers < 6000) {
@@ -34,7 +28,7 @@ module.exports.run = async (bot, args) => {
         const stolenMoney = (untilnext / 75) * 10000
         const endStolen = functions.numberWithCommas(Math.ceil(stolenMoney / 10000) * 10000)
 
-        resolve(`To rank up <@${MemberDetails.discord_id}> needs ${functions.numberWithCommas(untilnext)} vouchers, that is ${endStolen} stolen money`)
+        resolve(`To rank up you need ${functions.numberWithCommas(untilnext)} vouchers, that is ${endStolen} stolen money`)
     })
 
 }
@@ -44,45 +38,9 @@ module.exports.run = async (bot, args) => {
 module.exports.help = {
     name: "nextrank",
     aliases: [],
-    usage: "[person id]",
+    usage: "",
     description: "Get how much stolen money you need to rank up",
-    args: [{
-            name: "id",
-            description: "Get a persons next rank using their ID",
-            type: 1,
-            options: [{
-                name: "id",
-                description: "Their in game id or discord id",
-                type: 4,
-                required: true,
-                parse: (bot, message, args) => {
-                    return args[0]
-                }
-            }],
-        },
-        {
-            name: "discord",
-            description: "Get a persons next rank using their discord",
-            type: 1,
-            options: [{
-                name: "member",
-                description: "the other discord user",
-                type: 6,
-                required: true,
-                missing: "Please specify another employee",
-                parse: (bot, message, args) => {
-                    if (message.mentions.members.first()) args[0] = message.mentions.members.first().id;
-                    return args[0]
-                }
-            }]
-        },
-        {
-            name: "self",
-            description: "Get your own nextrank",
-            type: 1,
-            options: []
-        }
-    ],
+    args: [],
     permission: [...botconfig.OWNERS, ...botconfig.MANAGERS, ...botconfig.EMPLOYEES],
     slash: true
 }

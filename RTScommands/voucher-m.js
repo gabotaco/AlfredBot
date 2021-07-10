@@ -4,78 +4,63 @@ const functions = require("../functions.js")
 const Handlebars = require('handlebars');
 const puppeteer = require('puppeteer');
 const templateCache = [];
-const HTMLPath = './pigsVouchers.html'
+const HTMLPath = './rtsVouchers.html'
 const botconfig = require('../botconfig')
 
 module.exports.run = async (bot, args) => {
     return new Promise(async (resolve, reject) => {
-        const SearchColumn = functions.GetSearchColumn(args.author_id)
+        let ID = args.id || args.member
 
-        const MemberDetails = await functions.GetMemberDetails(bot.con, SearchColumn, args.author_id) //Get their member details
+        const SearchColumn = functions.GetSearchColumn(ID)
+
+        const MemberDetails = await functions.GetMemberDetails(bot.con, SearchColumn, ID) //Get their member details
         if (!MemberDetails) return resolve("You aren't hired") //Not hired
 
         const InGameName = MemberDetails.in_game_name
         const InGameID = MemberDetails.in_game_id
 
-        const TotalVouchers = functions.numberWithCommas(MemberDetails.pigs_total_vouchers)
-        if (MemberDetails.pigs_total_vouchers < 6000) {
-            var Rank = "Hustler"
-            var RequiredVouchers = 6000 - MemberDetails.pigs_total_vouchers
-            var NextRank = "Pickpocket"
-            var RankVouchers = 6000
-            var CurrentVouchers = MemberDetails.pigs_total_vouchers
+        const TotalVouchers = functions.numberWithCommas(MemberDetails.rts_total_vouchers)
 
-            var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100)
-        } else if (MemberDetails.pigs_total_vouchers < 18000) {
-            var Rank = "PickPocket"
-            var RequiredVouchers = 18000 - MemberDetails.pigs_total_vouchers
-
-            var NextRank = "Thief"
-            var RankVouchers = 12000
-            var CurrentVouchers = MemberDetails.pigs_total_vouchers - 6000
-
-            var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100)
-        } else if (MemberDetails.pigs_total_vouchers < 38000) {
-            var Rank = "Thief"
-            var RequiredVouchers = 38000 - MemberDetails.pigs_total_vouchers
-
-            var NextRank = "Lawless"
-            var RankVouchers = 20000
-            var CurrentVouchers = MemberDetails.pigs_total_vouchers - 18000
-
+        if (MemberDetails.rts_total_vouchers < 9600) {
+            var NextRank = "Lead Foot"
+            var RankVouchers = 9600
+            var CurrentVouchers = MemberDetails.rts_total_vouchers
             var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100)
 
-        } else if (MemberDetails.pigs_total_vouchers < 68000) {
-            var Rank = "Lawless"
-            var RequiredVouchers = 68000 - MemberDetails.pigs_total_vouchers
-            var NextRank = "Criminal Mastermind"
-            var RankVouchers = 30000
-            var CurrentVouchers = MemberDetails.pigs_total_vouchers - 38000
-
+            var Rank = "Initiate"
+            var RequiredVouchers = 9600 - MemberDetails.rts_total_vouchers
+        } else if (MemberDetails.rts_total_vouchers < 24000) {
+            var NextRank = "Wheelman"
+            var RankVouchers = 14400
+            var CurrentVouchers = MemberDetails.rts_total_vouchers - 9600
             var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100)
 
-        } else if (MemberDetails.pigs_total_vouchers < 150000) {
-            var Rank = "Mastermind"
-            var RequiredVouchers = 150000 - MemberDetails.pigs_total_vouchers
-            var NextRank = "Overlord"
-            var RankVouchers = 82000
-            var CurrentVouchers = MemberDetails.pigs_total_vouchers - 68000
-
+            var Rank = "Lead Foot"
+            var RequiredVouchers = 24000 - MemberDetails.rts_total_vouchers
+        } else if (MemberDetails.rts_total_vouchers < 52800) {
+            var NextRank = "Legendary Wheelman"
+            var RankVouchers = 28800
+            var CurrentVouchers = MemberDetails.rts_total_vouchers - 24000
             var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100)
-        } else if (MemberDetails.pigs_total_vouchers < 1500000) {
-            var Rank = "Overlord"
-            var RequiredVouchers = 1500000 - MemberDetails.pigs_total_vouchers
-            var NextRank = "Swine"
-            var RankVouchers = 1350000
-            var CurrentVouchers = MemberDetails.pigs_total_vouchers - 150000
 
+            var Rank = "Wheelman"
+            var RequiredVouchers = 52800 - MemberDetails.rts_total_vouchers
+        } else if (MemberDetails.rts_total_vouchers < 117600) {
+            var NextRank = "Speed Demon"
+            var RankVouchers = 64800
+            var CurrentVouchers = MemberDetails.rts_total_vouchers - 52800
             var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100)
+
+            var Rank = "Legendary Wheelman"
+            var RequiredVouchers = 117600 - MemberDetails.rts_total_vouchers
         } else {
-            var Rank = "Swine"
-            var CurrentVouchers = MemberDetails.pigs_total_vouchers - 1500000
-            var VoucherTextThing = "vouchers in Swine"
-            var RequiredVouchers = functions.numberWithCommas(CurrentVouchers)
+            var CurrentVouchers = MemberDetails.rts_total_vouchers - 117600
             var Progress = 100
+            var RequiredVouchers = CurrentVouchers;
+            var VoucherTextThing = "vouchers in Speed Demon"
+
+            var Rank = "Speed Demon"
+            var RequiredVouchers = "Max"
         }
 
         RequiredVouchers = functions.numberWithCommas(RequiredVouchers)
@@ -87,18 +72,17 @@ module.exports.run = async (bot, args) => {
 
         }
 
-        let CompanyRank
-        bot.con.query(`SELECT * FROM members, pigs WHERE members.in_game_id = pigs.in_game_id`, async function (err, result, fields) { //get all data for member and link member with pigs data
+
+        bot.con.query(`SELECT * FROM members, rts WHERE members.in_game_id = rts.in_game_id`, async function (err, result, fields) {
+            let CompanyRank
             if (err) {
                 console.log(err)
                 return reject("Unable to get members and company")
             }
             var Ranking = []
-
             result.forEach(member => {
-                Ranking.push([member[`pigs_total_vouchers`], member.in_game_name])
+                Ranking.push([member[`rts_total_vouchers`], member.in_game_name])
             });
-
             Ranking.sort(sortFunction); //Sort it from highest to least
             function sortFunction(a, b) {
                 if (a[0] == b[0]) {
@@ -107,13 +91,11 @@ module.exports.run = async (bot, args) => {
                     return (a[0] > b[0]) ? -1 : 1;
                 }
             }
-
             Ranking.forEach(element => { // Go through all ranks
                 if (element[1] == InGameName && !CompanyRank) { //If the member doesn't have a company rank yet and it finds their rank
                     CompanyRank = Ranking.indexOf(element) + 1 //set their rank to the index of it plus 1
                 }
             });
-
             let HTMLTemplate = templateCache[HTMLPath]; // try to load from memory cache
 
             // read html file from disk and save to memory cache
@@ -143,6 +125,7 @@ module.exports.run = async (bot, args) => {
             const browser = await puppeteer.launch({
                 args: ['--no-sandbox']
             });
+
             const page = await browser.newPage();
 
             // replace html
@@ -156,26 +139,53 @@ module.exports.run = async (bot, args) => {
             const localFileAttachment = new Discord.MessageAttachment(image)
             if (args.slash) {
                 bot.guilds.cache.get(args.guild_id).channels.cache.get(args.channel_id).send(localFileAttachment);
-                resolve("You should see your vouchers below :)")
+                resolve("You should see their vouchers below :)")
             } else {
                 resolve({message: "", messageOptions: localFileAttachment})
             }
 
             await browser.close();
-
         })
+
     })
 }
 
-
-
 module.exports.help = {
-    name: "vouchers",
-    aliases: ["voucher", "vouch"],
-    usage: "",
-    description: "Check your voucher status",
-    args: [],
-    permission: [...botconfig.OWNERS, ...botconfig.MANAGERS, ...botconfig.EMPLOYEES],
+    name: "voucher-m",
+    aliases: [],
+    usage: "<other member>",
+    description: "Check voucher status",
+    args: [{
+            name: "id",
+            description: "MANAGERS Get a persons vouchers using their ID",
+            type: 1,
+            options: [{
+                name: "id",
+                description: "Their in game id or discord id",
+                type: 4,
+                required: true,
+                parse: (bot, message, args) => {
+                    return args[0]
+                }
+            }],
+        },
+        {
+            name: "discord",
+            description: "MANAGERS Get a persons vouchers using their discord",
+            type: 1,
+            options: [{
+                name: "member",
+                description: "the other discord user",
+                type: 6,
+                required: true,
+                parse: (bot, message, args) => {
+                    if (message.mentions.members.first()) args[0] = message.mentions.members.first().id;
+                    return args[0]
+                }
+            }]
+        }
+    ],
+    permission: [...botconfig.OWNERS, ...botconfig.MANAGERS],
     slash: true,
     slow: false,
     hidden: true

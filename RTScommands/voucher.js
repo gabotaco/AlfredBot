@@ -9,16 +9,9 @@ const botconfig = require('../botconfig')
 
 module.exports.run = async (bot, args) => {
     return new Promise(async (resolve, reject) => {
-        let ID = args.id || args.member
-        if (!bot.guilds.cache.get(args.guild_id).members.cache.get(args.author_id).hasPermission("KICK_MEMBERS") && ID) {
-            return resolve("You aren't allowed to specify another member.")
-        }
+        const SearchColumn = functions.GetSearchColumn(args.author_id)
 
-        if (!ID) ID = args.author_id //if no args then set the first arg to the message member id
-
-        const SearchColumn = functions.GetSearchColumn(ID)
-
-        const MemberDetails = await functions.GetMemberDetails(bot.con, SearchColumn, ID) //Get their member details
+        const MemberDetails = await functions.GetMemberDetails(bot.con, SearchColumn, args.author_id) //Get their member details
         if (!MemberDetails) return resolve("You aren't hired") //Not hired
 
         const InGameName = MemberDetails.in_game_name
@@ -158,44 +151,9 @@ module.exports.run = async (bot, args) => {
 module.exports.help = {
     name: "voucher",
     aliases: ["vouchers", "vouch"],
-    usage: "[other member]",
-    description: "Check voucher status",
-    args: [{
-            name: "id",
-            description: "MANAGERS Get a persons vouchers using their ID",
-            type: 1,
-            options: [{
-                name: "id",
-                description: "Their in game id or discord id",
-                type: 4,
-                required: true,
-                parse: (bot, message, args) => {
-                    return args[0]
-                }
-            }],
-        },
-        {
-            name: "discord",
-            description: "MANAGERS Get a persons vouchers using their discord",
-            type: 1,
-            options: [{
-                name: "member",
-                description: "the other discord user",
-                type: 6,
-                required: true,
-                parse: (bot, message, args) => {
-                    if (message.mentions.members.first()) args[0] = message.mentions.members.first().id;
-                    return args[0]
-                }
-            }]
-        },
-        {
-          name: "self",
-          description: "Get your own vouchers",
-          type: 1,
-          options: []
-        }
-    ],
+    usage: "",
+    description: "Check your voucher status",
+    args: [],
     permission: [...botconfig.OWNERS, ...botconfig.MANAGERS, ...botconfig.EMPLOYEES],
     slash: true,
     slow: false,

@@ -9,9 +9,11 @@ const botconfig = require('../botconfig')
 
 module.exports.run = async (bot, args) => {
     return new Promise(async (resolve, reject) => {
-        const SearchColumn = functions.GetSearchColumn(args.author_id)
+        let ID = args.id || args.member
 
-        const MemberDetails = await functions.GetMemberDetails(bot.con, SearchColumn, args.author_id) //Get their member details
+        const SearchColumn = functions.GetSearchColumn(ID)
+
+        const MemberDetails = await functions.GetMemberDetails(bot.con, SearchColumn, ID) //Get their member details
         if (!MemberDetails) return resolve("You aren't hired") //Not hired
 
         const InGameName = MemberDetails.in_game_name
@@ -156,7 +158,7 @@ module.exports.run = async (bot, args) => {
             const localFileAttachment = new Discord.MessageAttachment(image)
             if (args.slash) {
                 bot.guilds.cache.get(args.guild_id).channels.cache.get(args.channel_id).send(localFileAttachment);
-                resolve("You should see your vouchers below :)")
+                resolve("You should see their vouchers below :)")
             } else {
                 resolve({message: "", messageOptions: localFileAttachment})
             }
@@ -170,12 +172,41 @@ module.exports.run = async (bot, args) => {
 
 
 module.exports.help = {
-    name: "vouchers",
-    aliases: ["voucher", "vouch"],
-    usage: "",
-    description: "Check your voucher status",
-    args: [],
-    permission: [...botconfig.OWNERS, ...botconfig.MANAGERS, ...botconfig.EMPLOYEES],
+    name: "vouchers-m",
+    aliases: [],
+    usage: "<other member>",
+    description: "Check another employees voucher status",
+    args: [{
+            name: "id",
+            description: "MANAGERS Get a persons vouchers using their ID",
+            type: 1,
+            options: [{
+                name: "id",
+                description: "Their in game id or discord id",
+                type: 4,
+                required: true,
+                parse: (bot, message, args) => {
+                    return args[0]
+                }
+            }],
+        },
+        {
+            name: "discord",
+            description: "MANAGERS Get a persons vouchers using their discord",
+            type: 1,
+            options: [{
+                name: "member",
+                description: "the other discord user",
+                type: 6,
+                required: true,
+                parse: (bot, message, args) => {
+                    if (message.mentions.members.first()) args[0] = message.mentions.members.first().id;
+                    return args[0]
+                }
+            }]
+        }
+    ],
+    permission: [...botconfig.OWNERS, ...botconfig.MANAGERS],
     slash: true,
     slow: false,
     hidden: true

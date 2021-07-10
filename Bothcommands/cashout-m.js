@@ -4,7 +4,9 @@ const botconfig = require("../botconfig.json")
 
 module.exports.run = async (bot, args) => {
   return new Promise((resolve, reject) => {
-    if (args.author_id == "404650985529540618") { //if its rock doing a cashout and nobody is specified
+    const cashoutUser = args.member //either first mention or member with the discord ID or the message author
+
+    if (cashoutUser == args.author_id && args.author_id == "404650985529540618") { //if its rock doing a cashout and nobody is specified
       bot.con.query(`SELECT discord_id, rts_cashout, rts_cashout_worth, pigs_cashout, pigs_cashout_worth FROM managers`, function (err, result, fields) { //get every managers cashout
         if (err) {
           console.log(err)
@@ -39,10 +41,10 @@ module.exports.run = async (bot, args) => {
       if (args.guild_id == botconfig.RTSServer) var CompanyName = "rts" //get company name depending on discord server
       else if (args.guild_id == botconfig.PIGSServer) var CompanyName = "pigs"
 
-      const SearchColumn = functions.GetSearchColumn(args.author_id)
+      const SearchColumn = functions.GetSearchColumn(cashoutUser)
       if (SearchColumn == "in_game_id") return resolve("You can't supply an in game id.")
 
-      bot.con.query(`SELECT ${CompanyName}_cashout, ${CompanyName}_cashout_worth FROM managers WHERE ${SearchColumn}='${args.author_id}'`, function (err, result, fields) { //get the cashout for the specified company for the manager
+      bot.con.query(`SELECT ${CompanyName}_cashout, ${CompanyName}_cashout_worth FROM managers WHERE ${SearchColumn}='${cashoutUser}'`, function (err, result, fields) { //get the cashout for the specified company for the manager
         if (err) {
           console.log(err)
           return reject("Unable to get manager cashouts.")
@@ -52,7 +54,7 @@ module.exports.run = async (bot, args) => {
         //there is a result
         let cashoutEmbed = new Discord.MessageEmbed()
           .setColor("RANDOM")
-          .setTitle(`Cashout for ${SearchColumn == 'discord_id' ? bot.guilds.cache.get(args.guild_id).members.cache.get(args.author_id).displayName : args.author_id}`)
+          .setTitle(`Cashout for ${SearchColumn == 'discord_id' ? bot.guilds.cache.get(args.guild_id).members.cache.get(cashoutUser).displayName : cashoutUser}`)
           .addField("Cashout Value", "$" + functions.numberWithCommas(result[0][`${CompanyName}_cashout_worth`]), true)
           .addField("Total Vouchers", functions.numberWithCommas(result[0][`${CompanyName}_cashout`]), true)
           .addField("Total Value", "$" + functions.numberWithCommas(result[0][`${CompanyName}_cashout`] * 10000), true)
@@ -66,11 +68,20 @@ module.exports.run = async (bot, args) => {
 }
 
 module.exports.help = {
-  name: "cashout",
+  name: "cashout-m",
   aliases: [],
-  usage: "[in game id or discord]",
+  usage: "<in game id or discord>",
   description: "Gets how many vouchers you owe rock and how much he owes you.",
   permission: [...botconfig.OWNERS, ...botconfig.MANAGERS],
-  args: [],
+  args: [{
+    name: "member",
+    description: "the other discord user",
+    type: 6,
+    required: true,
+    parse: (bot, message, args) => {
+      if (message.mentions.members.first()) args[0] = message.mentions.members.first().id;
+      return args[0]
+    }
+  }],
   slash: true
 }
