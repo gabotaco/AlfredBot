@@ -21,9 +21,7 @@
 # Breakdown
 
 ## Processing Commands
-I could go on for days about how every single thing works with Alfred. Due to the fact that I don't have days I'll give you all a quick rundown.
-
-The index.js file is where the magic begins. This is the file that brings everything together. Inside of this file is where I login Alfred and connect all the other files to him for use in Discord. When Alfred detects a message he then processes it to check for the correct prefix (in this case a '.') and then tries to find the specified command in either the Discord servers folder (RTScommands for RTS Discord and PIGScommands for PIGS Discord) or the Bothcommands folder. If it finds the specified command it will run the function inside of that file. Of course these functions could be in index.js but it is significantly easier to have them in a folder rather than literal thousands of lines of code in a single file.
+The index.js file is where everything is brought together. Inside of this file is where Alfred logs in, registers all the slash commands, and registers loads command logic. When Alfred detects a message, he processes it to check for the correct prefix (in this case a '.') and then tries to find the specified command in either the Discord servers folder (RTScommands for RTS Discord and PIGScommands for PIGS Discord) or the Bothcommands folder. If it finds the specified command it will run the function inside of that file.
 
 ## Random Files
 
@@ -38,251 +36,45 @@ The biggest thing to ignore is the "components" folder, "lib/google" folder, goo
 
 This section is dedicated to external files outside of commands that are used to assist the program.
 
-Lets start simple. There are 2 html files for Alfred. These are simply the voucher pictures for each company and I use them to render the image for each individual person. If you view the source for the html files you will see a lot of {{double curly brackets}}. This is where I insert the data specific to the member before processing the file and sending the result to Discord.
+Lets start simple. There are 2 html files for Alfred. These are the voucher pictures for each company and I use them to render the image for each individual person. If you view the source for the html files you will see a lot of {{double curly brackets}}. This is where I insert the data specific to the member before processing the file and sending the result to Discord.
 
-The next external file I will be looking at is "authentication.js". This file is what allows me to use the Google Sheets API without having to log in every time. We used to use Google Sheets for keeping track of member data but now it is only used for applications and exporting company info. This file simply gets authorization details using client secrets and a client token obtained from Google. The file is commented to explain what everything does.
+The next external file is "authentication.js". This file is what allows me to use the Google Sheets API without having to log in every time. We used Google Sheets for keeping track of member data but now it is only used for exporting company info and bennys channel. This file simply gets authorization details using client secrets and a client token obtained from Google. The file is commented to explain what everything does.
 
-The last file is the biggest external file which is functions.js. The reason I have functions.js is because a lot of the commands do the same thing. And because every command has it's own file I have to make an external one to import functions. This was especially helpful for when we worked with Google Sheets. This allows me to make changes without having to go to each file. I can make one change in one place.
+The last file is the biggest external file which is functions.js. The reason I have functions.js is because a lot of the commands do the same thing. And because every command has it's own file I have to make an external file to import functions shared between them. This was especially helpful for when we worked with Google Sheets. This allows me to make changes without having to go to each file. I can make one change in one place.
 
 # Commands
-
-Here I will be saying what each command does. If you want to know how it works each file has comments.
-
-## Bothcommands
-
-### 7days.js
-
-This command sets a members deadline to next week regardless of what their current deadline is.
-
-### 8ball.js
-
-Allows you to ask a yes or no question and it will respond with a random answer.
-
-### addweek.js
-
-This command adds a week to the member deadline. Unlike 7days.js this one does care about current deadline
-
-### answers.js
-
-Get an applicants answers
-
-### applicants.js
-
-Get a list of unprocessed applicants
-
-### ask.js
-
-This command uses Google Assistant. You can ask for the weather or do math or do anything that Google can do. Really cool and it can talk
-
-### available.js
-
-This command marks a manager as available and removes the unavailable role.
-
-### botinfo.js
-
-Returns basic info about Alfred
-
-### cashout.js
-
-Gets the number of vouchers a manager has collected and how much money they gave to members since the last time the CEO has paid them
-
-### catto.js
-
-Returns a random picture of a cat
-
-### clear.js
-
-Deletes the specified amount of messages. Usefull for bulk deleting
-
-### coinflip.js
-
-Flips a coin
-
-### contacted.js
-
-Mark an applicant as contacted
-
-### deadline.js
-
-Get a members current deadline
-
-### discord.js
-
-Returns an applicants Discord
-
-### doggo.js
-
-Returns a random picture of a dog
-
-### employees.js
-
-Get the number of employees in the company
-
-### export.js
-
-Exports the company data to a spreadsheet that can be shared with others
-
-### fire.js
-
-Fire a member
-
-### firereason.js
-
-Get the firereason of a member
-
-### fix.js
-
-Fix a members discord id, in game name, or in game id in the database
-
-### handbook.js
-
-Returns the link to the company handbook
-
-### hello.js
-
-Say hello in a random language
-
-### help.js
-
-Get a list of commands you can do
-
-### hire.js
-
-Hire a member
-
-### inactives.js
-
-Get a list of all the inactive members in the company
-
-### invite.js
-
-Get a Discord invite to the other company server
-
-### names.js
-
-Get the names of hired members in the specified server and what their job is
-
-### paid.js
-
-Clear a managers cashout.
-
-### payout.js
-
-Get the amount to pay a member for their vouchers and then add that data to the database
-
-### pigs.js
-
-Swap a member to PIGS
-
-### players.js
-
-Get a list of how many hired members are in each server
-
-### rejected.js
-
-Mark an applicant as rejected
-
-### roles.js
-
-Reset a members roles and add the correct ones
-
-### rts.js
-
-Swap a member to RTS
-
-### say.js
-
-Make Alfred speak whatever you want
-
-### serverinfo.js
-
-Get information about the server
-
-### status.js
-
-Get the status of your application
-
-### top10.js
-
-Get a list of the top 10 members in the company
-
-### ud.js
-
-Search urban dictionary for words
-
-### unavailable.js
-
-Mark a manager as unavailable
-
-## PIGScommands
-
-### active.js
-
-Get a list of how many people are heisting on each server
-
-### calculate.js
-
-Figure out how much stolen money you need to get the specified amount of vouchers
-
-### divide.js
-
-Sends "-------------------------------------------------------" to the channel to seperate messages
-
-### kys.js
-
-Assigns the "edgy" role
-
-### nextrank.js
-
-Figure out how much more stolen money you need to rank up
-
-### vouchers.js
-
-Get your voucher card
-
-### warn.js
-
-Warn a member
-
-### warnlevel.js
-
-Check your warn level
-
-### warthogs.js
-
-Assigns the "warthogs" role
-
-## RTScommands
-
-### ats.js
-
-Assigns the ats role
-
-### ets2.js
-
-Assigns the ets2 role
-
-### mods.js
-
-Search for mods to vehicles
-
-### owo.js
-
-Assigns the nsfw role
-
-### turnins.js 
-
-Assigns the vouchers role
-
-### voucher.js
-
-Get your voucher card for RTS
+Each command has helpful descriptions of what they do and what arguments they take. The general format goes:
+```js
+// Imports and constants
+module.exports.run = async (bot, args) => { // command logic
+    return new Promise((resolve, reject) => { // returns a   promise
+        
+        resolve("This is what is sent")
+        // or
+        resolve(["send", "multiple", "things"])
+        // or
+        reject("This is an error")
+    })
+}
+
+module.exports.help = {
+    name: "COMMAND_NAME", // .COMMAND_NAME
+    aliases: ["cmd_name", "cmd_nme"], //.cmd_name, .cmd_nme 
+    usage: "<required> [optional arg]",
+    description: "A helpful description",
+    permission: [...botconfig.OWNERS, ...botconfig.MANAGERS, ...botconfig.EMPLOYEES, ...botconfig.MEMBERS], // who can use it
+    slash: true, // if command is slash
+    args: [], // arguments as described in usage (view other commands for examples, this is in discords slash command format with an added parse function)
+    hidden: false, // if response should be hidden
+    slow: false // if command takes a while to respond
+}
+```
 
 # Database
 
-The God of this whole project. This allows us to easily keep track of everyone while also keeping processing down.
+The Holy Spirit of this whole project. This allows us to easily keep track of everyone while also keeping commands quick.
 
-The database has 5 tables. managers, members, payout, pigs, and rts.
+The database has 6 tables. managers, members, payout, pigs, rts, and applicants.
 
 ## managers
 
@@ -326,11 +118,10 @@ $ git clone https://github.com/Gabolicious/AlfredBot.git
 $ npm install
 ```
 
-Inside the repository create botconfig.json. Obviously I can't show you exactly what my botconfig looks like but this is the bare essentials.
+Inside the repository create a file called `botconfig.json`. Obviously I can't show you exactly what my botconfig looks like but this is the bare essentials.
 
 ```json
 {
-    
     "YesResponses": [
         "Yes.",
         "Most likely",
@@ -360,14 +151,18 @@ Inside the repository create botconfig.json. Obviously I can't show you exactly 
     "PIGSSignMeUpIndex": 13,
     "RTSSignMeUpIndex": 14,
     "ApplicationInGameIDIndex": 5,
-    "ApplicationStartingRow": 900,
+    "ApplicationStartingRow": 2,
     "ApplicationWhyIndex": 16,
     "ApplicationAnythingIndex": 18,
+    "ApplicationRefferalCode": 19,
+    "ApplicationRefferalStatus": 20,
+    "ApplicationRefferalStatusColumn": "U",
+    "ApplicationRefferalCodeColumn": "T",
     "ApplicationPlayTimeIndex": 10,
     "ApplicationDiscordIndex": 3,
     "ApplicationInGameNameIndex": 4,
-    "GoogleAssistantKeyFile": "FILENAMETOGOOGLEASSISTANTFILE",
-    "RCSheet": "RCSHEETGOOGLESHEETID",
+    "GoogleAssistantKeyFile": "FILENAME.json",
+    "RCSheet": "RCSHEETID",
     "PIGSManagementCatagoryID": "487289620804141088",
     "RTSManagementCatagoryID": "454231796905803776",
     "GaboID": "330000865215643658",
@@ -375,53 +170,73 @@ Inside the repository create botconfig.json. Obviously I can't show you exactly 
     "ActiveServers": [
         [
             "server.tycoon.community",
-            "30122"
+            "30169",
+            "OS"
         ],
         [
             "server.tycoon.community",
-            "30123"
+            "30122",
+            "2"
         ],
         [
             "server.tycoon.community",
-            "30124"
+            "30123",
+            "3"
+        ],
+        [
+            "server.tycoon.community",
+            "30124",
+            "4"
         ],
         [
             "na.tycoon.community",
-            "30120"
+            "30120",
+            "6"
         ],
         [
             "na.tycoon.community",
-            "30122"
+            "30122",
+            "7"
         ],
         [
             "na.tycoon.community",
-            "30123"
+            "30123",
+            "8"
         ],
         [
             "na.tycoon.community",
-            "30124"
+            "30124",
+            "9"
         ],
         [
             "na.tycoon.community",
-            "30125"
+            "30125",
+            "A"
         ]
     ],
-    "PIGSGuestRole": "526487757695090691",
-    "RTSGuestRole": "483292098976546819",
-    "PIGSInactiveRole": "576784981024571412",
-    "RTSInactiveRole": "583745333591277590",
-    "PIGSUnavailableRole": "573159277817233418",
-    "RTSUnavailableRole": "576787272142422021",
-    "PIGSEdgyRole": "498885132468486175",
-    "RTSModsSheet": "RTSMODGOOGLESHEETID",
-    "Applications": "APPLICATIONGOOGLESHEETID",
-    "ApplicationRange": "A900:S1600",
-    "token": "DISCORDBOTTOKEN",
-    "RTSCEOSpamChannel": "536639000463540256",
+    "PIGSRoles": {
+        "GuestRole": "526487757695090691",
+        "InactiveRole": "576784981024571412",
+        "UnavailableRole": "573159277817233418",
+        "EdgyRole": "498885132468486175",
+        "BotRole": "487289216968032256"
+    },
+    "RTSRoles": {
+        "GuestRole": "483292098976546819",
+        "InactiveRole": "583745333591277590",
+        "UnavailableRole": "576787272142422021",
+        "BotRole": "455014608810541068",
+        "FiveMRole": "475029760930611200"
+    },
     "PIGSLogs": "569674770816172043",
     "RTSLogs": "569683812028645386",
-    "RTSBotRole": "455014608810541068",
-    "PIGSBotRole": "487289216968032256",
+    "OWNERS": [{"id": "447494569173712898", "server": "rts"}, {"id": "447493627791409173", "server": "rts"}, {"id": "487286138529120256", "server": "pigs"}, {"id": "530765121522499584", "server":"pigs"}],
+    "MANAGERS": [{"id": "453982220907184128", "server": "rts"}, {"id": "529643022866972684", "server": "rts"}, {"id": "487288337065836558", "server": "pigs"}, {"id": "529644127734988821", "server": "pigs"}],
+    "EMPLOYEES": [{"id": "526203890639699968", "server": "rts"}, {"id": "483297370482933760", "server": "rts"}, {"id": "526160668882239508", "server": "pigs"}, {"id": "562991083882151937", "server": "pigs"}],
+    "MEMBERS": [{"id": "483292098976546819", "server": "rts"}, {"id": "526487757695090691", "server": "pigs"}],
+    "RTSModsSheet": "MODSHEETID",
+    "Applications": "APPLICATIONSHEETID",
+    "ApplicationRange": "A2:U500",
     "RTSWelcome": "447500215357014026",
     "PIGSWelcome": "487285826544205849",
     "PIGSOneWordStory": "576434701124894735",
@@ -429,11 +244,13 @@ Inside the repository create botconfig.json. Obviously I can't show you exactly 
         "PIGS": ".",
         "RTS": "."
     },
+    "RTSCEOSpamChannel": "536639000463540256",
     "RTSPublicBotCommandsChannel": "483312512217907220",
     "RTSBotCommandsChannel": "472054525172383744",
     "RTSBennysChannel": "472410321475338246",
     "PIGSBotCommandsChannel": "488149666249048064",
     "PIGSVoucherChannel": "487621053494067200",
+    "RTSVoucherChannel": "588099364497653780",
     "RTSManagers": [
         "225564356140728320",
         "440831788240338944",
@@ -447,8 +264,13 @@ Inside the repository create botconfig.json. Obviously I can't show you exactly 
         "330015505211457551",
         "394694336127696897"
     ],
-    "RTSFiveMRole": "475029760930611200",
     "GlitchDetectorID": "71676578244857856",
-    "BabySheet": "GOOGLESHEETID"
+    "BabySheet": "BABYSHEETID",
+    "access_token": "PWD",
+    "TTHeaders": {
+        "X-Tycoon-Key": "TYCOONKEY"
+    },
+    "token": "BOTTOKEN"
 }
 ```
+That's the project.
