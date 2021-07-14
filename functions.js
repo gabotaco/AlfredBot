@@ -68,7 +68,7 @@ module.exports = {
      * @returns {[String, Number]} [Server IP, Last server Port number]
      */
     GetServerIPandPort: function (ServerNumber) {
-        if (!ServerNumber || (ServerNumber.toLowerCase() != 'a' && (isNaN(parseInt(ServerNumber)) || ServerNumber < 1 || ServerNumber > 9))) return null;
+        if (!ServerNumber || ((ServerNumber.toLowerCase() != 'a' && ServerNumber.toLowerCase() != 'os') && (isNaN(parseInt(ServerNumber)) || ServerNumber < 1 || ServerNumber > 9))) return null;
 
         let server = parseInt(ServerNumber) //convert the string to an int
 
