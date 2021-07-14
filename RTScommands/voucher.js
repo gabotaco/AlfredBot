@@ -150,7 +150,7 @@ module.exports.run = async (bot, args) => {
 
 module.exports.help = {
     name: "voucher",
-    aliases: ["vouchers", "vouch"],
+    aliases: ["vouchers", "vouch", "rank", "progress"],
     usage: "",
     description: "Check your voucher status",
     args: [],

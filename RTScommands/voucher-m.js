@@ -152,12 +152,12 @@ module.exports.run = async (bot, args) => {
 
 module.exports.help = {
     name: "voucher-m",
-    aliases: [],
+    aliases: ["vouchers-m", "vouch-m", "rank-m", "progress-m"],
     usage: "<other member>",
     description: "Check voucher status",
     args: [{
             name: "id",
-            description: "MANAGERS Get a persons vouchers using their ID",
+            description: "Get a persons vouchers using their ID",
             type: 1,
             options: [{
                 name: "id",
@@ -171,7 +171,7 @@ module.exports.help = {
         },
         {
             name: "discord",
-            description: "MANAGERS Get a persons vouchers using their discord",
+            description: "Get a persons vouchers using their discord",
             type: 1,
             options: [{
                 name: "member",

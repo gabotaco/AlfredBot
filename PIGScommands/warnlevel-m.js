@@ -19,7 +19,7 @@ module.exports.run = async (bot, args) => {
 
 module.exports.help = {
     name: "warnlevel-m",
-    aliases: [""],
+    aliases: ["wl-m"],
     usage: "<member>",
     description: "Check how many warns an employee has",
     args: [{

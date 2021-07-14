@@ -173,7 +173,7 @@ module.exports.run = async (bot, args) => {
 
 module.exports.help = {
     name: "vouchers-m",
-    aliases: [],
+    aliases: ["voucher-m", "vouch-m", "rank-m", "progress-m"],
     usage: "<other member>",
     description: "Check another employees voucher status",
     args: [{
