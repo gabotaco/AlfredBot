@@ -81,9 +81,15 @@ app.get("/roles/update", function (req, res) {
         "member": null
     }
 
-    bot.BothCommands.get("roles").run(bot, roleArgs)
-    res.json({
-        "success": "Yes"
+    bot.BothCommands.get("roles").run(bot, roleArgs).then((res) => {
+        bot.channels.cache.get("727993411461841038").send(res)
+        res.json({
+            "success": "Yes"
+        })
+    }).catch((err) => {
+        res.json({
+            "error": err
+        })
     })
 })
 
@@ -118,7 +124,6 @@ app.get("/member/message", function (req, res) {
         res.json({
             "Error": "Couldn't find member"
         })
-        console.log("COULDN'T FIND MEMBER")
         return
     }
     member.send(`
