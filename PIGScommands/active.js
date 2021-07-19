@@ -19,7 +19,7 @@ module.exports.run = async (bot, args) => {
                     }, 1000);
                 }
     
-                request(`http://${botconfig.ActiveServers[index][0]}:${botconfig.ActiveServers[index][1]}/status/widget/players.json`, function (error, response, body) { //url to get all players
+                request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, function (error, response, body) { //url to get all players
                     if (error) { //server is offline
                         return;
                     }
@@ -36,19 +36,17 @@ module.exports.run = async (bot, args) => {
                         if (player[5] == "P.I.G.S. Robberrery") CurrentServerPoints++ //if theres someone with a pigs job increase points
                     });
     
-                    ServerPoints.push([CurrentServerPoints, botconfig.ActiveServers[index][2]])
+                    ServerPoints.push([CurrentServerPoints, botconfig.ActiveServers[index].name])
                 });
             }
     
             checkServer(0); //Run recursive function starting at index 0
     
         } else { //specified server
-            const Response = functions.GetServerIPandPort(args.server)
-            if (!Response) return resolve("Invalid server. [1 or OS, 2, 3, 4, 5, 6, 7, 8, 9, A]")
-            const ServerIP = Response.ip
-            const ServerPort = Response.port
+            const Server = functions.GetServerURL(args.server)
+            if (!Server) return resolve("Invalid server. [1 or OS, 2, 3, 4, 5, 6, 7, 8, 9, A]")
     
-            request(`http://${ServerIP}:${ServerPort}/status/map/positions.json`, {'headers': botconfig.TTHeaders}, function (error, response, body) { //get server ip and port
+            request(`https://${Server}/status/map/positions.json`, {'headers': botconfig.TTHeaders}, function (error, response, body) { //get server ip and port
                 if (error) return resolve("Server is offline");
                 body = JSON.parse(body)
     

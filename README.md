@@ -168,51 +168,46 @@ Inside the repository create a file called `botconfig.json`. Obviously I can't s
     "GaboID": "330000865215643658",
     "RockID": "404650985529540618",
     "ActiveServers": [
-        [
-            "server.tycoon.community",
-            "30169",
-            "OS"
-        ],
-        [
-            "server.tycoon.community",
-            "30122",
-            "2"
-        ],
-        [
-            "server.tycoon.community",
-            "30123",
-            "3"
-        ],
-        [
-            "server.tycoon.community",
-            "30124",
-            "4"
-        ],
-        [
-            "na.tycoon.community",
-            "30120",
-            "6"
-        ],
-        [
-            "na.tycoon.community",
-            "30122",
-            "7"
-        ],
-        [
-            "na.tycoon.community",
-            "30123",
-            "8"
-        ],
-        [
-            "na.tycoon.community",
-            "30124",
-            "9"
-        ],
-        [
-            "na.tycoon.community",
-            "30125",
-            "A"
-        ]
+        {
+            "url": "tycoon-w8r4q4.users.cfx.re",
+            "name": "OS"
+        },
+        {
+            "url": "tycoon-2epova.users.cfx.re",
+            "name": "2"
+        },
+        {
+            "url": "tycoon-2epovd.users.cfx.re",
+            "name": "3"
+        },
+        {
+            "url": "tycoon-wdrypd.users.cfx.re",
+            "name": "4"
+        },
+        {
+            "url": "tycoon-njyvop.users.cfx.re",
+            "name": "5"
+        },
+        {
+            "url": "tycoon-2r4588.users.cfx.re",
+            "name": "6"
+        },
+        {
+            "url": "tycoon-npl5oy.users.cfx.re",
+            "name": "7"
+        },
+        {
+            "url": "tycoon-2vzlde.users.cfx.re",
+            "name": "8"
+        },
+        {
+            "url": "tycoon-wmapod.users.cfx.re",
+            "name": "9"
+        },
+        {
+            "url": "tycoon-wxjpge.users.cfx.re",
+            "name": "A"
+        }
     ],
     "PIGSRoles": {
         "GuestRole": "526487757695090691",

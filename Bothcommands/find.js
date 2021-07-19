@@ -22,7 +22,7 @@ module.exports.run = async (bot, args) => {
         function checkServer(index) { //Find people heisting in server
           if (index >= botconfig.ActiveServers.length) return resolve(ActiveManagerEmbed)
     
-          request(`http://${botconfig.ActiveServers[index][0]}:${botconfig.ActiveServers[index][1]}/status/widget/players.json`, {timeout: 1500}, function (error, response, body) { //url to get all players
+          request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, {timeout: 1500}, function (error, response, body) { //url to get all players
             if (error) { //server is offline
               checkServer(index + 1) //check next one
               return;
@@ -41,7 +41,7 @@ module.exports.run = async (bot, args) => {
             let found = false;
             jsonBody.players.forEach(player => { //loop through all players
               if (Object.keys(Managers).includes(player[2].toString())) {
-                ActiveManagerEmbed.addField(`${player[0]} (${Managers[player[2].toString()].toUpperCase()})`, `Server ${botconfig.ActiveServers[index][2]}`, true)
+                ActiveManagerEmbed.addField(`${player[0]} (${Managers[player[2].toString()].toUpperCase()})`, `Server ${botconfig.ActiveServers[index].name}`, true)
               }
             });
             setTimeout(() => {
@@ -62,7 +62,7 @@ module.exports.run = async (bot, args) => {
           tryGetInGame(0);
           function tryGetInGame(index) {
             if (index >= botconfig.ActiveServers.length) return resolve("Unable to get the in game id for that user")
-            request(`http://${botconfig.ActiveServers[index][0]}:${botconfig.ActiveServers[index][1]}/status/snowflake2user/${args.member || args.id}`, {
+            request(`https://${botconfig.ActiveServers[index].url}/status/snowflake2user/${args.member || args.id}`, {
               headers: botconfig.TTHeaders
             }, function (err, response, html) {
               if (err) {
@@ -101,7 +101,7 @@ module.exports.run = async (bot, args) => {
       function checkServer(index) { //Find people heisting in server
         if (index >= botconfig.ActiveServers.length) return resolve("Couldn't find that player online.")
   
-        request(`http://${botconfig.ActiveServers[index][0]}:${botconfig.ActiveServers[index][1]}/status/widget/players.json`, {timeout: 1500}, function (error, response, body) { //url to get all players
+        request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, {timeout: 1500}, function (error, response, body) { //url to get all players
           if (error) { //server is offline
             checkServer(index + 1) //check next one
             return;
@@ -120,7 +120,7 @@ module.exports.run = async (bot, args) => {
           let found = false;
           jsonBody.players.forEach(player => { //loop through all players
             if (InGameId == player[2]) {
-              resolve(`Player ${InGameId} is online on server ${botconfig.ActiveServers[index][2]}`)
+              resolve(`Player ${InGameId} is online on server ${botconfig.ActiveServers[index].name}`)
               found = true;
             }
           });

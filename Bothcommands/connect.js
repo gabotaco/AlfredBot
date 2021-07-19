@@ -4,14 +4,13 @@ const botconfig = require("../botconfig.json")
 
 module.exports.run = async (bot, args) => {
   return new Promise((resolve, reject) => {
-    const Server = functions.GetServerIPandPort(args.server) //get server ip and port
+    const Server = functions.GetServerURL(args.server) //get server ip and port
     if (!Server) return resolve("Invalid server. [1 or OS, 2, 3, 4, 5, 6, 7, 8, 9, A]")
-
 
     const ConnectEmbed = new Discord.MessageEmbed()
       .setTitle(`Connect to Server ${args.server}`)
       .setColor("RANDOM")
-      .setDescription(`<fivem:\//connect/${Server.ip}:${Server.port}>`)
+      .setDescription(`<fivem:\//connect/${Server}>`)
     return resolve(ConnectEmbed)
   })
 }

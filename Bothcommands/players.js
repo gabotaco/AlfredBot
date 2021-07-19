@@ -38,7 +38,7 @@ module.exports.run = async (bot, args) => {
         }, 1000);
       }
 
-      request(`http://${botconfig.ActiveServers[index][0]}:${botconfig.ActiveServers[index][1]}/status/widget/players.json`, function (error, response, body) { //url to get all players
+      request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, function (error, response, body) { //url to get all players
         if (error) { //server is offline
           return;
         }
@@ -55,7 +55,7 @@ module.exports.run = async (bot, args) => {
           if (CompanyMembers.includes(player[2].toString())) CurrentServerPoints++ //if player is in company increase score
         });
 
-        ServerPoints.push([CurrentServerPoints, botconfig.ActiveServers[index][2]]) //Add array into array [points, server num]
+        ServerPoints.push([CurrentServerPoints, botconfig.ActiveServers[index].name]) //Add array into array [points, server num]
       });
     }
   })

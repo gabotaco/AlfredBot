@@ -5,10 +5,8 @@ const functions = require("../functions.js")
 
 module.exports.run = async (bot, args) => {
   return new Promise((resolve, reject) => {
-    const Response = functions.GetServerIPandPort(args.server); //get server ip and port
-    if (!Response) return resolve("Invalid server. [1 or OS, 2, 3, 4, 5, 6, 7, 8, 9, A]")
-    const ServerIP = Response.ip
-    const ServerPort = Response.port
+    const Server = functions.GetServerURL(args.server); //get server ip and port
+    if (!Server) return resolve("Invalid server. [1 or OS, 2, 3, 4, 5, 6, 7, 8, 9, A]")
 
     let CompanyMembers = [] //track company members
 
@@ -41,7 +39,7 @@ module.exports.run = async (bot, args) => {
         }
       }, 5000);
 
-      request(`http://${ServerIP}:${ServerPort}/status/widget/players.json`, function (error, response, body) { //get server players
+      request(`https://${Server}/status/widget/players.json`, function (error, response, body) { //get server players
         if (!error) { //If no error
           SentMessage = true; //sent message
           body = JSON.parse(body) //parse body

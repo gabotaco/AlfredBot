@@ -67,65 +67,33 @@ module.exports = {
      * @param {String} ServerNumber Specified server number
      * @returns {[String, Number]} [Server IP, Last server Port number]
      */
-    GetServerIPandPort: function (ServerNumber) {
+    GetServerURL: function (ServerNumber) {
         if (!ServerNumber || ((ServerNumber.toLowerCase() != 'a' && ServerNumber.toLowerCase() != 'os') && (isNaN(parseInt(ServerNumber)) || ServerNumber < 1 || ServerNumber > 9))) return null;
 
         let server = parseInt(ServerNumber) //convert the string to an int
 
         if (ServerNumber.toLowerCase() == "a") { //if the server number is A
-            var serverIP = "na.tycoon.community" //ip is na
-            server = 30125 //last port number is 5
+            return "tycoon-wxjpge.users.cfx.re";
         } else if (server == 1 || ServerNumber.toLowerCase() == "os") {
-            var serverIP = "server.tycoon.community" //server ip is server
-            server = 30169
-        } else if (server > 1 && server < 6) { //if the server number is higher than 1 and less than 6
-            var serverIP = "server.tycoon.community" //server ip is server. and last port number is the same provided in the servernumber
-            server += 30120
-        } else if (server == 0) { //if they say server 0
-            var serverIP = "server.tycoon.community" //server ip is server.
-            server = 30121 //last port number is 1
-        } else if (server > 6) { //if the number is higher than 6
-            var serverIP = "na.tycoon.community" //na.
-            server -= 5 //last port number is that number minues 5
-            server += 30120
-        } else { //any other server
-            var serverIP = "na.tycoon.community" //na.
-            server = 30120 //server port is 0
-        }
-
-        return {"ip": serverIP, "port": server}
-    },
-
-    /**
-     * @summary Gets the english server number
-     * @param {String} serverIP Specified server ip
-     * @param {String} serverPort Specified server port
-     * @returns {String]} The server number or IDK
-     */
-    GetServerNumber: function (serverIP, serverPort) {
-        switch (`${serverIP}:${serverPort}`) {
-            case "server.tycoon.community:30169":
-                return "1"
-            case "server.tycoon.community:30122":
-                return "2"
-            case "server.tycoon.community:30123":
-                return "3"
-            case "server.tycoon.community:30124":
-                return "4"
-            case "server.tycoon.community:30125":
-                return "5"
-            case "na.tycoon.community:30120":
-                return "6"
-            case "na.tycoon.community:30122":
-                return "7"
-            case "na.tycoon.community:30123":
-                return "8"
-            case "na.tycoon.community:30124":
-                return "9"
-            case "na.tycoon.community:30125":
-                return "A"
-            default:
-                return "idk"
+            return "tycoon-w8r4q4.users.cfx.re"
+        } else if (server == 2) {
+            return "tycoon-2epova.users.cfx.re"
+        } else if (server == 3) {
+            return "tycoon-2epovd.users.cfx.re"
+        } else if (server == 4) {
+            return "tycoon-wdrypd.users.cfx.re"
+        } else if (server == 5) {
+            return "tycoon-njyvop.users.cfx.re"
+        } else if (server == 6) {
+            return "tycoon-2r4588.users.cfx.re"
+        } else if (server == 7) {
+            return "tycoon-npl5oy.users.cfx.re"
+        } else if (server == 8) {
+            return "tycoon-2vzlde.users.cfx.re"
+        } else if (server == 9) {
+            return "tycoon-wmapod.users.cfx.re"
+        } else {
+            return null;
         }
     },
 

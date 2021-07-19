@@ -294,7 +294,7 @@ function checkForDxp() {
             return;
         }
 
-        request(`http://${botconfig.ActiveServers[index][0]}:${botconfig.ActiveServers[index][1]}/status/widget/players.json`, function (error, response, body) { //url to get all players
+        request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, function (error, response, body) { //url to get all players
             if (error) { //server is offline
                 return;
             }

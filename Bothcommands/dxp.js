@@ -29,7 +29,7 @@ module.exports.run = async (bot, args) => {
 
         function checkServer(index) {
             function addServerPoint(CurrentServerPoints) {
-                ServerPoints.push([CurrentServerPoints, botconfig.ActiveServers[index][2]]);
+                ServerPoints.push([CurrentServerPoints, botconfig.ActiveServers[index].name]);
             }
 
             if (index < botconfig.ActiveServers.length - 1) { //if its not the last server
@@ -49,7 +49,7 @@ module.exports.run = async (bot, args) => {
                 }, 1000);
             }
 
-            request(`http://${botconfig.ActiveServers[index][0]}:${botconfig.ActiveServers[index][1]}/status/widget/players.json`, function (error, response, body) { //url to get all players
+            request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, function (error, response, body) { //url to get all players
                 if (error) { //server is offline
                     // console.log(error)
                     addServerPoint("OFFLINE")
