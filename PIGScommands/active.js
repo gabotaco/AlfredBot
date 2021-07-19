@@ -19,20 +19,13 @@ module.exports.run = async (bot, args) => {
                     }, 1000);
                 }
     
-                request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, function (error, response, body) { //url to get all players
-                    if (error) { //server is offline
+                request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, {json: true}, function (error, response, body) { //url to get all players
+                    if (error || !body) { //server is offline
                         return;
                     }
     
-                    try {
-                        var JSONBody = JSON.parse(body); //convert to json so we can use it
-                    } catch (e) {
-                        //Handle or naw
-                        return
-                    }
-    
                     let CurrentServerPoints = 0 //start at 0 people playing
-                    JSONBody.players.forEach(player => {
+                    body.players.forEach(player => {
                         if (player[5] == "P.I.G.S. Robberrery") CurrentServerPoints++ //if theres someone with a pigs job increase points
                     });
     
@@ -46,9 +39,8 @@ module.exports.run = async (bot, args) => {
             const Server = functions.GetServerURL(args.server)
             if (!Server) return resolve("Invalid server. [1 or OS, 2, 3, 4, 5, 6, 7, 8, 9, A]")
     
-            request(`https://${Server}/status/map/positions.json`, {'headers': botconfig.TTHeaders}, function (error, response, body) { //get server ip and port
-                if (error) return resolve("Server is offline");
-                body = JSON.parse(body)
+            request(`https://${Server}/status/map/positions.json`, {'headers': botconfig.TTHeaders, json: true}, function (error, response, body) { //get server ip and port
+                if (error || !body) return resolve("Server is offline");
     
                 let PlayersHeighsting = new Discord.MessageEmbed()
                     .setTitle(`Players currently heisting on server ${args.server}`)

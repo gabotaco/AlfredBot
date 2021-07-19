@@ -294,20 +294,13 @@ function checkForDxp() {
             return;
         }
 
-        request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, function (error, response, body) { //url to get all players
-            if (error) { //server is offline
+        request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, {json: true}, function (error, response, body) { //url to get all players
+            if (error || !body) { //server is offline
                 return;
             }
 
-            try {
-                var jsonBody = JSON.parse(body); //convert to json so we can use it
-            } catch (e) {
-                //Handle or naw
-                return
-            }
-
-            if (jsonBody.server.dxp[0]) {
-                const dxpMessage = `There's double experience on **server ${jsonBody.server.number}** for another **${toTimeFormat(jsonBody.server.dxp[2] + jsonBody.server.dxp[3])}** :eyes:`
+            if (body.server.dxp[0]) {
+                const dxpMessage = `There's double experience on **server ${body.server.number}** for another **${toTimeFormat(body.server.dxp[2] + body.server.dxp[3])}** :eyes:`
                 bot.channels.cache.get("747859854424801401").send(dxpMessage)
                 bot.channels.cache.get("747859721922412736").send(dxpMessage)
             }

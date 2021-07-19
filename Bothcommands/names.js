@@ -39,10 +39,9 @@ module.exports.run = async (bot, args) => {
         }
       }, 5000);
 
-      request(`https://${Server}/status/widget/players.json`, function (error, response, body) { //get server players
-        if (!error) { //If no error
+      request(`https://${Server}/status/widget/players.json`, {json: true}, function (error, response, body) { //get server players
+        if (!error && body) { //If no error
           SentMessage = true; //sent message
-          body = JSON.parse(body) //parse body
           body.players.forEach(player => { //go thorugh all players
             if (CompanyMembers.includes(player[2].toString())) { //if the player is in company
               playerNames.push(player[0]) //add player name

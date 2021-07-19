@@ -22,24 +22,13 @@ module.exports.run = async (bot, args) => {
         function checkServer(index) { //Find people heisting in server
           if (index >= botconfig.ActiveServers.length) return resolve(ActiveManagerEmbed)
     
-          request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, {timeout: 1500}, function (error, response, body) { //url to get all players
+          request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, {timeout: 1500, json: true}, function (error, response, body) { //url to get all players
             if (error) { //server is offline
               checkServer(index + 1) //check next one
               return;
             }
     
-            try {
-              var jsonBody = JSON.parse(body); //convert to json so we can use it
-            } catch (e) {
-              //Handle or naw
-              setTimeout(() => {
-                checkServer(index + 1) //check next one
-              }, 500);
-              return
-            }
-    
-            let found = false;
-            jsonBody.players.forEach(player => { //loop through all players
+            body.players.forEach(player => { //loop through all players
               if (Object.keys(Managers).includes(player[2].toString())) {
                 ActiveManagerEmbed.addField(`${player[0]} (${Managers[player[2].toString()].toUpperCase()})`, `Server ${botconfig.ActiveServers[index].name}`, true)
               }
@@ -101,24 +90,14 @@ module.exports.run = async (bot, args) => {
       function checkServer(index) { //Find people heisting in server
         if (index >= botconfig.ActiveServers.length) return resolve("Couldn't find that player online.")
   
-        request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, {timeout: 1500}, function (error, response, body) { //url to get all players
-          if (error) { //server is offline
+        request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, {timeout: 1500, json: true}, function (error, response, body) { //url to get all players
+          if (error || !body) { //server is offline
             checkServer(index + 1) //check next one
             return;
           }
   
-          try {
-            var jsonBody = JSON.parse(body); //convert to json so we can use it
-          } catch (e) {
-            //Handle or naw
-            setTimeout(() => {
-              checkServer(index + 1) //check next one
-            }, 500);
-            return
-          }
-  
           let found = false;
-          jsonBody.players.forEach(player => { //loop through all players
+          body.players.forEach(player => { //loop through all players
             if (InGameId == player[2]) {
               resolve(`Player ${InGameId} is online on server ${botconfig.ActiveServers[index].name}`)
               found = true;

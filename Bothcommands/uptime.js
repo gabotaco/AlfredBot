@@ -20,15 +20,13 @@ module.exports.run = async (bot, args) => {
                 }, 1000);
             }
 
-            request(`https://${botconfig.ActiveServers[index].url}/info.json`, function (error, response, body) { //url to get all players
-                if (error) { //server is offline
+            request(`https://${botconfig.ActiveServers[index].url}/info.json`, {json: true}, function (error, response, body) { //url to get all players
+                if (error || !body) { //server is offline
                     ServerStatus.addField(botconfig.ActiveServers[index].name, "OFFLINE", true)
                     return;
                 }
 
-                const JSONBody = JSON.parse(body); //convert to json so we can use it
-
-                ServerStatus.addField(botconfig.ActiveServers[index].name, JSONBody.vars.Uptime, true)
+                ServerStatus.addField(botconfig.ActiveServers[index].name, body.vars.Uptime, true)
               
             });
         }
