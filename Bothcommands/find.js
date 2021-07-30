@@ -23,7 +23,7 @@ module.exports.run = async (bot, args) => {
           if (index >= botconfig.ActiveServers.length) return resolve(ActiveManagerEmbed)
     
           request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, {timeout: 1500, json: true}, function (error, response, body) { //url to get all players
-            if (error) { //server is offline
+            if (error || !body) { //server is offline
               checkServer(index + 1) //check next one
               return;
             }
