@@ -16,18 +16,22 @@ module.exports.run = async (bot, args) => {
           Managers[manager.in_game_id.toString()] = manager.company;
         });
         const ActiveManagerEmbed = new Discord.MessageEmbed()
-        .setColor("random")
-        .setTitle("Active Managers")
+          .setColor("random")
+          .setTitle("Active Managers")
         checkServer(0);
+
         function checkServer(index) { //Find people heisting in server
           if (index >= botconfig.ActiveServers.length) return resolve(ActiveManagerEmbed)
-    
-          request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, {timeout: 1500, json: true}, function (error, response, body) { //url to get all players
+
+          request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, {
+            timeout: 1500,
+            json: true
+          }, function (error, response, body) { //url to get all players
             if (error || !body) { //server is offline
               checkServer(index + 1) //check next one
               return;
             }
-    
+
             body.players.forEach(player => { //loop through all players
               if (Object.keys(Managers).includes(player[2].toString())) {
                 ActiveManagerEmbed.addField(`${player[0]} (${Managers[player[2].toString()].toUpperCase()})`, `Server ${botconfig.ActiveServers[index].name}`, true)
@@ -49,6 +53,7 @@ module.exports.run = async (bot, args) => {
         }
         if (result.length == 0 && SearchColumn == "discord_id") {
           tryGetInGame(0);
+
           function tryGetInGame(index) {
             if (index >= botconfig.ActiveServers.length) return resolve("Unable to get the in game id for that user")
             request(`https://${botconfig.ActiveServers[index].url}/status/snowflake2user/${args.member || args.id}`, {
@@ -58,19 +63,19 @@ module.exports.run = async (bot, args) => {
                 tryGetInGame(index + 1)
                 return;
               }
-    
+
               try {
                 var response = JSON.parse(new DOMParser().parseFromString(html, "text/html").body
                   .innerHTML.replace(/<\/?[^>]+>/gi, ''))
               } catch (e) {
-    
+
               }
-    
+
               if (!response || response.code == "408") {
                 tryGetInGame(index + 1)
                 return;
               }
-    
+
               if (response.user_id) {
                 InGameId = response.user_id
                 checkServer(0);
@@ -86,28 +91,34 @@ module.exports.run = async (bot, args) => {
           checkServer(0); //Check server 1
         }
       })
-  
+
+      const foundPlayers = []
+
       function checkServer(index) { //Find people heisting in server
-        if (index >= botconfig.ActiveServers.length) return resolve("Couldn't find that player online.")
-  
-        request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, {timeout: 1500, json: true}, function (error, response, body) { //url to get all players
+        if (index >= botconfig.ActiveServers.length) {
+          if (foundPlayers.length == 0) {
+            return resolve("Couldn't find that player online.")
+          }
+          return resolve(foundPlayers)
+        }
+
+        request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, {
+          timeout: 1500,
+          json: true
+        }, function (error, response, body) { //url to get all players
           if (error || !body) { //server is offline
             checkServer(index + 1) //check next one
             return;
           }
-  
-          let found = false;
+
           body.players.forEach(player => { //loop through all players
-            if (InGameId == player[2]) {
-              resolve(`Player ${InGameId} is online on server ${botconfig.ActiveServers[index].name}`)
-              found = true;
+            if (InGameId == player[2] || player[0].toLowerCase().includes(args.name.toLowerCase())) {
+              foundPlayers.push(`Player ${player[0]} (${player[2]}) is online on server ${botconfig.ActiveServers[index].name}`)
             }
           });
-          if (!found) {
-            setTimeout(() => {
-              checkServer(index + 1) //check next one
-            }, 500);
-          }
+          setTimeout(() => {
+            checkServer(index + 1) //check next one
+          }, 500);
         });
       }
     }
@@ -131,6 +142,21 @@ module.exports.help = {
         missing: "Please specify another player",
         parse: (bot, message, args) => {
           if (message.mentions.members.first()) args[0] = message.mentions.members.first().id;
+          return args[0]
+        }
+      }],
+    },
+    {
+      name: "name",
+      description: "Find a player using their name",
+      type: 1,
+      options: [{
+        name: "name",
+        description: "Their in game name",
+        type: 3,
+        required: true,
+        missing: "Please specify another player",
+        parse: (bot, message, args) => {
           return args[0]
         }
       }],
