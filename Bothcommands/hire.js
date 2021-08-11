@@ -13,7 +13,7 @@ module.exports.run = async (bot, args) => {
       var CompanyName = "rts"
     }
 
-    if (args.in_game_id && (!args.discord && !args.in_game_name)) { //if they only have 1 arg
+    if (args.in_game_id && (!args.discord && !args.name)) { //if they only have 1 arg
       bot.con.query(`SELECT discord_id, in_game_name, in_game_id FROM applications WHERE in_game_id = ${args.in_game_id}`, function (err, result) {
         if (err) {
           console.log(err)
@@ -31,7 +31,7 @@ module.exports.run = async (bot, args) => {
         }
       })
     } else { //privided either nothing or has more than 1 arg
-      Hire(args.discord, args.in_game_name, args.in_game_id).then((res) => {
+      Hire(args.discord, args.name, args.in_game_id).then((res) => {
         return resolve(res);
       }).catch((err) => {
         return reject(err);
