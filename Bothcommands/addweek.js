@@ -10,7 +10,9 @@ module.exports.run = async (bot, args) => {
                 console.log(err)
                 return reject("There was an error updating the deadline")
             } else {
-                return resolve(`Updated deadline.`)
+                functions.CheckForActive(bot, SearchColumn, args.id || args.member).then(() => {
+                    return resolve("Updated deadline")
+                })
             }
         })
     })

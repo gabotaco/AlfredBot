@@ -320,8 +320,10 @@ module.exports.run = async (bot, args) => {
                                     console.log(err)
                                     return reject("Unable to update members deadline and last turning. WARNING MANAGERS, COMPANY, AND PAYOUT TABLE WERE UPDATED");
                                 }
-                                resolve("Payout performed.")
-                                delete pendingPayouts[args.author_id]
+                                functions.CheckForActive(bot, 'in_game_id', pendingPayout.in_game_id).then(() => {
+                                    delete pendingPayouts[args.author_id]
+                                    return resolve("Payout performed.")
+                                })
                             })
                         })
                     })

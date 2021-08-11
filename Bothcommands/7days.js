@@ -10,7 +10,9 @@ module.exports.run = async (bot, args) => {
         const newDeadline = d.toISOString().slice(0, 19).replace('T', ' ');
 
         functions.ChangeDeadline(bot.con, newDeadline, SearchColumn, args.id || args.member).then((res) => {
-            return resolve(res)
+            functions.CheckForActive(bot, SearchColumn, args.id || args.member).then(() => {
+                return resolve(res)
+            })
         })
     })
 }

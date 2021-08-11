@@ -12,7 +12,9 @@ module.exports.run = async (bot, args) => {
                 return reject("Unable to update the members table.")
             }
             if (result.affectedRows > 0) {
-                resolve("Transferred to RTS")
+                functions.CheckForActive(bot, SearchColumn, ID).then(() => {
+                    return resolve("Transferred to RTS")
+                })
             } else {
                 resolve("Couldn't find a hired member with that id.")
             }
