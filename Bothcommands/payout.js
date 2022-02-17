@@ -21,25 +21,25 @@ module.exports.run = async (bot, args) => {
                 var voucherWorth = function (playerTotalVouchers, voucherAmount) { //get how much to pay the person
                     if (playerTotalVouchers < 6000) { //Hustler
                         var RankVouchers = 6000
-                        var rankWorth = 3500
+                        var rankWorth = 3.5
                     } else if (playerTotalVouchers < 18000) { //Pickpocket
                         var RankVouchers = 18000
-                        var rankWorth = 4000
+                        var rankWorth = 4
                     } else if (playerTotalVouchers < 38000) { //Thief
                         var RankVouchers = 38000
-                        var rankWorth = 5000
+                        var rankWorth = 5
                     } else if (playerTotalVouchers < 68000) { //Lawless
                         var RankVouchers = 68000
-                        var rankWorth = 6000;
+                        var rankWorth = 6;
                     } else if (playerTotalVouchers < 150000) { //Mastermind
                         var RankVouchers = 150000
-                        var rankWorth = 7000
+                        var rankWorth = 7
                     } else if (playerTotalVouchers < 1500000) { //Overlord
                         var RankVouchers = 1500000
-                        var rankWorth = 8500
+                        var rankWorth = 8.5
                     } else {
                         var RankVouchers = Infinity
-                        var rankWorth = 9000
+                        var rankWorth = 9
                     }
     
                     rankVouchers = RankVouchers;
@@ -146,19 +146,19 @@ module.exports.run = async (bot, args) => {
                 var voucherWorth = function (playerTotalVouchers, voucherAmount) { //get how much to pay the person
                     if (playerTotalVouchers < 9600) { //Initiate
                         var RankVouchers = 9600
-                        var rankWorth = 5000
+                        var rankWorth = 5
                     } else if (playerTotalVouchers < 24000) { //Lead Foot
                         var RankVouchers = 24000
-                        var rankWorth = 5500
+                        var rankWorth = 5.5
                     } else if (playerTotalVouchers < 52800) { //Wheelman
                         var RankVouchers = 52800
-                        var rankWorth = 6000
+                        var rankWorth = 6
                     } else if (playerTotalVouchers < 117600) { //Legendary
                         var RankVouchers = 117600
-                        var rankWorth = 7500;
+                        var rankWorth = 7.5;
                     } else {
                         var RankVouchers = Infinity
-                        var rankWorth = 8500
+                        var rankWorth = 8.5
                     }
     
                     rankVouchers = RankVouchers;
