@@ -71,7 +71,7 @@ module.exports.run = async (bot, args) => {
         }
 
 
-        bot.con.query(`SELECT * FROM members, rts WHERE members.in_game_id = rts.in_game_id`, async function (err, result, fields) {
+        bot.con.query(`SELECT * FROM members, rts WHERE members.id = rts.member_id`, async function (err, result, fields) {
             let CompanyRank
             if (err) {
                 console.log(err)
@@ -79,7 +79,7 @@ module.exports.run = async (bot, args) => {
             }
             var Ranking = []
             result.forEach(member => {
-                Ranking.push([member[`rts_total_vouchers`], member.in_game_name])
+                Ranking.push([member.vouchers, member.in_game_name])
             });
             Ranking.sort(sortFunction); //Sort it from highest to least
             function sortFunction(a, b) {

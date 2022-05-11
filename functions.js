@@ -163,7 +163,7 @@ module.exports = {
      */
     GetMemberDetails: function (con, Column, ID) {
         return new Promise(resolve => {
-            con.query(`SELECT * FROM members, rts, pigs WHERE members.${Column} = '${ID}' AND members.in_game_id = pigs.in_game_id AND members.in_game_id = rts.in_game_id`, function (err, result, fields) { //get all their info into one array
+            con.query(`SELECT me.*, r.vouchers as rts_total_vouchers, r.worth as rts_total_worth, p.vouchers as pigs_total_vouchers, p.worth as pigs_total_worth FROM members me, rts r, pigs p WHERE me.${Column} = '${ID}' AND me.id = pigs.member_id AND me.id = rts.member_id`, function (err, result, fields) { //get all their info into one array
                 if (err) return console.log(err)
                 resolve(result[0]) //return first found member
             })
@@ -225,7 +225,7 @@ module.exports = {
      */
     UpdateApplicantStatus: function (con, ID, Status, Reason = "") {
         return new Promise((resolve, reject) => {
-            con.query(`UPDATE applications SET status = '${Status}', reason = '${Reason}' WHERE app_id = '${ID}' OR in_game_id = '${ID}' OR discord_id = '${ID}'`, function (err, result, fields) {
+            con.query(`UPDATE applications SET status = '${Status}', reason = '${Reason}' WHERE id = '${ID}' OR in_game_id = '${ID}' OR discord_id = '${ID}'`, function (err, result, fields) {
                 if (err) {
                     console.log(err)
                     return reject("There was an error updating the applicants status.");
@@ -272,12 +272,12 @@ module.exports = {
      */
     PayManager: async function (con, ID, CompanyName) {
         return new Promise((resolve, reject) => {
-            con.query(`UPDATE managers SET total_money = total_money + FLOOR(((${CompanyName}_cashout * 10000) - ${CompanyName}_cashout_worth) * 0.5) WHERE discord_id = '${ID}'`, function (err, result, fields) { //add total money
+            con.query(`UPDATE managers SET total_money = total_money + FLOOR(((${CompanyName}_cashout * 10000) - ${CompanyName}_cashout_worth) * 0.5) WHERE member_id = '${ID}'`, function (err, result, fields) { //add total money
                 if (err) {
                     console.log(err)
                     return reject("Unable to update total money for the manager.")
                 }
-                con.query(`UPDATE managers SET ${CompanyName}_cashout = '0', ${CompanyName}_cashout_worth = '0' WHERE discord_id = '${ID}'`, function (err, result, fields) { //reset to 0
+                con.query(`UPDATE managers SET ${CompanyName}_cashout = '0', ${CompanyName}_cashout_worth = '0' WHERE member_id = '${ID}'`, function (err, result, fields) { //reset to 0
                     if (err) {
                        console.log(err)
                        return reject("Unable to remove cashout BUT calculated new total money")

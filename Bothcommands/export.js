@@ -7,7 +7,7 @@ const authentication = require("../authentication"); //Imports functions from au
 module.exports.run = async (bot, args) => {
     return new Promise((resolve, reject) => {
         authentication.authenticate().then(async (auth) => {
-            bot.con.query(`SELECT * FROM members, rts, pigs WHERE members.in_game_id = pigs.in_game_id AND members.in_game_id = rts.in_game_id`, function (err, result, fields) { //get everything from all tables
+            bot.con.query(`SELECT me.company, me.in_game_name, me.in_game_id, p.vouchers as pigs_total_vouchers, p.worth as pigs_total_money, r.vouchers as rts_total_vouchers, r.worth as rts_total_money, me.deadline FROM members me, rts r, pigs p WHERE me.id = p.member_id AND me.id = r.member_id`, function (err, result, fields) { //get everything from all tables
                 if (err) {
                     console.log(err)    
                     return reject("Couldn't get all employees")

@@ -9,10 +9,20 @@ module.exports.run = async (bot, args) => {
       var CompanyName = "rts"
     }
 
-    functions.PayManager(bot.con, args.manager, CompanyName).then((res) => {
-      resolve(res)
-    }).catch((err) => {
-      reject(err)
+    bot.con.query(`SELECT id FROM members WHERE discord_id = '${args.manager}'`, function (err, result, fields) {
+      if (err) {
+        console.log(err);
+        return reject("Failed to get that managers member page")
+      }
+      if (result.length != 1) {
+        return reject("Couldn't find that managers member page")
+      }
+
+      functions.PayManager(bot.con, result[0].id, CompanyName).then((res) => {
+        resolve(res)
+      }).catch((err) => {
+        reject(err)
+      })
     })
   })
 }

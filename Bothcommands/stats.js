@@ -16,7 +16,7 @@ module.exports.run = async (bot, args) => {
                 const Threshold = new Date()
                 Threshold.setDate(Threshold.getDate() - parseInt(args.num))
                 
-                bot.con.query(`SELECT * FROM payout WHERE time > '${Threshold.toISOString()}'`, function (err, result, fields) { //get all their info into one array
+                bot.con.query(`SELECT * FROM payout WHERE createdAt > '${Threshold.toISOString()}'`, function (err, result, fields) { //get all their info into one array
                     if (err) {
                         console.log(err);
                         return reject("There was an error selecting payouts.")
@@ -25,9 +25,9 @@ module.exports.run = async (bot, args) => {
                     let TotalVouchers = 0;
                     let TotalValue = 0;
                     result.forEach(member => {
-                        TotalVouchers += member.vouchers_turned_in;
+                        TotalVouchers += member.amount;
 
-                        TotalValue += member.payed_money;
+                        TotalValue += member.worth;
                     });
 
                     const statEmbed = new Discord.MessageEmbed()
@@ -73,7 +73,7 @@ module.exports.run = async (bot, args) => {
         if (args.sub_command.toLowerCase() == "days") {
             const Threshold = new Date()
             Threshold.setDate(Threshold.getDate() - parseInt(args.num))
-            bot.con.query(`SELECT * FROM payout WHERE time > '${Threshold.toISOString()}' AND current_company = '${company}'`, function (err, result, fields) { //get all their info into one array
+            bot.con.query(`SELECT * FROM payout WHERE createdAt > '${Threshold.toISOString()}' AND company = '${company}'`, function (err, result, fields) { //get all their info into one array
                 if (err) {
                     console.log(err);
                     return reject("Unable to get payouts.")
@@ -82,9 +82,9 @@ module.exports.run = async (bot, args) => {
                 let TotalVouchers = 0;
                 let TotalValue = 0;
                 result.forEach(member => {
-                    TotalVouchers += member.vouchers_turned_in;
+                    TotalVouchers += member.vouchers;
 
-                    TotalValue += member.payed_money;
+                    TotalValue += member.worth;
                 });
 
                 const statEmbed = new Discord.MessageEmbed()
@@ -125,7 +125,7 @@ module.exports.run = async (bot, args) => {
             const Threshold = new Date()
             Threshold.setDate(Threshold.getDate() - NumOfDays)
 
-            bot.con.query(`SELECT * FROM members, payout WHERE payout.current_company = '${company}' AND members.in_game_id = payout.player_id AND payout.time > '${Threshold.toISOString()}' ORDER BY payout.player_id DESC`, function (err, result, fields) { //get all their info into one array
+            bot.con.query(`SELECT * FROM members, payout WHERE payout.company = '${company}' AND members.id = payout.member_id AND payout.createdAt > '${Threshold.toISOString()}' ORDER BY payout.member_id DESC`, function (err, result, fields) { //get all their info into one array
                 if (err) {
                     console.log(err);
                     return reject("There was an error getting members and payouts.")
@@ -135,16 +135,16 @@ module.exports.run = async (bot, args) => {
                 for (let i = 0; i < result.length; i++) {
                     const index = TopPlayers.indexOfId(result[i].in_game_id)
                     if (index > -1) {
-                        TopPlayers[index].vouchers_turned_in += result[i].vouchers_turned_in
+                        TopPlayers[index].vouchers += result[i].vouchers
                     } else {
                         TopPlayers.push(result[i])
                     }
                 }
                 TopPlayers.sort(function (x, y) {
-                    if (x.vouchers_turned_in < y.vouchers_turned_in) {
+                    if (x.vouchers < y.vouchers) {
                         return 1;
                     }
-                    if (x.vouchers_turned_in > y.vouchers_turned_in) {
+                    if (x.vouchers > y.vouchers) {
                         return -1;
                     }
                     return 0;
@@ -154,7 +154,7 @@ module.exports.run = async (bot, args) => {
                     .setTitle("Top Turnins over the past " + NumOfDays + " days")
                     .setColor("RANDOM")
                 for (let i = 0; i < NumOfPlayers && i < TopPlayers.length; i++) {
-                    TopEmbed.addField(TopPlayers[i].in_game_name + ` (${i + 1})`, functions.numberWithCommas(TopPlayers[i].vouchers_turned_in), true)
+                    TopEmbed.addField(TopPlayers[i].in_game_name + ` (${i + 1})`, functions.numberWithCommas(TopPlayers[i].vouchers), true)
                 }
                 return resolve(TopEmbed)
             })

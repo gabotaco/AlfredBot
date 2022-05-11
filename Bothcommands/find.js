@@ -7,7 +7,7 @@ module.exports.run = async (bot, args) => {
   return new Promise((resolve, reject) => {
     if (args.sub_command == 'manager') {
       const Managers = {};
-      bot.con.query(`SELECT members.in_game_id, members.company FROM members, managers WHERE members.discord_id = managers.discord_id AND managers.active = '1'`, function (err, result, fields) {
+      bot.con.query(`SELECT members.in_game_id, members.company FROM members me, managers ma WHERE me.id = ma.member_id AND ma.active = '1'`, function (err, result, fields) {
         if (err) {
           console.log(err)
           return reject("Unable to get active managers")

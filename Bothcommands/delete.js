@@ -6,7 +6,7 @@ module.exports.run = async (bot, args) => {
         let user = args.id || args.member;
         const SearchColumn = functions.GetSearchColumn(user); //check if they used discord id or ingame id
     
-        bot.con.query(`SELECT in_game_id FROM members WHERE ${SearchColumn} = '${user}'`, function (err, results, fields) {
+        bot.con.query(`SELECT id FROM members WHERE ${SearchColumn} = '${user}'`, function (err, results, fields) {
             if (err) {
                 console.log(err)
                 return reject("Problem selecting form mebers table.")
@@ -15,19 +15,19 @@ module.exports.run = async (bot, args) => {
             if (results.length == 0) return resolve("Couldn't find that member.")
 
             results.forEach(result => {
-                bot.con.query(`DELETE FROM members WHERE in_game_id = '${result.in_game_id}'`, function (err, res, fields) {
+                bot.con.query(`DELETE FROM members WHERE id = '${result.id}'`, function (err, res, fields) {
                     if (err) {
                         console.log(err)
                         return reject("Couldn't delete the member.")
                     }
     
-                    bot.con.query(`DELETE FROM pigs WHERE in_game_id = '${result.in_game_id}'`, function (err, res, fields) {
+                    bot.con.query(`DELETE FROM pigs WHERE member_id = '${result.id}'`, function (err, res, fields) {
                         if (err) {
                             console.log(err)
                             return reject("Couldn't delete the PIGS member.")
                         }
     
-                        bot.con.query(`DELETE FROM rts WHERE in_game_id = '${result.in_game_id}'`, function (err, res, fields) {
+                        bot.con.query(`DELETE FROM rts WHERE member_id = '${result.id}'`, function (err, res, fields) {
                             if (err) {
                                 console.log(err)
                                 return reject("Couldn't delete the RTS member.")

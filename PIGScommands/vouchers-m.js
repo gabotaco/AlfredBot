@@ -90,7 +90,7 @@ module.exports.run = async (bot, args) => {
         }
 
         let CompanyRank
-        bot.con.query(`SELECT * FROM members, pigs WHERE members.in_game_id = pigs.in_game_id`, async function (err, result, fields) { //get all data for member and link member with pigs data
+        bot.con.query(`SELECT * FROM members, pigs WHERE members.id = pigs.member_id`, async function (err, result, fields) { //get all data for member and link member with pigs data
             if (err) {
                 console.log(err)
                 return reject("Unable to get members and company")
@@ -98,7 +98,7 @@ module.exports.run = async (bot, args) => {
             var Ranking = []
 
             result.forEach(member => {
-                Ranking.push([member[`pigs_total_vouchers`], member.in_game_name])
+                Ranking.push([member.vouchers, member.in_game_name])
             });
 
             Ranking.sort(sortFunction); //Sort it from highest to least

@@ -42,7 +42,7 @@ module.exports.run = async (bot, args) => {
       const SearchColumn = functions.GetSearchColumn(args.author_id)
       if (SearchColumn == "in_game_id") return resolve("You can't supply an in game id.")
 
-      bot.con.query(`SELECT ${CompanyName}_cashout, ${CompanyName}_cashout_worth FROM managers WHERE ${SearchColumn}='${args.author_id}'`, function (err, result, fields) { //get the cashout for the specified company for the manager
+      bot.con.query(`SELECT ${CompanyName}_cashout, ${CompanyName}_cashout_worth FROM managers ma, members me WHERE me.${SearchColumn}='${args.author_id}' AND ma.member_id = me.id`, function (err, result, fields) { //get the cashout for the specified company for the manager
         if (err) {
           console.log(err)
           return reject("Unable to get manager cashouts.")

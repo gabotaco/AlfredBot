@@ -275,6 +275,7 @@ module.exports.run = async (bot, args) => {
                 "voucherAmount": voucherAmount,
                 "Money": Money,
                 "in_game_id": MemberDetails.in_game_id,
+                "member_id": MemberDetails.id,
                 "NewDeadline": NewDeadline(MemberDetails).toISOString().slice(0, 19).replace('T', ' '),
                 "CurrentDate": new Date().toISOString().slice(0, 19).replace('T', ' ')
             }
@@ -287,46 +288,56 @@ module.exports.run = async (bot, args) => {
             } else {
                 const pendingPayout = pendingPayouts[args.author_id];
 
-                bot.con.query(`UPDATE managers SET ${pendingPayout.CompanyName}_cashout = ${pendingPayout.CompanyName}_cashout + ${pendingPayout.voucherAmount}, ${pendingPayout.CompanyName}_cashout_worth = ${pendingPayout.CompanyName}_cashout_worth + ${pendingPayout.Money} WHERE discord_id = '${args.author_id}'`, function (err, result, fields) {
-                    //update the manager with the new cashout
+                bot.con.query(`SELECT id FROM members WHERE discord_id = '${args.author_id}'`, function (err, member, fields) {
                     if (err) {
                         console.log(err)
-                        return reject("Unable to updated the managers table. No data was added.")
+                        return reject("Unable to get the managers member row");
                     }
-                    if (result.affectedRows == 0) { //if no manager
-                        bot.con.query(`INSERT INTO managers (discord_id, ${pendingPayout.CompanyName}_cashout, ${pendingPayout.CompanyName}_cashout_worth) VALUES ('${args.author_id}', '${pendingPayout.voucherAmount}', '${pendingPayout.Money}')`, function (err) {
+                    if (member.length == 0) {
+                        return reject("Could not find that managers member field");
+                    } else {
+                        bot.con.query(`UPDATE managers SET ${pendingPayout.CompanyName}_cashout = ${pendingPayout.CompanyName}_cashout + ${pendingPayout.voucherAmount}, ${pendingPayout.CompanyName}_cashout_worth = ${pendingPayout.CompanyName}_cashout_worth + ${pendingPayout.Money} WHERE member_id = '${member[0].id}'`, function (err, result, fields) {
+                            //update the manager with the new cashout
                             if (err) {
                                 console.log(err)
-                                return reject("Unable to add you as a manager.")
+                                return reject("Unable to updated the managers table. No data was added.")
                             }
-                            //add manager to table
-                        })
-                    } 
-                    //update the members company data
-                    bot.con.query(`UPDATE ${pendingPayout.CompanyName} SET ${pendingPayout.CompanyName}_total_vouchers = ${pendingPayout.CompanyName}_total_vouchers + '${pendingPayout.voucherAmount}', ${pendingPayout.CompanyName}_total_money = ${pendingPayout.CompanyName}_total_money + '${pendingPayout.Money}' WHERE in_game_id = '${pendingPayout.in_game_id}'`, function (err, result, fields) {
-                        if (err) {
-                            console.log(err)
-                            return reject("Unable to add vouchers to the member. WARNING MANAGERS TABLE WAS UPDATED")
-                        }
-                        //add to payout table
-                        bot.con.query(`INSERT INTO payout(manager_id, player_id, current_company, vouchers_turned_in, payed_money) VALUES ('${args.author_id}', '${pendingPayout.in_game_id}', '${pendingPayout.CompanyName}', '${pendingPayout.voucherAmount}', '${pendingPayout.Money}')`, function (err) {
-                            if (err) {
-                                console.log(err)
-                                return reject("Unable to add this payout to payouts table. WARNING MANAGERS AND COMPANY TABLE WERE UPDATED")
-                            }
-                            //update deadline
-                            bot.con.query(`UPDATE members SET deadline = '${pendingPayout.NewDeadline}', last_turnin = '${pendingPayout.CurrentDate}' WHERE in_game_id = '${pendingPayout.in_game_id}'`, function (err, result, fields) {
+                            if (result.affectedRows == 0) { //if no manager
+                                bot.con.query(`INSERT INTO managers (member_id, ${pendingPayout.CompanyName}_cashout, ${pendingPayout.CompanyName}_cashout_worth) VALUES ('${member[0].id}', '${pendingPayout.voucherAmount}', '${pendingPayout.Money}')`, function (err) {
+                                    if (err) {
+                                        console.log(err)
+                                        return reject("Unable to add you as a manager.")
+                                    }
+                                    //add manager to table
+                                })
+                            } 
+                            //update the members company data
+                            bot.con.query(`UPDATE ${pendingPayout.CompanyName} SET ${pendingPayout.CompanyName}_total_vouchers = ${pendingPayout.CompanyName}_total_vouchers + '${pendingPayout.voucherAmount}', ${pendingPayout.CompanyName}_total_money = ${pendingPayout.CompanyName}_total_money + '${pendingPayout.Money}' WHERE member_id = '${pendingPayout.member_id}'`, function (err, result, fields) {
                                 if (err) {
                                     console.log(err)
-                                    return reject("Unable to update members deadline and last turning. WARNING MANAGERS, COMPANY, AND PAYOUT TABLE WERE UPDATED");
+                                    return reject("Unable to add vouchers to the member. WARNING MANAGERS TABLE WAS UPDATED")
                                 }
-                                functions.CheckForActive(bot, 'in_game_id', pendingPayout.in_game_id).then(() => {
-                                    delete pendingPayouts[args.author_id]
-                                    return resolve("Payout performed.")
+                                //add to payout table
+                                bot.con.query(`INSERT INTO payout(manager_id, member_id, company, amount, worth) VALUES ('${member[0].id}', '${pendingPayout.member_id}', '${pendingPayout.CompanyName}', '${pendingPayout.voucherAmount}', '${pendingPayout.Money}')`, function (err) {
+                                    if (err) {
+                                        console.log(err)
+                                        return reject("Unable to add this payout to payouts table. WARNING MANAGERS AND COMPANY TABLE WERE UPDATED")
+                                    }
+                                    //update deadline
+                                    bot.con.query(`UPDATE members SET deadline = '${pendingPayout.NewDeadline}', last_turnin = '${pendingPayout.CurrentDate}' WHERE id = '${pendingPayout.member_id}'`, function (err, result, fields) {
+                                        if (err) {
+                                            console.log(err)
+                                            return reject("Unable to update members deadline and last turning. WARNING MANAGERS, COMPANY, AND PAYOUT TABLE WERE UPDATED");
+                                        }
+                                        functions.CheckForActive(bot, 'in_game_id', pendingPayout.in_game_id).then(() => {
+                                            delete pendingPayouts[args.author_id]
+                                            return resolve("Payout performed.")
+                                        })
+                                    })
                                 })
                             })
                         })
-                    })
+                    }
                 })
             }
         }

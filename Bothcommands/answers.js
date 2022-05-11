@@ -9,7 +9,7 @@ module.exports.run = async (bot, args) => {
 
     const SearchColumn = functions.GetSearchColumn(args.id || args.member);
 
-    bot.con.query(`SELECT in_game_name, why, anything, play_per_week, app_id, status FROM applications WHERE ${SearchColumn} = '${args.id || args.member}'`, function (err, result, fields) {
+    bot.con.query(`SELECT in_game_name, why, anything, play_per_week, id, status FROM applications WHERE ${SearchColumn} = '${args.id || args.member}'`, function (err, result, fields) {
       if (err) {
         console.log(err)
         return reject("There was an error getting the answers")
@@ -19,7 +19,7 @@ module.exports.run = async (bot, args) => {
         AnswersEmbed.addField("This sounds serious but it's totally not! Why should we choose you?", applicant.why)
         if (applicant.anything) AnswersEmbed.addField("Say anything! (Hobbies, interests, field of work, whatever makes you, you!)", applicant.anything)
         AnswersEmbed.addField("How much do you play per week right now?", applicant.play_per_week)
-        if (applicant.status == "Received") functions.UpdateApplicantStatus(bot.con, applicant.app_id, "Under review") //Set it to Under review
+        if (applicant.status == "Received") functions.UpdateApplicantStatus(bot.con, applicant.id, "Under review") //Set it to Under review
       });
       if (!AnswersEmbed.fields[0]) { //no added fields
         return resolve("Couldn't find that applicant")

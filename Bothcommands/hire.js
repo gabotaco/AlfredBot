@@ -68,17 +68,24 @@ module.exports.run = async (bot, args) => {
                     console.log(err)
                     return reject("There was an error creating the member row.")
                   }
-                  bot.con.query(`INSERT INTO pigs(in_game_id) VALUES ('${InGameID}');`, function (err, result, fields) { //insert into pigs table
+                  bot.con.query(`SELECT id FROM members WHERE in_game_id = '${InGameID}'`, function (err, result, fields) {
                     if (err) {
                       console.log(err)
-                      return reject("There was an error creating the PIGS row.")
+                      return reject("There was a problem getting the new members ID");
                     }
-                    bot.con.query(`INSERT INTO rts(in_game_id) VALUES ('${InGameID}');`, function (err, result, fields) { //insert into rts table
+                    if (result.length != 1) return reject("Unable to get hired members ID")
+                    bot.con.query(`INSERT INTO pigs(member_id) VALUES ('${result[0].id}');`, function (err, result, fields) { //insert into pigs table
                       if (err) {
                         console.log(err)
-                        return reject("There was an error creating the RTS row.")
+                        return reject("There was an error creating the PIGS row.")
                       }
-                      return resolve("Hired!")
+                      bot.con.query(`INSERT INTO rts(member_id) VALUES ('${result[0].id}');`, function (err, result, fields) { //insert into rts table
+                        if (err) {
+                          console.log(err)
+                          return reject("There was an error creating the RTS row.")
+                        }
+                        return resolve("Hired!")
+                      })
                     })
                   })
                 })
