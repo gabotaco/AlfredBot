@@ -93,6 +93,48 @@ app.get("/roles/update", function (req, res) {
     })
 })
 
+app.patch("/roles/update", function (req, res) {
+    if (!req.query.access_token) {
+        res.json({
+            code: 404
+        })
+        return;
+    }
+
+    if (req.query.access_token != botconfig.access_token) {
+        res.json({
+            code: 404
+        })
+        return;
+    }
+
+    if (!req.query.server || !req.query.member) {
+        res.json({
+            code: 404
+        })
+        return;
+    }
+
+    const roleArgs = {
+        "guild_id": req.query.server,
+        "channel_id": "727993411461841038",
+        "author_id": req.query.member,
+        "slash": false,
+        "member": null
+    }
+
+    bot.BothCommands.get("roles").run(bot, roleArgs).then((res) => {
+        bot.channels.cache.get("727993411461841038").send(res)
+        res.json({
+            "success": "Yes"
+        })
+    }).catch((err) => {
+        res.json({
+            "error": err
+        })
+    })
+})
+
 app.get("/roles/inactive", function (req, res) {
     if (!req.query.access_token) {
         res.json({
@@ -183,6 +225,121 @@ Use the toggles on the left side to see points of interest for both companies.
 **Dual enrollment**
 Also know that you can switch between PIGS and RTS any time. Find a manager from the company you’d like to change to in-game and ask. It’s really no trouble! Use the map to see all managers online.
     `)
+
+    res.json({
+        "success": "Yes"
+    })
+})
+
+app.patch("/member/message/hired", function (req, res) {
+    if (!req.query.access_token) {
+        res.json({
+            code: 404
+        })
+        return;
+    }
+
+    if (req.query.access_token != botconfig.access_token) {
+        res.json({
+            code: 404
+        })
+        return;
+    }
+
+    if (!req.query.member || !req.query.name) {
+        res.json({
+            code: 404
+        })
+        return;
+    }
+
+    let member = null;
+    member = bot.guilds.cache.get("447157938390433792").members.cache.get(req.query.member)
+    if (member == null) {
+        member = bot.guilds.cache.get("487285826544205845").members.cache.get(req.query.member)
+    }
+    if (!member) {
+        res.json({
+            "Error": "Couldn't find member"
+        })
+        return
+    }
+    member.send(`
+***Great news ${req.query.name}! You’re the newest member of RC!***
+
+**Getting Started Guide**
+We’ve compiled a few tips to help get you started.
+    
+**Vouchers**
+-Completing company runs will give you vouchers.
+-Heavy, Aviator, and RTS Vouchers all have equal value.
+-Meet a manager in-game and give them your vouchers - they will pay you.
+-Check http://payout.rockwelltransport.com to calculate how much you’ll make.
+    
+**Useful tools and links**
+Your profile: http://profile.rockwelltransport.com
+Contains:
+-Progress to the next rank in each company
+-Your past turnins
+    
+**Live map** of all current RC employees, including ongoing heists!
+http://map.rockwelltransport.com
+-PIGS = Pink
+-RTS = Orange
+-Management = Green
+Use the toggles on the left side to see points of interest for both companies.
+    
+**Dual enrollment**
+Also know that you can switch between PIGS and RTS any time. Find a manager from the company you’d like to change to in-game and ask. It’s really no trouble! Use the map to see all managers online.
+    `)
+
+    res.json({
+        "success": "Yes"
+    })
+})
+
+app.patch("/member/message/rejected", function (req, res) {
+    if (!req.query.access_token) {
+        res.json({
+            code: 404
+        })
+        return;
+    }
+
+    if (req.query.access_token != botconfig.access_token) {
+        res.json({
+            code: 404
+        })
+        return;
+    }
+
+    if (!req.query.member || !req.query.reason) {
+        res.json({
+            code: 404
+        })
+        return;
+    }
+
+    let member = null;
+    member = bot.guilds.cache.get("447157938390433792").members.cache.get(req.query.member)
+    if (member == null) {
+        member = bot.guilds.cache.get("487285826544205845").members.cache.get(req.query.member)
+    }
+    if (!member) {
+        res.json({
+            "Error": "Couldn't find member"
+        })
+        return
+    }
+    member.send(`Hello,
+
+    This message is in regards to your recent application to RC. We'd like to thank you for your interest in our company and what we do.
+                              
+    Here at the Rockwell Corporation, we strive to maintain a tight-knit community of helpful, happy, and active members. As such, we perform background checks with Transport Tycoon staff and check for everything from player reports, to kicks and bans, as well as general attitude, communication skills, and overall state of activity. 
+                              
+    In the case of your candidacy, this background check has raised a red flag to our management team and, as a result, your application has been rejected. If you feel this decision has been made in error, you may appeal by @mentioning Rock in <#560917748184776736> channel of the company's Discord.
+                              
+    Once again, thank you for your interest; we wish you the best of luck in your future endeavors. Reason for fire: '${req.query.reason}'`)
 
     res.json({
         "success": "Yes"
@@ -328,7 +485,9 @@ function checkForDxp() {
                 return;
             }
 
-            if (body.server.dxp[0]) {
+            if (!body.server) {
+                console.log('body, index', body, index);
+            } else if (body.server.dxp[0]) {
                 const dxpMessage = `There's double experience on **server ${body.server.number}** for another **${toTimeFormat(body.server.dxp[2] + body.server.dxp[3])}** :eyes:`
                 bot.channels.cache.get("747859854424801401").send(dxpMessage)
                 bot.channels.cache.get("747859721922412736").send(dxpMessage)
