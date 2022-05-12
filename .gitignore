@@ -3,8 +3,8 @@ token.json
 out.jpg
 creds.json
 credentials.json
-botconfig*.json
 .vscode
-client_secret_*.json
 tokens.json
 /creds/
+.env
+google_client_secret.json

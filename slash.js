@@ -113,7 +113,7 @@ slash.init = async (client) => {
                     data: data
                 },
                 headers: {
-                    "Authorization": `Bot ${botconfig.token}`
+                    "Authorization": `Bot ${process.env.BOT_TOKEN}`
                 },
                 json: true
             }, (err, res, body) => {
@@ -153,7 +153,7 @@ slash.init = async (client) => {
             request.patch(`https://discord.com/api/v8/webhooks/${slash.app.id}/${interaction.token}/messages/@original`, {
                 body: data,
                 headers: {
-                    "Authorization": `Bot ${botconfig.token}`
+                    "Authorization": `Bot ${process.env.BOT_TOKEN}`
                 },
                 json: true
             }, (err, res, body) => {
@@ -194,7 +194,7 @@ slash.init = async (client) => {
             request.post(`https://discord.com/api/v8/webhooks/${slash.app.id}/${interaction.token}`, {
                 body: data,
                 headers: {
-                    "Authorization": `Bot ${botconfig.token}`
+                    "Authorization": `Bot ${process.env.BOT_TOKEN}`
                 },
                 json: true
             }, (err, res, body) => {
@@ -223,7 +223,7 @@ slash.init = async (client) => {
                     type: 5
                 },
                 headers: {
-                    "Authorization": `Bot ${botconfig.token}`
+                    "Authorization": `Bot ${process.env.BOT_TOKEN}`
                 },
                 json: true
             }, (err, res, body) => {
@@ -350,7 +350,7 @@ slash.addCommands = (slashCommands) => {
     if (slashCommands.guild == "GLOBAL") {
         request.get(`${slash.baseURI}/commands`, {
             headers: {
-                "Authorization": `Bot ${botconfig.token}`
+                "Authorization": `Bot ${process.env.BOT_TOKEN}`
             },
             json: true
         }, (err, response, globalCommands) => {
@@ -361,7 +361,7 @@ slash.addCommands = (slashCommands) => {
 
             request.get(`${slash.baseURI}/guilds/${botconfig.RTSServer}/commands/permissions`, {
                 headers: {
-                    "Authorization": `Bot ${botconfig.token}`
+                    "Authorization": `Bot ${process.env.BOT_TOKEN}`
                 },
                 json: true
             }, (err, response, rtsPerms) => {
@@ -373,7 +373,7 @@ slash.addCommands = (slashCommands) => {
 
                 request.get(`${slash.baseURI}/guilds/${botconfig.PIGSServer}/commands/permissions`, {
                     headers: {
-                        "Authorization": `Bot ${botconfig.token}`
+                        "Authorization": `Bot ${process.env.BOT_TOKEN}`
                     },
                     json: true
                 }, (err, response, pigsPerms) => {
@@ -389,7 +389,7 @@ slash.addCommands = (slashCommands) => {
     } else {
         request.get(`${slash.baseURI}/guilds/${guildID}/commands`, {
             headers: {
-                "Authorization": `Bot ${botconfig.token}`
+                "Authorization": `Bot ${process.env.BOT_TOKEN}`
             },
             json: true
         }, (err, response, guildCommands) => {
@@ -400,7 +400,7 @@ slash.addCommands = (slashCommands) => {
 
             request.get(`${slash.baseURI}/guilds/${guildID}/commands/permissions`, {
                 headers: {
-                    "Authorization": `Bot ${botconfig.token}`
+                    "Authorization": `Bot ${process.env.BOT_TOKEN}`
                 },
                 json: true
             }, (err, response, guildPerms) => {
@@ -440,7 +440,7 @@ slash.addCommands = (slashCommands) => {
                             default_permission: false
                         },
                         headers: {
-                            "Authorization": `Bot ${botconfig.token}`
+                            "Authorization": `Bot ${process.env.BOT_TOKEN}`
                         },
                         json: true
                     }, (err, response, cmd) => {
@@ -540,7 +540,7 @@ slash.addCommands = (slashCommands) => {
                         default_permission: false
                     },
                     headers: {
-                        "Authorization": `Bot ${botconfig.token}`
+                        "Authorization": `Bot ${process.env.BOT_TOKEN}`
                     },
                     json: true
                 }, (err, response, cmd) => {
@@ -574,7 +574,7 @@ slash.addCommands = (slashCommands) => {
                             default_permission: false
                         },
                         headers: {
-                            "Authorization": `Bot ${botconfig.token}`
+                            "Authorization": `Bot ${process.env.BOT_TOKEN}`
                         },
                         json: true
                     }, (err, response, cmd) => {
@@ -638,7 +638,7 @@ slash.addCommands = (slashCommands) => {
                         default_permission: false
                     },
                     headers: {
-                        "Authorization": `Bot ${botconfig.token}`
+                        "Authorization": `Bot ${process.env.BOT_TOKEN}`
                     },
                     json: true
                 }, (err, response, cmd) => {
@@ -702,7 +702,7 @@ slash.addCommands = (slashCommands) => {
                         permissions: rtscmdPermissions
                     },
                     headers: {
-                        "Authorization": `Bot ${botconfig.token}`
+                        "Authorization": `Bot ${process.env.BOT_TOKEN}`
                     },
                     json: true
                 }, (err, response, body) => {
@@ -723,7 +723,7 @@ slash.addCommands = (slashCommands) => {
                             permissions: pigscmdPermissions
                         },
                         headers: {
-                            "Authorization": `Bot ${botconfig.token}`
+                            "Authorization": `Bot ${process.env.BOT_TOKEN}`
                         },
                         json: true
                     }, (err, response, body) => {
@@ -751,7 +751,7 @@ slash.addCommands = (slashCommands) => {
                         permissions: pigscmdPermissions
                     },
                     headers: {
-                        "Authorization": `Bot ${botconfig.token}`
+                        "Authorization": `Bot ${process.env.BOT_TOKEN}`
                     },
                     json: true
                 }, (err, response, body) => {
@@ -778,7 +778,7 @@ slash.addCommands = (slashCommands) => {
                         permissions: rtscmdPermissions
                     },
                     headers: {
-                        "Authorization": `Bot ${botconfig.token}`
+                        "Authorization": `Bot ${process.env.BOT_TOKEN}`
                     },
                     json: true
                 }, (err, response, body) => {
@@ -811,7 +811,7 @@ slash.addCommands = (slashCommands) => {
             if (slashCommands.guild == 'GLOBAL') {
                 request.delete(`${slash.baseURI}/commands/${id}`, {
                     headers: {
-                        "Authorization": `Bot ${botconfig.token}`
+                        "Authorization": `Bot ${process.env.BOT_TOKEN}`
                     },
                     json: true
                 }, (err, response, body) => {
@@ -820,7 +820,7 @@ slash.addCommands = (slashCommands) => {
             } else {
                 request.delete(`${slash.baseURI}/guilds/${guildID}/commands/${id}`, {
                     headers: {
-                        "Authorization": `Bot ${botconfig.token}`
+                        "Authorization": `Bot ${process.env.BOT_TOKEN}`
                     },
                     json: true
                 }, (err, response, body) => {

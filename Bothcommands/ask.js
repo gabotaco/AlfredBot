@@ -8,7 +8,7 @@ const path = require('path');
 const GoogleAssistant = require('../google');
 const config = {
     auth: {
-        keyFilePath: path.resolve(__dirname, "../" + botconfig.GoogleAssistantKeyFile),
+        keyFilePath: path.resolve(__dirname, "../google_client_secret.json"),
         savedTokensPath: "/root/Dropbox/JavaScript/discordBots/alfredBot/tokens.json", // where you want the tokens to be saved
     },
     conversation: {

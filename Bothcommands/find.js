@@ -57,7 +57,9 @@ module.exports.run = async (bot, args) => {
           function tryGetInGame(index) {
             if (index >= botconfig.ActiveServers.length) return resolve("Unable to get the in game id for that user")
             request(`https://${botconfig.ActiveServers[index].url}/status/snowflake2user/${args.member || args.id}`, {
-              headers: botconfig.TTHeaders
+              headers: {
+                "X-Tycoon-Key": process.env.TYCOON_KEY
+              }
             }, function (err, response, html) {
               if (err) {
                 tryGetInGame(index + 1)

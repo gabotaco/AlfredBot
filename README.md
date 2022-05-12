@@ -161,8 +161,6 @@ Inside the repository create a file called `botconfig.json`. Obviously I can't s
     "ApplicationPlayTimeIndex": 10,
     "ApplicationDiscordIndex": 3,
     "ApplicationInGameNameIndex": 4,
-    "GoogleAssistantKeyFile": "FILENAME.json",
-    "RCSheet": "RCSHEETID",
     "PIGSManagementCatagoryID": "487289620804141088",
     "RTSManagementCatagoryID": "454231796905803776",
     "GaboID": "330000865215643658",
@@ -229,8 +227,6 @@ Inside the repository create a file called `botconfig.json`. Obviously I can't s
     "MANAGERS": [{"id": "453982220907184128", "server": "rts"}, {"id": "529643022866972684", "server": "rts"}, {"id": "487288337065836558", "server": "pigs"}, {"id": "529644127734988821", "server": "pigs"}],
     "EMPLOYEES": [{"id": "526203890639699968", "server": "rts"}, {"id": "483297370482933760", "server": "rts"}, {"id": "526160668882239508", "server": "pigs"}, {"id": "562991083882151937", "server": "pigs"}],
     "MEMBERS": [{"id": "483292098976546819", "server": "rts"}, {"id": "526487757695090691", "server": "pigs"}],
-    "RTSModsSheet": "MODSHEETID",
-    "Applications": "APPLICATIONSHEETID",
     "ApplicationRange": "A2:U500",
     "RTSWelcome": "447500215357014026",
     "PIGSWelcome": "487285826544205849",
@@ -259,13 +255,7 @@ Inside the repository create a file called `botconfig.json`. Obviously I can't s
         "330015505211457551",
         "394694336127696897"
     ],
-    "GlitchDetectorID": "71676578244857856",
-    "BabySheet": "BABYSHEETID",
-    "access_token": "PWD",
-    "TTHeaders": {
-        "X-Tycoon-Key": "TYCOONKEY"
-    },
-    "token": "BOTTOKEN"
+    "GlitchDetectorID": "71676578244857856"
 }
 ```
 That's the project.

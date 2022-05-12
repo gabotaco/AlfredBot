@@ -39,7 +39,7 @@ module.exports.run = async (bot, args) => {
             const Server = functions.GetServerURL(args.server)
             if (!Server) return resolve("Invalid server. [1 or OS, 2, 3, 4, 5, 6, 7, 8, 9, A]")
     
-            request(`https://${Server}/status/map/positions.json`, {'headers': botconfig.TTHeaders, json: true}, function (error, response, body) { //get server ip and port
+            request(`https://${Server}/status/map/positions.json`, {'headers': {"X-Tycoon-Key": process.env.TYCOON_KEY}, json: true}, function (error, response, body) { //get server ip and port
                 if (error || !body) return resolve("Server is offline");
     
                 let PlayersHeighsting = new Discord.MessageEmbed()

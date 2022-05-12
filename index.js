@@ -10,10 +10,10 @@ const {
     google
 } = require('googleapis'); //allows you to use googles api
 const con = mysql.createConnection({ //connect to database
-    host: "localhost",
-    user: "root",
-    password: "admin",
-    database: "rc"
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
 });
 const express = require("express")
 const app = express();
@@ -49,7 +49,7 @@ bot.RTSCommands = new Discord.Collection(); //Store all commands inside a discor
 bot.PIGSCommands = new Discord.Collection();
 bot.BothCommands = new Discord.Collection();
 
-bot.login(botconfig.token) //logs in the bot with the token found in botconfig.json
+bot.login(process.env.BOT_TOKEN) //logs in the bot with the token found in botconfig.json
 
 app.get("/roles/update", function (req, res) {
     if (!req.query.access_token) {
@@ -59,7 +59,7 @@ app.get("/roles/update", function (req, res) {
         return;
     }
 
-    if (req.query.access_token != botconfig.access_token) {
+    if (req.query.access_token != process.env.SERVER_PASSWORD) {
         res.json({
             code: 404
         })
@@ -101,7 +101,7 @@ app.patch("/roles/update", function (req, res) {
         return;
     }
 
-    if (req.query.access_token != botconfig.access_token) {
+    if (req.query.access_token != process.env.SERVER_PASSWORD) {
         res.json({
             code: 404
         })
@@ -123,16 +123,20 @@ app.patch("/roles/update", function (req, res) {
         "member": null
     }
 
-    bot.BothCommands.get("roles").run(bot, roleArgs).then((res) => {
-        bot.channels.cache.get("727993411461841038").send(res)
-        res.json({
-            "success": "Yes"
-        })
-    }).catch((err) => {
-        res.json({
-            "error": err
-        })
+    res.json({
+        "error": "Disabled temporarily"
     })
+
+    // bot.BothCommands.get("roles").run(bot, roleArgs).then((res) => {
+    //     bot.channels.cache.get("727993411461841038").send(res)
+    //     res.json({
+    //         "success": "Yes"
+    //     })
+    // }).catch((err) => {
+    //     res.json({
+    //         "error": err
+    //     })
+    // })
 })
 
 app.get("/roles/inactive", function (req, res) {
@@ -143,7 +147,7 @@ app.get("/roles/inactive", function (req, res) {
         return;
     }
 
-    if (req.query.access_token != botconfig.access_token) {
+    if (req.query.access_token != process.env.SERVER_PASSWORD) {
         res.json({
             code: 404
         })
@@ -172,7 +176,7 @@ app.get("/member/message", function (req, res) {
         return;
     }
 
-    if (req.query.access_token != botconfig.access_token) {
+    if (req.query.access_token != process.env.SERVER_PASSWORD) {
         res.json({
             code: 404
         })
@@ -239,7 +243,7 @@ app.patch("/member/message/hired", function (req, res) {
         return;
     }
 
-    if (req.query.access_token != botconfig.access_token) {
+    if (req.query.access_token != process.env.SERVER_PASSWORD) {
         res.json({
             code: 404
         })
@@ -306,7 +310,7 @@ app.patch("/member/message/rejected", function (req, res) {
         return;
     }
 
-    if (req.query.access_token != botconfig.access_token) {
+    if (req.query.access_token != process.env.SERVER_PASSWORD) {
         res.json({
             code: 404
         })
@@ -777,7 +781,7 @@ bot.on("message", async message => {
 
                 sheets.spreadsheets.values.append({ //append all the hired people
                     auth: auth,
-                    spreadsheetId: botconfig.BabySheet,
+                    spreadsheetId: process.env.BABY_SHEET,
                     range: "B3:D9999",
                     valueInputOption: "USER_ENTERED",
                     insertDataOption: "OVERWRITE",
@@ -793,7 +797,7 @@ bot.on("message", async message => {
                     message.channel.send("GOO GOO GAA GAA THANKS FOR THE SUSTENANCE")
 
                     sheets.spreadsheets.values.batchGet({ //get spreadsheet range
-                        spreadsheetId: botconfig.BabySheet,
+                        spreadsheetId: process.env.BABY_SHEET,
                         ranges: ["H2", "J2", "J5"],
                         valueRenderOption: "UNFORMATTED_VALUE",
                         dateTimeRenderOption: "FORMATTED_STRING",
@@ -835,7 +839,7 @@ bot.on("message", async message => {
                     });
 
                     sheets.spreadsheets.values.get({ //get spreadsheet range
-                        spreadsheetId: botconfig.BabySheet,
+                        spreadsheetId: process.env.BABY_SHEET,
                         range: "B3:D9999",
                     }, (err, res) => {
                         if (err) {
@@ -992,5 +996,5 @@ bot.on("error", (error) => { //when theres a discord error
 })
 
 bot.on("shardDisconnect", (event, shardID) => { //when the bot disconnects
-    bot.login(botconfig.token) //reconnect
+    bot.login(process.env.BOT_TOKEN) //reconnect
 })

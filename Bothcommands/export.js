@@ -31,7 +31,7 @@ module.exports.run = async (bot, args) => {
 
                 sheets.spreadsheets.values.batchClear({ //clear the range 
                     auth: auth,
-                    spreadsheetId: botconfig.RCSheet,
+                    spreadsheetId: process.env.RC_SHEET,
                     resource: {
                         ranges: [
                             [`B5:I244`],
@@ -45,7 +45,7 @@ module.exports.run = async (bot, args) => {
                     }
                     sheets.spreadsheets.values.append({ //append all the hired people
                         auth: auth,
-                        spreadsheetId: botconfig.RCSheet,
+                        spreadsheetId: process.env.RC_SHEET,
                         range: "B5:I244",
                         valueInputOption: "RAW",
                         insertDataOption: "OVERWRITE",
@@ -62,7 +62,7 @@ module.exports.run = async (bot, args) => {
 
                         sheets.spreadsheets.values.append({ //append all the fired people
                             auth: auth,
-                            spreadsheetId: botconfig.RCSheet,
+                            spreadsheetId: process.env.RC_SHEET,
                             range: "L5:R733",
                             valueInputOption: "RAW",
                             insertDataOption: "OVERWRITE",

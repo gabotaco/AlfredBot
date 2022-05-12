@@ -193,7 +193,7 @@ module.exports = {
             });
 
             sheets.spreadsheets.values.get({ //get range
-                spreadsheetId: botconfig.Applications,
+                spreadsheetId: process.env.APPLICATIONS_SHEET,
                 range: botconfig.ApplicationRange,
             }, (err, res) => {
                 if (err) return channel.send(`The API returned an ${err}`);

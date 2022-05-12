@@ -28,7 +28,7 @@ module.exports.run = async (bot, args) => {
       } else {
         sheets.spreadsheets.values.update({ //Puts what they typed into the search bar
           auth: auth,
-          spreadsheetId: botconfig.RTSModsSheet,
+          spreadsheetId: process.env.RTS_MODS_SHEET,
           range: "Search Engine!D21:G22",
           valueInputOption: "USER_ENTERED",
           resource: {
@@ -43,7 +43,7 @@ module.exports.run = async (bot, args) => {
             return;
           } else { //no error
             sheets.spreadsheets.values.get({ //gets the search results
-              spreadsheetId: botconfig.RTSModsSheet,
+              spreadsheetId: process.env.RTS_MODS_SHEET,
               range: "Search Engine!E26:H35",
             }, (err, res) => {
               if (err) {
