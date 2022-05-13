@@ -708,10 +708,10 @@ slash.addCommands = (slashCommands) => {
                 }, (err, response, body) => {
                     if (err) throw err;
                     if (body.message == "You are being rate limited.") {
-                        console.log(`Timoeut for ${cmd.retry_after} seconds`);
+                        console.log(`Timoeut for ${body.retry_after} seconds`);
                         setTimeout(() => {
                             addPermissions('global')
-                        }, cmd.retry_after * 1000);
+                        }, body.retry_after * 1000);
                         return;
                     }
                     slash.commands[botconfig.RTSServer][enabledCommand.name] = {
@@ -726,9 +726,9 @@ slash.addCommands = (slashCommands) => {
                             "Authorization": `Bot ${process.env.BOT_TOKEN}`
                         },
                         json: true
-                    }, (err, response, body) => {
+                    }, (err, response, cmd) => {
                         if (err) throw err;
-                        if (body.message == "You are being rate limited.") {
+                        if (cmd.message == "You are being rate limited.") {
                             console.log(`Timoeut for ${cmd.retry_after} seconds`);
                             setTimeout(() => {
                                 addPermissions('pigs')
@@ -757,10 +757,10 @@ slash.addCommands = (slashCommands) => {
                 }, (err, response, body) => {
                     if (err) throw err;
                     if (body.message == "You are being rate limited.") {
-                        console.log(`Timoeut for ${cmd.retry_after} seconds`);
+                        console.log(`Timoeut for ${body.retry_after} seconds`);
                         setTimeout(() => {
                             addPermissions('pigs')
-                        }, cmd.retry_after * 1000);
+                        }, body.retry_after * 1000);
                         return;
                     }
                     slash.commands[botconfig.PIGSServer][enabledCommand.name] = {
@@ -784,10 +784,10 @@ slash.addCommands = (slashCommands) => {
                 }, (err, response, body) => {
                     if (err) throw err;
                     if (body.message == "You are being rate limited.") {
-                        console.log(`Timoeut for ${cmd.retry_after} seconds`);
+                        console.log(`Timoeut for ${body.retry_after} seconds`);
                         setTimeout(() => {
                             addPermissions('rts')
-                        }, cmd.retry_after * 1000);
+                        }, body.retry_after * 1000);
                         return;
                     }
                     slash.commands[botconfig.RTSServer][enabledCommand.name] = {
