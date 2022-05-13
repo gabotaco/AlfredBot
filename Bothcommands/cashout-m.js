@@ -7,7 +7,7 @@ module.exports.run = async (bot, args) => {
     const cashoutUser = args.member //either first mention or member with the discord ID or the message author
 
     if (cashoutUser == args.author_id && args.author_id == "404650985529540618") { //if its rock doing a cashout and nobody is specified
-      bot.con.query(`SELECT discord_id, rts_cashout, rts_cashout_worth, pigs_cashout, pigs_cashout_worth FROM managers`, function (err, result, fields) { //get every managers cashout
+      bot.con.query(`SELECT me.discord_id, ma.rts_cashout, ma.rts_cashout_worth, ma.pigs_cashout, ma.pigs_cashout_worth FROM managers ma, members me WHERE me.id = ma.member_id`, function (err, result, fields) { //get every managers cashout
         if (err) {
           console.log(err)
           return reject("There was an error getting cashouts.")
