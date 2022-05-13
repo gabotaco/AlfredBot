@@ -7,7 +7,7 @@ module.exports.run = async (bot, args) => {
         const ID = args.member || args.id
         const SearchColumn = functions.GetSearchColumn(ID);
 
-        bot.con.query(`SELECT * FROM applications WHERE ${SearchColumn} = '${ID}' ORDER BY app_id DESC`, function (err, result, fields) {
+        bot.con.query(`SELECT * FROM applications WHERE ${SearchColumn} = '${ID}' ORDER BY id DESC`, function (err, result, fields) {
             if (err) {
                 console.log(err)
                 return reject("Unable to get applications");

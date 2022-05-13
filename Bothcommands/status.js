@@ -4,7 +4,7 @@ const functions = require("../functions.js")
 
 module.exports.run = async (bot, args) => {
     return new Promise((resolve, reject) => {       
-        bot.con.query(`SELECT * FROM applications WHERE discord_id = '${args.author_id}' ORDER BY app_id DESC`, function (err, result, fields) {
+        bot.con.query(`SELECT * FROM applications WHERE discord_id = '${args.author_id}' ORDER BY id DESC`, function (err, result, fields) {
             if (err) {
                 console.log(err)
                 return reject("Unable to get applications");
