@@ -90,7 +90,7 @@ module.exports.run = async (bot, args) => {
         }
 
         let CompanyRank
-        bot.con.query(`SELECT * FROM members, pigs WHERE members.id = pigs.member_id`, async function (err, result, fields) { //get all data for member and link member with pigs data
+        bot.con.query(`SELECT * FROM members me, pigs p WHERE me.id = p.member_id`, async function (err, result, fields) { //get all data for member and link member with pigs data
             if (err) {
                 console.log(err)
                 return reject("Unable to get members and company")

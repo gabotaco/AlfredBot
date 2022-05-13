@@ -71,7 +71,7 @@ module.exports.run = async (bot, args) => {
         }
 
 
-        bot.con.query(`SELECT * FROM members, rts WHERE members.id = rts.member_id`, async function (err, result, fields) {
+        bot.con.query(`SELECT * FROM members me, rts r WHERE me.id = r.member_id`, async function (err, result, fields) {
             let CompanyRank
             if (err) {
                 console.log(err)

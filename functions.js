@@ -163,7 +163,7 @@ module.exports = {
      */
     GetMemberDetails: function (con, Column, ID) {
         return new Promise(resolve => {
-            con.query(`SELECT me.*, r.vouchers as rts_total_vouchers, r.worth as rts_total_worth, p.vouchers as pigs_total_vouchers, p.worth as pigs_total_worth FROM members me, rts r, pigs p WHERE me.${Column} = '${ID}' AND me.id = pigs.member_id AND me.id = rts.member_id`, function (err, result, fields) { //get all their info into one array
+            con.query(`SELECT me.*, r.vouchers as rts_total_vouchers, r.worth as rts_total_worth, p.vouchers as pigs_total_vouchers, p.worth as pigs_total_worth FROM members me, rts r, pigs p WHERE me.${Column} = '${ID}' AND me.id = p.member_id AND me.id = r.member_id`, function (err, result, fields) { //get all their info into one array
                 if (err) return console.log(err)
                 resolve(result[0]) //return first found member
             })

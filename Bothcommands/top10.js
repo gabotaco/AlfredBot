@@ -13,7 +13,7 @@ module.exports.run = async (bot, args) => {
     
         const MemberInfo = await functions.GetMemberDetails(bot.con, "discord_id", args.author_id) //get member info
     
-        bot.con.query(`SELECT * FROM members, ${CompanyName} WHERE members.id = ${CompanyName}.member_id`, function (err, result, fields) { //get all company members and link their vouchers with their in game name
+        bot.con.query(`SELECT * FROM members me, ${CompanyName} c WHERE me.id = c.member_id`, function (err, result, fields) { //get all company members and link their vouchers with their in game name
             if (err) {
                 console.log(err)
                 return reject("Unable to get members and company vouchers.")

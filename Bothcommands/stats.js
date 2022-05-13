@@ -125,7 +125,7 @@ module.exports.run = async (bot, args) => {
             const Threshold = new Date()
             Threshold.setDate(Threshold.getDate() - NumOfDays)
 
-            bot.con.query(`SELECT * FROM members, payout WHERE payout.company = '${company}' AND members.id = payout.member_id AND payout.createdAt > '${Threshold.toISOString()}' ORDER BY payout.member_id DESC`, function (err, result, fields) { //get all their info into one array
+            bot.con.query(`SELECT * FROM members me, payout pa WHERE pa.company = '${company}' AND me.id = pa.member_id AND pa.createdAt > '${Threshold.toISOString()}' ORDER BY pa.member_id DESC`, function (err, result, fields) { //get all their info into one array
                 if (err) {
                     console.log(err);
                     return reject("There was an error getting members and payouts.")
