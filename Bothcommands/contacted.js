@@ -20,7 +20,7 @@ module.exports.run = async (bot, args) => {
           .setColor("RANDOM")
   
         result.forEach(applicant => {
-          reqEmbed.addField(applicant.in_game_name + " (" + applicant.in_game_id + ")", applicant.reason) //Adds them to embed
+          reqEmbed.addField(applicant.in_game_name + " (" + applicant.in_game_id + ")", applicant.status_info) //Adds them to embed
         });
         if (!reqEmbed.fields[0]) { //if there aren't any fields in the embed
           return resolve("Nobody is contacted")

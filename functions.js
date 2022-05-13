@@ -225,7 +225,7 @@ module.exports = {
      */
     UpdateApplicantStatus: function (con, ID, Status, Reason = "") {
         return new Promise((resolve, reject) => {
-            con.query(`UPDATE applications SET status = '${Status}', reason = '${Reason}' WHERE id = '${ID}' OR in_game_id = '${ID}' OR discord_id = '${ID}'`, function (err, result, fields) {
+            con.query(`UPDATE applications SET status = '${Status}', status_info = '${Reason}' WHERE id = '${ID}' OR in_game_id = '${ID}' OR discord_id = '${ID}'`, function (err, result, fields) {
                 if (err) {
                     console.log(err)
                     return reject("There was an error updating the applicants status.");

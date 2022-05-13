@@ -15,7 +15,7 @@ module.exports.run = async (bot, args) => {
             if (result.length < 1) {
                 return resolve(`Unable to find <@${ID}>'s application.`)
             } else {
-                return resolve(`<@${ID}>'s application status is: ${result[0].status} ${result[0].reason ? `(${result[0].reason})` : ""}`)
+                return resolve(`<@${ID}>'s application status is: ${result[0].status} ${result[0].status_info ? `(${result[0].status_info})` : ""}`)
             }
         })
     })
