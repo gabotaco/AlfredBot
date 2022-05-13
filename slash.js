@@ -123,7 +123,7 @@ slash.init = async (client) => {
                 }
                 if (!body) return;
                 if (body.message == "You are being rate limited.") {
-                    console.log(`Timoeut for ${body.retry_after} seconds`);
+                    console.log(`Timeout for ${body.retry_after} seconds`);
                     setTimeout(() => {
                         slash.reply(interaction, response, command)
                     }, body.retry_after * 1000);
@@ -164,7 +164,7 @@ slash.init = async (client) => {
                 if (!body) return;
 
                 if (body.message == "You are being rate limited.") {
-                    console.log(`Timoeut for ${body.retry_after} seconds`);
+                    console.log(`Timeout for ${body.retry_after} seconds`);
                     setTimeout(() => {
                         slash.edit(interaction, response, command)
                     }, body.retry_after * 1000);
@@ -205,7 +205,7 @@ slash.init = async (client) => {
                 if (!body) return;
 
                 if (body.message == "You are being rate limited.") {
-                    console.log(`Timoeut for ${body.retry_after} seconds`);
+                    console.log(`Timeout for ${body.retry_after} seconds`);
                     setTimeout(() => {
                         slash.follow(interaction, response, command)
                     }, body.retry_after * 1000);
@@ -234,7 +234,7 @@ slash.init = async (client) => {
                 if (!body) return;
 
                 if (body.message == "You are being rate limited.") {
-                    console.log(`Timoeut for ${body.retry_after} seconds`);
+                    console.log(`Timeout for ${body.retry_after} seconds`);
                     setTimeout(() => {
                         slash.defer(interaction)
                     }, body.retry_after * 1000);
@@ -308,8 +308,8 @@ slash.init = async (client) => {
                 slash.reply(interaction, `There was an error. Gabo says ${err}`, command)
             })
         } else {
-            console.log("Couldn't find command!");
-            console.log(slashCommands[guild_id]);
+            console.log(`Couldn't find command ${name.toLowerCase()}!`);
+            console.log(slash.commands[guild_id]);
         }
     })
     console.log("Slash initalized");
@@ -446,7 +446,7 @@ slash.addCommands = (slashCommands) => {
                     }, (err, response, cmd) => {
                         if (err) throw err;
                         if (cmd.message == "You are being rate limited.") {
-                            console.log(`Timoeut for ${cmd.retry_after} seconds`);
+                            console.log(`Timeout for ${cmd.retry_after} seconds`);
                             setTimeout(() => {
                                 addCommand(i)
                             }, cmd.retry_after * 1000);
@@ -546,7 +546,7 @@ slash.addCommands = (slashCommands) => {
                 }, (err, response, cmd) => {
                     if (err) throw err;
                     if (cmd.message == "You are being rate limited.") {
-                        console.log(`Timoeut for ${cmd.retry_after} seconds`);
+                        console.log(`Timeout for ${cmd.retry_after} seconds`);
                         setTimeout(() => {
                             addCommand(i)
                         }, cmd.retry_after * 1000);
@@ -580,7 +580,7 @@ slash.addCommands = (slashCommands) => {
                     }, (err, response, cmd) => {
                         if (err) throw err;
                         if (cmd.message == "You are being rate limited.") {
-                            console.log(`Timoeut for ${cmd.retry_after} seconds`);
+                            console.log(`Timeout for ${cmd.retry_after} seconds`);
                             setTimeout(() => {
                                 addCommand(i)
                             }, cmd.retry_after * 1000);
@@ -644,7 +644,7 @@ slash.addCommands = (slashCommands) => {
                 }, (err, response, cmd) => {
                     if (err) throw err;
                     if (cmd.message == "You are being rate limited.") {
-                        console.log(`Timoeut for ${cmd.retry_after} seconds`);
+                        console.log(`Timeout for ${cmd.retry_after} seconds`);
                         setTimeout(() => {
                             addCommand(i)
                         }, cmd.retry_after * 1000);
@@ -708,7 +708,7 @@ slash.addCommands = (slashCommands) => {
                 }, (err, response, body) => {
                     if (err) throw err;
                     if (body.message == "You are being rate limited.") {
-                        console.log(`Timoeut for ${body.retry_after} seconds`);
+                        console.log(`Timeout for ${body.retry_after} seconds`);
                         setTimeout(() => {
                             addPermissions('global')
                         }, body.retry_after * 1000);
@@ -729,7 +729,7 @@ slash.addCommands = (slashCommands) => {
                     }, (err, response, cmd) => {
                         if (err) throw err;
                         if (cmd.message == "You are being rate limited.") {
-                            console.log(`Timoeut for ${cmd.retry_after} seconds`);
+                            console.log(`Timeout for ${cmd.retry_after} seconds`);
                             setTimeout(() => {
                                 addPermissions('pigs')
                             }, cmd.retry_after * 1000);
@@ -757,7 +757,7 @@ slash.addCommands = (slashCommands) => {
                 }, (err, response, body) => {
                     if (err) throw err;
                     if (body.message == "You are being rate limited.") {
-                        console.log(`Timoeut for ${body.retry_after} seconds`);
+                        console.log(`Timeout for ${body.retry_after} seconds`);
                         setTimeout(() => {
                             addPermissions('pigs')
                         }, body.retry_after * 1000);
@@ -784,7 +784,7 @@ slash.addCommands = (slashCommands) => {
                 }, (err, response, body) => {
                     if (err) throw err;
                     if (body.message == "You are being rate limited.") {
-                        console.log(`Timoeut for ${body.retry_after} seconds`);
+                        console.log(`Timeout for ${body.retry_after} seconds`);
                         setTimeout(() => {
                             addPermissions('rts')
                         }, body.retry_after * 1000);
