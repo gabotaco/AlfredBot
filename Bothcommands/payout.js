@@ -312,7 +312,7 @@ module.exports.run = async (bot, args) => {
                                 })
                             } 
                             //update the members company data
-                            bot.con.query(`UPDATE ${pendingPayout.CompanyName} SET ${pendingPayout.CompanyName}_total_vouchers = ${pendingPayout.CompanyName}_total_vouchers + '${pendingPayout.voucherAmount}', ${pendingPayout.CompanyName}_total_money = ${pendingPayout.CompanyName}_total_money + '${pendingPayout.Money}' WHERE member_id = '${pendingPayout.member_id}'`, function (err, result, fields) {
+                            bot.con.query(`UPDATE ${pendingPayout.CompanyName} SET vouchers = vouchers + '${pendingPayout.voucherAmount}', worth = worth + '${pendingPayout.Money}' WHERE member_id = '${pendingPayout.member_id}'`, function (err, result, fields) {
                                 if (err) {
                                     console.log(err)
                                     return reject("Unable to add vouchers to the member. WARNING MANAGERS TABLE WAS UPDATED")
