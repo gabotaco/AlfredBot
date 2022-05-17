@@ -74,12 +74,12 @@ module.exports.run = async (bot, args) => {
                       return reject("There was a problem getting the new members ID");
                     }
                     if (result.length != 1) return reject("Unable to get hired members ID")
-                    bot.con.query(`INSERT INTO pigs(member_id) VALUES ('${result[0].id}');`, function (err, result, fields) { //insert into pigs table
+                    bot.con.query(`INSERT INTO pigs(member_id) VALUES ('${result[0].id}');`, function (err, res, fields) { //insert into pigs table
                       if (err) {
                         console.log(err)
                         return reject("There was an error creating the PIGS row.")
                       }
-                      bot.con.query(`INSERT INTO rts(member_id) VALUES ('${result[0].id}');`, function (err, result, fields) { //insert into rts table
+                      bot.con.query(`INSERT INTO rts(member_id) VALUES ('${result[0].id}');`, function (err, res, fields) { //insert into rts table
                         if (err) {
                           console.log(err)
                           return reject("There was an error creating the RTS row.")
