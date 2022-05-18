@@ -37,8 +37,8 @@ CREATE TABLE `applications` (
   `status` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Received',
   `status_info` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `paid` tinyint NOT NULL DEFAULT '0',
-  `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1724 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -59,8 +59,8 @@ CREATE TABLE `managers` (
   `pigs_cashout_worth` bigint NOT NULL DEFAULT '0',
   `total_money` bigint NOT NULL DEFAULT '0',
   `active` tinyint NOT NULL DEFAULT '1',
-  `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `managers_idx` (`member_id`),
   CONSTRAINT `managers` FOREIGN KEY (`member_id`) REFERENCES `members` (`id`)
@@ -85,8 +85,8 @@ CREATE TABLE `members` (
   `last_turnin` date NOT NULL,
   `warnings` int NOT NULL DEFAULT '0',
   `welcome` tinyint NOT NULL DEFAULT '1',
-  `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3716 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -105,8 +105,8 @@ CREATE TABLE `payout` (
   `company` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `amount` int NOT NULL,
   `worth` int NOT NULL,
-  `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `payout manager_idx` (`manager_id`),
   KEY `payout member_idx` (`member_id`),
@@ -127,8 +127,8 @@ CREATE TABLE `pigs` (
   `member_id` int NOT NULL,
   `vouchers` bigint NOT NULL DEFAULT '0',
   `worth` bigint NOT NULL DEFAULT '0',
-  `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `PIGS_idx` (`member_id`),
   CONSTRAINT `PIGS` FOREIGN KEY (`member_id`) REFERENCES `members` (`id`)
@@ -147,8 +147,8 @@ CREATE TABLE `rts` (
   `member_id` int NOT NULL,
   `vouchers` bigint NOT NULL DEFAULT '0',
   `worth` bigint NOT NULL DEFAULT '0',
-  `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `RTS_idx` (`member_id`),
   CONSTRAINT `RTS` FOREIGN KEY (`member_id`) REFERENCES `members` (`id`)
@@ -167,8 +167,8 @@ CREATE TABLE `website` (
   `discord_id` varchar(18) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `in_game_id` int NOT NULL,
   `permission` int NOT NULL DEFAULT '0',
-  `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4291 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
