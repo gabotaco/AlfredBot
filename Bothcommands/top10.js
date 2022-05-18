@@ -38,7 +38,7 @@ module.exports.run = async (bot, args) => {
                 .setColor("RANDOM")
                 .setTitle("__*Top 10 Voucher Handins*__")
                 .setThumbnail(bot.guilds.cache.get(args.guild_id).members.cache.get(args.author_id).user.avatarURL())
-                .setFooter(`Your total vouchers: ${functions.numberWithCommas(MemberInfo.vouchers)}`) //add total vouchers
+                .setFooter(`Your total vouchers: ${functions.numberWithCommas(MemberInfo.rts_total_vouchers + MemberInfo.pigs_total_vouchers)}`) //add total vouchers
     
             for (let i = 0; i < 10 && i < vouchers.length; i++) { //loop through first 10 items in array
                 top10.addField(vouchers[i][1], functions.numberWithCommas(vouchers[i][0]))
