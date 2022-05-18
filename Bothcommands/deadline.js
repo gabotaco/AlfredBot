@@ -8,7 +8,7 @@ module.exports.run = async (bot, args) => {
     const MemberInfo = await functions.GetMemberDetails(bot.con, SearchColumn, args.author_id) //Get their member info
     if (!MemberInfo) return resolve("Couldn't find that user") //no member data
 
-    return resolve(`Deadline: ${MemberInfo.deadline}`) //get the deadline and send it
+    return resolve(`Your deadline: ${MemberInfo.deadline}`) //get the deadline and send it
   })
 }
 
