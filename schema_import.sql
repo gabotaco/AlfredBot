@@ -166,6 +166,7 @@ CREATE TABLE `website` (
   `id` int NOT NULL AUTO_INCREMENT,
   `discord_id` varchar(18) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `in_game_id` int NOT NULL,
+  `public_key` VARCHAR(30) NULL,
   `permission` int NOT NULL DEFAULT '0',
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
