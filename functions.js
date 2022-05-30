@@ -299,6 +299,7 @@ module.exports = {
      * @returns {String} Number with commas
      */
     numberWithCommas: function (num) {
+        if (!num) return "0";
         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); //fancy regex
     },
 

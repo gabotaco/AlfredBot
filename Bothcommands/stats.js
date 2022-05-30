@@ -82,7 +82,7 @@ module.exports.run = async (bot, args) => {
                 let TotalVouchers = 0;
                 let TotalValue = 0;
                 result.forEach(member => {
-                    TotalVouchers += member.vouchers;
+                    TotalVouchers += member.amount;
 
                     TotalValue += member.worth;
                 });
@@ -135,16 +135,16 @@ module.exports.run = async (bot, args) => {
                 for (let i = 0; i < result.length; i++) {
                     const index = TopPlayers.indexOfId(result[i].in_game_id)
                     if (index > -1) {
-                        TopPlayers[index].vouchers += result[i].vouchers
+                        TopPlayers[index].amount += result[i].amount
                     } else {
                         TopPlayers.push(result[i])
                     }
                 }
                 TopPlayers.sort(function (x, y) {
-                    if (x.vouchers < y.vouchers) {
+                    if (x.amount < y.amount) {
                         return 1;
                     }
-                    if (x.vouchers > y.vouchers) {
+                    if (x.amount > y.amount) {
                         return -1;
                     }
                     return 0;
@@ -154,7 +154,7 @@ module.exports.run = async (bot, args) => {
                     .setTitle("Top Turnins over the past " + NumOfDays + " days")
                     .setColor("RANDOM")
                 for (let i = 0; i < NumOfPlayers && i < TopPlayers.length; i++) {
-                    TopEmbed.addField(TopPlayers[i].in_game_name + ` (${i + 1})`, functions.numberWithCommas(TopPlayers[i].vouchers), true)
+                    TopEmbed.addField(TopPlayers[i].in_game_name + ` (${i + 1})`, functions.numberWithCommas(TopPlayers[i].amount), true)
                 }
                 return resolve(TopEmbed)
             })
