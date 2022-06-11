@@ -206,26 +206,26 @@ app.get("/member/message", function (req, res) {
 
 **Getting Started Guide**
 We’ve compiled a few tips to help get you started.
-    
+
 **Vouchers**
 -Completing company runs will give you vouchers.
 -Heavy, Aviator, and RTS Vouchers all have equal value.
 -Meet a manager in-game and give them your vouchers - they will pay you.
 -Check http://payout.rockwelltransport.com to calculate how much you’ll make.
-    
+
 **Useful tools and links**
 Your profile: http://profile.rockwelltransport.com
 Contains:
 -Progress to the next rank in each company
 -Your past turnins
-    
+
 **Live map** of all current RC employees, including ongoing heists!
 http://map.rockwelltransport.com
 -PIGS = Pink
 -RTS = Orange
 -Management = Green
 Use the toggles on the left side to see points of interest for both companies.
-    
+
 **Dual enrollment**
 Also know that you can switch between PIGS and RTS any time. Find a manager from the company you’d like to change to in-game and ask. It’s really no trouble! Use the map to see all managers online.
     `)
@@ -273,26 +273,26 @@ app.patch("/member/message/hired", function (req, res) {
 
 **Getting Started Guide**
 We’ve compiled a few tips to help get you started.
-    
+
 **Vouchers**
 -Completing company runs will give you vouchers.
 -Heavy, Aviator, and RTS Vouchers all have equal value.
 -Meet a manager in-game and give them your vouchers - they will pay you.
 -Check http://payout.rockwelltransport.com to calculate how much you’ll make.
-    
+
 **Useful tools and links**
 Your profile: http://profile.rockwelltransport.com
 Contains:
 -Progress to the next rank in each company
 -Your past turnins
-    
+
 **Live map** of all current RC employees, including ongoing heists!
 http://map.rockwelltransport.com
 -PIGS = Pink
 -RTS = Orange
 -Management = Green
 Use the toggles on the left side to see points of interest for both companies.
-    
+
 **Dual enrollment**
 Also know that you can switch between PIGS and RTS any time. Find a manager from the company you’d like to change to in-game and ask. It’s really no trouble! Use the map to see all managers online.
     `)
@@ -338,11 +338,11 @@ app.patch("/member/message/rejected", function (req, res) {
     member.send(`Hello,
 
     This message is in regards to your recent application to RC. We'd like to thank you for your interest in our company and what we do.
-                              
-    Here at the Rockwell Corporation, we strive to maintain a tight-knit community of helpful, happy, and active members. As such, we perform background checks with Transport Tycoon staff and check for everything from player reports, to kicks and bans, as well as general attitude, communication skills, and overall state of activity. 
-                              
+
+    Here at the Rockwell Corporation, we strive to maintain a tight-knit community of helpful, happy, and active members. As such, we perform background checks with Transport Tycoon staff and check for everything from player reports, to kicks and bans, as well as general attitude, communication skills, and overall state of activity.
+
     In the case of your candidacy, this background check has raised a red flag to our management team and, as a result, your application has been rejected. If you feel this decision has been made in error, you may appeal by @mentioning Rock in <#560917748184776736> channel of the company's Discord.
-                              
+
     Once again, thank you for your interest; we wish you the best of luck in your future endeavors. Reason for fire: '${req.query.reason}'`)
 
     res.json({
@@ -484,7 +484,7 @@ function checkForDxp() {
             return;
         }
 
-        request(`https://${botconfig.ActiveServers[index].url}/status/widget/players.json`, {json: true}, function (error, response, body) { //url to get all players
+        request(`http://${botconfig.ActiveServers[index].url}/status/widget/players.json`, {json: true}, function (error, response, body) { //url to get all players
             if (error || !body) { //server is offline
                 return;
             }

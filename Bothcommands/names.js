@@ -39,7 +39,7 @@ module.exports.run = async (bot, args) => {
         }
       }, 5000);
 
-      request(`https://${Server}/status/widget/players.json`, {json: true}, function (error, response, body) { //get server players
+      request(`http://${Server}/status/widget/players.json`, {json: true}, function (error, response, body) { //get server players
         if (!error && body) { //If no error
           SentMessage = true; //sent message
           body.players.forEach(player => { //go thorugh all players
