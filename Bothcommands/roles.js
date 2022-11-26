@@ -137,7 +137,7 @@ module.exports.run = async (bot, args) => {
 				"648966486383394827",
 				"705180161850474578",
 				"843226962390417419",
-				""
+				"974001993158897664"
 			];
 			var employeeID = "483297370482933760";
 			var GuestRole = botconfig.RTSRoles.GuestRole;
