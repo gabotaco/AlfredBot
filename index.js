@@ -924,7 +924,6 @@ bot.on("messageReactionAdd", async (reaction, user) => {
         case "705251722557128725":
             //Voucher
             const botCommandsChannel = reaction.message.guild.channels.cache.get("483312512217907220")
-            fakeMessage.channel = botCommandsChannel
             bot.RTSCommands.get("voucher").run(bot, fakeArgs)
             reaction.remove()
             botCommandsChannel.send(`${user}`)
@@ -932,7 +931,6 @@ bot.on("messageReactionAdd", async (reaction, user) => {
         case "705253371468185651":
             //Voucher
             const pigsBotChannel = reaction.message.guild.channels.cache.get("487621053494067200")
-            fakeMessage.channel = pigsBotChannel
             bot.PIGSCommands.get("vouchers").run(bot, fakeArgs)
             reaction.remove()
             pigsBotChannel.send(`${user}`)
