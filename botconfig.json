@@ -25,21 +25,9 @@
     ],
     "PIGSServer": "487285826544205845",
     "RTSServer": "447157938390433792",
-    "PIGSSignMeUpIndex": 13,
-    "RTSSignMeUpIndex": 14,
     "ApplicationInGameIDIndex": 5,
     "ApplicationStartingRow": 2,
-    "ApplicationWhyIndex": 16,
-    "ApplicationAnythingIndex": 18,
-    "ApplicationRefferalCode": 19,
-    "ApplicationRefferalStatus": 20,
-    "ApplicationRefferalStatusColumn": "U",
-    "ApplicationRefferalCodeColumn": "T",
-    "ApplicationPlayTimeIndex": 10,
     "ApplicationDiscordIndex": 3,
-    "ApplicationInGameNameIndex": 4,
-    "PIGSManagementCatagoryID": "487289620804141088",
-    "RTSManagementCatagoryID": "454231796905803776",
     "GaboID": "330000865215643658",
     "RockID": "404650985529540618",
     "ActiveServers": [
@@ -119,18 +107,5 @@
     "PIGSBotCommandsChannel": "488149666249048064",
     "PIGSVoucherChannel": "487621053494067200",
     "RTSVoucherChannel": "588099364497653780",
-    "RTSManagers": [
-        "225564356140728320",
-        "440831788240338944",
-        "266153125507891200",
-        "221228768461586442",
-        "298433145928286209"
-    ],
-    "PIGSManagers": [
-        "209736326432423937",
-        "203930869847687177",
-        "330015505211457551",
-        "394694336127696897"
-    ],
     "GlitchDetectorID": "71676578244857856"
 }
