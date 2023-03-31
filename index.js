@@ -40,7 +40,7 @@ const bot = new Discord.Client({
     messageCacheLifetime: 86400, //1 day
     messageSweepInterval: 3600, //every hour
     messageEditHistoryMaxSize: 0, //don't hold past message edits
-    fetchAllMembers: true //cache all members
+    fetchAllMembers: process.env.NODE_ENV == "development" ? false : true, //fetch all members on startup
 })
 
 bot.con = con; //save connection to bot so i can access in commands
