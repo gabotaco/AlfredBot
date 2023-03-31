@@ -24,7 +24,7 @@ module.exports.run = async (bot, args) => {
 				}
 
 				request(
-					`http://${botconfig.ActiveServers[index].url}/status/widget/players.json`,
+					`http://${botconfig.ActiveServers[index].api}/widget/players.json`,
 					{ json: true },
 					function (error, response, body) {
 						//url to get all players

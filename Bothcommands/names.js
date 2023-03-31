@@ -6,7 +6,7 @@ const functions = require("../functions.js")
 module.exports.run = async (bot, args) => {
   return new Promise((resolve, reject) => {
     const Server = functions.GetServerURL(args.server); //get server ip and port
-    if (!Server) return resolve("Invalid server. [1 or OS, 2, 3, 4, 5, 6, 7, 8, 9, A]")
+    if (!Server) return resolve("Invalid server. [1 2]")
 
     let CompanyMembers = [] //track company members
 
@@ -39,7 +39,7 @@ module.exports.run = async (bot, args) => {
         }
       }, 5000);
 
-      request(`http://${Server}/status/widget/players.json`, {json: true}, function (error, response, body) { //get server players
+      request(`http://${Server}/widget/players.json`, {json: true}, function (error, response, body) { //get server players
         if (!error && body) { //If no error
           SentMessage = true; //sent message
           body.players.forEach(player => { //go thorugh all players
@@ -77,7 +77,7 @@ module.exports.help = {
     name: "server",
     description: "The server number",
     required: true,
-    missing: "Please specify a server number [1 or OS, 2, 3, 4, 5, 6, 7, 8, 9, A]",
+    missing: "Please specify a server number [1 or 2]",
     parse: (bot, message, args) => {
       return args[0]
     }
