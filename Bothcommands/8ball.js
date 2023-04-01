@@ -12,9 +12,9 @@ module.exports.run = async (bot, args) => {
         }
 
         if (Math.random() <= 0.5) { //50%
-            var answer = botconfig.YesResponses[Math.floor(Math.random() * botconfig.YesResponses.length)] //answer is yes
+            var answer = YesResponses[Math.floor(Math.random() * YesResponses.length)] //answer is yes
         } else {
-            var answer = botconfig.NoResponses[Math.floor(Math.random() * botconfig.NoResponses.length)] //answer is no
+            var answer = NoResponses[Math.floor(Math.random() * NoResponses.length)] //answer is no
         }
 
         const ballembed = new Discord.MessageEmbed()
@@ -44,3 +44,29 @@ module.exports.help = {
     permission: [...botconfig.OWNERS, ...botconfig.MANAGERS, ...botconfig.EMPLOYEES, ...botconfig.MEMBERS],
     slash: true
 }
+
+const YesResponses = [
+    "Yes.",
+    "Most likely",
+    "There is a small chance",
+    "Yes- definitely",
+    "You may rely on it",
+    "It is decidedly so.",
+    "Signs point to yes.",
+    "Without a doubt.",
+    "As I see it yes.",
+    "Outlook good.",
+    "Well yes. You didn't know that? 😂",
+    "Of course."
+]
+const NoResponses = [
+    "No.",
+    "Never ever ever",
+    "Very doubtful",
+    "Don't count on it.",
+    "No. Nonononononono FUCK NO!",
+    "You wish.",
+    "Nah fam",
+    "My reply is no.",
+    "My sources say no."
+]
