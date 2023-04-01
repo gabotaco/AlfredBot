@@ -281,6 +281,12 @@ slash.init = async client => {
 		const { guild_id, channel_id } = interaction;
 
 		const { name, options } = interaction.data;
+		// If interaction has no member, log it and return
+		if (!interaction.member) {
+			console.log(
+				`Interaction with no member: https://discord.com/channels/${guild_id}/${channel_id}/${interaction.message.id}`
+			);
+		}
 		const { id } = interaction.member.user;
 
 		const command = slash.commands[guild_id][name.toLowerCase()];
