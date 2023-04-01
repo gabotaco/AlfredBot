@@ -1,0 +1,15 @@
+{
+  "extends": ["strongloop", "prettier", "react-app"],
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "plugins": ["prettier"],
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "rules": {
+    "no-var": "warn",
+    "radix": "off"
+  }
+}
