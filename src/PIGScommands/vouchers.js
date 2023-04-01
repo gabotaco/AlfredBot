@@ -4,7 +4,7 @@ const functions = require('../util/functions.js');
 const Handlebars = require('handlebars');
 const puppeteer = require('puppeteer');
 const templateCache = [];
-const HTMLPath = './pigsVouchers.html';
+const HTMLPath = './src/html/pigsVouchers.html';
 const botconfig = require('../botconfig');
 
 module.exports.run = async (bot, args) => {
@@ -31,6 +31,7 @@ module.exports.run = async (bot, args) => {
 		let RankVouchers = 0;
 		let CurrentVouchers = 0;
 		let Progress = 0;
+		let VoucherTextThing;
 
 		if (MemberDetails.pigs_total_vouchers < 6000) {
 			Rank = 'Hustler';

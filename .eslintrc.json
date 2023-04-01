@@ -1,0 +1,18 @@
+{
+	//"extends": ["strongloop", "prettier"],
+	"parserOptions": {
+		"sourceType": "module",
+		"ecmaVersion": "latest"
+	},
+	"plugins": ["prettier"],
+	"env": {
+		"node": true,
+		"es6": true
+	},
+	"rules": {
+		"no-var": "warn",
+		"radix": "off",
+		"no-confusing-arrow": "warn",
+		"no-constant-condition": "warn"
+	}
+}
