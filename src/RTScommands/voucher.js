@@ -25,55 +25,62 @@ module.exports.run = async (bot, args) => {
 			MemberDetails.rts_total_vouchers
 		);
 
+		let Rank = '';
+		let RequiredVouchers = 0;
+		let NextRank = '';
+		let RankVouchers = 0;
+		let CurrentVouchers = 0;
+		let Progress = 0;
+
 		if (MemberDetails.rts_total_vouchers < 9600) {
-			var NextRank = 'Lead Foot';
-			var RankVouchers = 9600;
-			var CurrentVouchers = MemberDetails.rts_total_vouchers;
-			var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
+			NextRank = 'Lead Foot';
+			RankVouchers = 9600;
+			CurrentVouchers = MemberDetails.rts_total_vouchers;
+			Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
 
-			var Rank = 'Initiate';
-			var RequiredVouchers = 9600 - MemberDetails.rts_total_vouchers;
+			Rank = 'Initiate';
+			RequiredVouchers = 9600 - MemberDetails.rts_total_vouchers;
 		} else if (MemberDetails.rts_total_vouchers < 24000) {
-			var NextRank = 'Wheelman';
-			var RankVouchers = 14400;
-			var CurrentVouchers = MemberDetails.rts_total_vouchers - 9600;
-			var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
+			NextRank = 'Wheelman';
+			RankVouchers = 14400;
+			CurrentVouchers = MemberDetails.rts_total_vouchers - 9600;
+			Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
 
-			var Rank = 'Lead Foot';
-			var RequiredVouchers = 24000 - MemberDetails.rts_total_vouchers;
+			Rank = 'Lead Foot';
+			RequiredVouchers = 24000 - MemberDetails.rts_total_vouchers;
 		} else if (MemberDetails.rts_total_vouchers < 52800) {
-			var NextRank = 'Legendary Wheelman';
-			var RankVouchers = 28800;
-			var CurrentVouchers = MemberDetails.rts_total_vouchers - 24000;
-			var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
+			NextRank = 'Legendary Wheelman';
+			RankVouchers = 28800;
+			CurrentVouchers = MemberDetails.rts_total_vouchers - 24000;
+			Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
 
-			var Rank = 'Wheelman';
-			var RequiredVouchers = 52800 - MemberDetails.rts_total_vouchers;
+			Rank = 'Wheelman';
+			RequiredVouchers = 52800 - MemberDetails.rts_total_vouchers;
 		} else if (MemberDetails.rts_total_vouchers < 117600) {
-			var NextRank = 'Speed Demon';
-			var RankVouchers = 64800;
-			var CurrentVouchers = MemberDetails.rts_total_vouchers - 52800;
-			var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
+			NextRank = 'Speed Demon';
+			RankVouchers = 64800;
+			CurrentVouchers = MemberDetails.rts_total_vouchers - 52800;
+			Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
 
-			var Rank = 'Legendary Wheelman';
-			var RequiredVouchers = 117600 - MemberDetails.rts_total_vouchers;
+			Rank = 'Legendary Wheelman';
+			RequiredVouchers = 117600 - MemberDetails.rts_total_vouchers;
 		} else {
-			var CurrentVouchers = MemberDetails.rts_total_vouchers - 117600;
-			var Progress = 100;
-			var RequiredVouchers = CurrentVouchers;
-			var VoucherTextThing = 'vouchers in Speed Demon';
+			CurrentVouchers = MemberDetails.rts_total_vouchers - 117600;
+			Progress = 100;
+			RequiredVouchers = CurrentVouchers;
+			VoucherTextThing = 'vouchers in Speed Demon';
 
-			var Rank = 'Speed Demon';
-			var RequiredVouchers = 'Max';
+			Rank = 'Speed Demon';
+			RequiredVouchers = 'Max';
 		}
 
 		RequiredVouchers = functions.numberWithCommas(RequiredVouchers);
 
+		let Deadline = '';
 		if (MemberDetails.company == 'fired') {
-			var Deadline = 'Non-Employee';
+			Deadline = 'Non-Employee';
 		} else {
-			var Deadline =
-				'Deadline: ' + new Date(MemberDetails.deadline).toDateString();
+			Deadline = 'Deadline: ' + new Date(MemberDetails.deadline).toDateString();
 		}
 
 		bot.con.query(
@@ -84,7 +91,7 @@ module.exports.run = async (bot, args) => {
 					console.log(err);
 					return reject('Unable to get members and company');
 				}
-				var Ranking = [];
+				let Ranking = [];
 				result.forEach(member => {
 					Ranking.push([member.vouchers, member.in_game_name]);
 				});

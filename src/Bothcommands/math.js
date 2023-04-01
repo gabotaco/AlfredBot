@@ -4,7 +4,7 @@ const botconfig = require('../botconfig');
 module.exports.run = async (bot, args) => {
 	return new Promise((resolve, reject) => {
 		try {
-			var answer = mathjs.evaluate(args.equation);
+			let answer = mathjs.evaluate(args.equation);
 			resolve(`${args.equation} = ${answer.toString()}`);
 		} catch (e) {
 			resolve('Invalid equation.');

@@ -6,15 +6,15 @@ module.exports.run = async (bot, args) => {
 	return new Promise((resolve, reject) => {
 		let CompanyMembers = []; //Company members
 		let ServerPoints = []; //Keeps num of players in each server
-
+		let CompanyName;
 		if (args.guild_id == botconfig.PIGSServer) {
 			//PIGS server
 
-			var CompanyName = 'pigs';
+			CompanyName = 'pigs';
 		} else if (args.guild_id == botconfig.RTSServer) {
 			//RTS server
 
-			var CompanyName = 'rts';
+			CompanyName = 'rts';
 		}
 		bot.con.query(
 			`SELECT (in_game_id) FROM members WHERE company = '${CompanyName}'`,
@@ -58,7 +58,7 @@ module.exports.run = async (bot, args) => {
 					}
 
 					try {
-						var jsonBody = JSON.parse(body); //convert to json so we can use it
+						const jsonBody = JSON.parse(body); //convert to json so we can use it
 					} catch (e) {
 						//Handle or naw
 						return;

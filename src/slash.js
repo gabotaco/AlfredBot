@@ -370,10 +370,11 @@ function handleOptions(args) {
 slash.addCommands = slashCommands => {
 	let enabledCommands = {};
 	let enabledPerms = {};
+	let guildID;
 	if (slashCommands.guild == 'rts') {
-		var guildID = botconfig.RTSServer;
+		guildID = botconfig.RTSServer;
 	} else {
-		var guildID = botconfig.PIGSServer;
+		guildID = botconfig.PIGSServer;
 	}
 	if (slashCommands.guild == 'GLOBAL') {
 		request.get(

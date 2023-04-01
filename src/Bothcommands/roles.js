@@ -28,7 +28,7 @@ module.exports.run = async (bot, args) => {
 			return resolve("You aren't allowed to specify another member.");
 		}
 
-		var person = bot.guilds.cache
+		let person = bot.guilds.cache
 			.get(args.guild_id)
 			.members.cache.get(args.member ? args.member : args.author_id); //get person by first mention or first arg or message author
 
@@ -38,8 +38,14 @@ module.exports.run = async (bot, args) => {
 			args.member != args.author_id
 		)
 			return resolve("Couldn't find specified member.");
+
+		let alwaysKeep;
+		let employeeID;
+		let GuestRole;
+		let InactiveRole;
+		let FamilyID;
 		if (args.guild_id == botconfig.PIGSServer) {
-			var alwaysKeep = [
+			alwaysKeep = [
 				'970370393468710943',
 				'487624439668670464',
 				'487286138529120256',
@@ -90,12 +96,12 @@ module.exports.run = async (bot, args) => {
 				'823222964609876012',
 				'853769094876102663',
 			];
-			var employeeID = '562991083882151937';
-			var GuestRole = botconfig.PIGSRoles.GuestRole;
-			var InactiveRole = botconfig.PIGSRoles.InactiveRole;
-			var FamilyID = rtsfamilyID;
+			employeeID = '562991083882151937';
+			GuestRole = botconfig.PIGSRoles.GuestRole;
+			InactiveRole = botconfig.PIGSRoles.InactiveRole;
+			FamilyID = rtsfamilyID;
 		} else if (args.guild_id == botconfig.RTSServer) {
-			var alwaysKeep = [
+			alwaysKeep = [
 				'447494569173712898',
 				'472145541091033123',
 				'455014608810541068',
@@ -139,10 +145,10 @@ module.exports.run = async (bot, args) => {
 				'843226962390417419',
 				'974001993158897664',
 			];
-			var employeeID = '483297370482933760';
-			var GuestRole = botconfig.RTSRoles.GuestRole;
-			var InactiveRole = botconfig.RTSRoles.InactiveRole;
-			var FamilyID = pigsfamilyID;
+			employeeID = '483297370482933760';
+			GuestRole = botconfig.RTSRoles.GuestRole;
+			InactiveRole = botconfig.RTSRoles.InactiveRole;
+			FamilyID = pigsfamilyID;
 		}
 
 		if (person.roles.cache) {
@@ -161,7 +167,7 @@ module.exports.run = async (bot, args) => {
 
 		await person.roles.add(GuestRole); //add guest role
 
-		var MemberDetails = await functions.GetMemberDetails(
+		let MemberDetails = await functions.GetMemberDetails(
 			bot.con,
 			'discord_id',
 			person.id

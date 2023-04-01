@@ -431,10 +431,11 @@ module.exports = {
 					if (err) resolve(console.log(err));
 					else if (result.length < 1) resolve(undefined);
 					if (new Date(result[0].deadline) >= Date.now()) {
+						let server;
 						if (result[0].company == 'rts') {
-							var server = botconfig.RTSServer;
+							server = botconfig.RTSServer;
 						} else {
-							var server = botconfig.PIGSServer;
+							server = botconfig.PIGSServer;
 						}
 
 						bot.guilds.cache
@@ -447,10 +448,11 @@ module.exports = {
 							);
 						resolve();
 					} else {
+						let server;
 						if (result[0].company == 'rts') {
-							var server = botconfig.RTSServer;
+							server = botconfig.RTSServer;
 						} else {
-							var server = botconfig.PIGSServer;
+							server = botconfig.PIGSServer;
 						}
 
 						bot.guilds.cache

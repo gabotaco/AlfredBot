@@ -12,18 +12,19 @@ module.exports.run = async (bot, args) => {
 		);
 		if (!MemberDetails) return resolve('Unable to find that member'); //not in PIGS
 
+		let untilnext = 0;
 		if (MemberDetails.pigs_total_vouchers < 6000) {
-			var untilnext = 6000 - MemberDetails.pigs_total_vouchers;
+			untilnext = 6000 - MemberDetails.pigs_total_vouchers;
 		} else if (MemberDetails.pigs_total_vouchers < 18000) {
-			var untilnext = 18000 - MemberDetails.pigs_total_vouchers;
+			untilnext = 18000 - MemberDetails.pigs_total_vouchers;
 		} else if (MemberDetails.pigs_total_vouchers < 38000) {
-			var untilnext = 38000 - MemberDetails.pigs_total_vouchers;
+			untilnext = 38000 - MemberDetails.pigs_total_vouchers;
 		} else if (MemberDetails.pigs_total_vouchers < 68000) {
-			var untilnext = 68000 - MemberDetails.pigs_total_vouchers;
+			untilnext = 68000 - MemberDetails.pigs_total_vouchers;
 		} else if (MemberDetails.pigs_total_vouchers < 150000) {
-			var untilnext = 150000 - MemberDetails.pigs_total_vouchers;
+			untilnext = 150000 - MemberDetails.pigs_total_vouchers;
 		} else if (MemberDetails.pigs_total_vouchers < 1500000) {
-			var untilnext = 1500000 - MemberDetails.pigs_total_vouchers;
+			untilnext = 1500000 - MemberDetails.pigs_total_vouchers;
 		} else {
 			return resolve('You are at the top rank');
 		}

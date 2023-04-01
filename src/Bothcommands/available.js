@@ -2,11 +2,12 @@ const botconfig = require('../botconfig.json');
 
 module.exports.run = async (bot, args) => {
 	return new Promise((resolve, reject) => {
+		let UnavailableRole;
 		if (args.guild_id == botconfig.PIGSServer) {
 			//Get correct unavailable role
-			var UnavailableRole = botconfig.PIGSRoles.UnavailableRole;
+			UnavailableRole = botconfig.PIGSRoles.UnavailableRole;
 		} else if (args.guild_id == botconfig.RTSServer) {
-			var UnavailableRole = botconfig.RTSRoles.UnavailableRole;
+			UnavailableRole = botconfig.RTSRoles.UnavailableRole;
 		}
 
 		const member = bot.guilds.cache

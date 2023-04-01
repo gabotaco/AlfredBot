@@ -4,10 +4,11 @@ const functions = require('../util/functions.js');
 
 module.exports.run = async (bot, args) => {
 	return new Promise(async (resolve, reject) => {
+		let CompanyName;
 		if (args.guild_id == botconfig.PIGSServer) {
-			var CompanyName = 'pigs';
+			CompanyName = 'pigs';
 		} else if (args.guild_id == botconfig.RTSServer) {
-			var CompanyName = 'rts';
+			CompanyName = 'rts';
 		}
 
 		const MemberInfo = await functions.GetMemberDetails(

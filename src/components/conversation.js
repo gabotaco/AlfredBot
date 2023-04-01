@@ -1,5 +1,3 @@
-'use strict';
-
 const EventEmitter = require('events');
 const util = require('util');
 const protoLoader = require('./proto-loader');

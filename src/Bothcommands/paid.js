@@ -3,11 +3,12 @@ const functions = require('../util/functions.js');
 
 module.exports.run = async (bot, args) => {
 	return new Promise((resolve, reject) => {
+		let CompanyName;
 		if (args.guild_id == botconfig.PIGSServer) {
 			//if pigs server
-			var CompanyName = 'pigs';
+			CompanyName = 'pigs';
 		} else {
-			var CompanyName = 'rts';
+			CompanyName = 'rts';
 		}
 
 		bot.con.query(

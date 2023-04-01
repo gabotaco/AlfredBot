@@ -7,12 +7,13 @@ module.exports.run = async (bot, args) => {
 		d.setDate(d.getDate() + 14); //add 14 days to deadline
 		const date = d.toISOString().slice(0, 19).replace('T', ' ');
 
+		let CompanyName;
 		if (args.guild_id == botconfig.PIGSServer) {
 			//pigs server
-			var CompanyName = 'pigs';
+			CompanyName = 'pigs';
 		} else if (args.guild_id == botconfig.RTSServer) {
 			//rts server
-			var CompanyName = 'rts';
+			CompanyName = 'rts';
 		}
 
 		if (args.in_game_id && !args.discord && !args.name) {

@@ -26,71 +26,79 @@ module.exports.run = async (bot, args) => {
 		const TotalVouchers = functions.numberWithCommas(
 			MemberDetails.pigs_total_vouchers
 		);
+
+		let Rank = '';
+		let RequiredVouchers = 0;
+		let NextRank = '';
+		let RankVouchers = 0;
+		let CurrentVouchers = 0;
+		let Progress = 0;
+
 		if (MemberDetails.pigs_total_vouchers < 6000) {
-			var Rank = 'Hustler';
-			var RequiredVouchers = 6000 - MemberDetails.pigs_total_vouchers;
-			var NextRank = 'Pickpocket';
-			var RankVouchers = 6000;
-			var CurrentVouchers = MemberDetails.pigs_total_vouchers;
+			Rank = 'Hustler';
+			RequiredVouchers = 6000 - MemberDetails.pigs_total_vouchers;
+			NextRank = 'Pickpocket';
+			RankVouchers = 6000;
+			CurrentVouchers = MemberDetails.pigs_total_vouchers;
 
-			var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
+			Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
 		} else if (MemberDetails.pigs_total_vouchers < 18000) {
-			var Rank = 'PickPocket';
-			var RequiredVouchers = 18000 - MemberDetails.pigs_total_vouchers;
+			Rank = 'PickPocket';
+			RequiredVouchers = 18000 - MemberDetails.pigs_total_vouchers;
 
-			var NextRank = 'Thief';
-			var RankVouchers = 12000;
-			var CurrentVouchers = MemberDetails.pigs_total_vouchers - 6000;
+			NextRank = 'Thief';
+			RankVouchers = 12000;
+			CurrentVouchers = MemberDetails.pigs_total_vouchers - 6000;
 
-			var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
+			Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
 		} else if (MemberDetails.pigs_total_vouchers < 38000) {
-			var Rank = 'Thief';
-			var RequiredVouchers = 38000 - MemberDetails.pigs_total_vouchers;
+			Rank = 'Thief';
+			RequiredVouchers = 38000 - MemberDetails.pigs_total_vouchers;
 
-			var NextRank = 'Lawless';
-			var RankVouchers = 20000;
-			var CurrentVouchers = MemberDetails.pigs_total_vouchers - 18000;
+			NextRank = 'Lawless';
+			RankVouchers = 20000;
+			CurrentVouchers = MemberDetails.pigs_total_vouchers - 18000;
 
-			var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
+			Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
 		} else if (MemberDetails.pigs_total_vouchers < 68000) {
-			var Rank = 'Lawless';
-			var RequiredVouchers = 68000 - MemberDetails.pigs_total_vouchers;
-			var NextRank = 'Criminal Mastermind';
-			var RankVouchers = 30000;
-			var CurrentVouchers = MemberDetails.pigs_total_vouchers - 38000;
+			Rank = 'Lawless';
+			RequiredVouchers = 68000 - MemberDetails.pigs_total_vouchers;
+			NextRank = 'Criminal Mastermind';
+			RankVouchers = 30000;
+			CurrentVouchers = MemberDetails.pigs_total_vouchers - 38000;
 
-			var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
+			Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
 		} else if (MemberDetails.pigs_total_vouchers < 150000) {
-			var Rank = 'Mastermind';
-			var RequiredVouchers = 150000 - MemberDetails.pigs_total_vouchers;
-			var NextRank = 'Overlord';
-			var RankVouchers = 82000;
-			var CurrentVouchers = MemberDetails.pigs_total_vouchers - 68000;
+			Rank = 'Mastermind';
+			RequiredVouchers = 150000 - MemberDetails.pigs_total_vouchers;
+			NextRank = 'Overlord';
+			RankVouchers = 82000;
+			CurrentVouchers = MemberDetails.pigs_total_vouchers - 68000;
 
-			var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
+			Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
 		} else if (MemberDetails.pigs_total_vouchers < 1500000) {
-			var Rank = 'Overlord';
-			var RequiredVouchers = 1500000 - MemberDetails.pigs_total_vouchers;
-			var NextRank = 'Swine';
-			var RankVouchers = 1350000;
-			var CurrentVouchers = MemberDetails.pigs_total_vouchers - 150000;
+			Rank = 'Overlord';
+			RequiredVouchers = 1500000 - MemberDetails.pigs_total_vouchers;
+			NextRank = 'Swine';
+			RankVouchers = 1350000;
+			CurrentVouchers = MemberDetails.pigs_total_vouchers - 150000;
 
-			var Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
+			Progress = Math.floor((CurrentVouchers / RankVouchers) * 100);
 		} else {
-			var Rank = 'Swine';
-			var CurrentVouchers = MemberDetails.pigs_total_vouchers - 1500000;
-			var VoucherTextThing = 'vouchers in Swine';
-			var RequiredVouchers = functions.numberWithCommas(CurrentVouchers);
-			var Progress = 100;
+			Rank = 'Swine';
+			CurrentVouchers = MemberDetails.pigs_total_vouchers - 1500000;
+			VoucherTextThing = 'vouchers in Swine';
+			RequiredVouchers = functions.numberWithCommas(CurrentVouchers);
+			Progress = 100;
 		}
 
 		RequiredVouchers = functions.numberWithCommas(RequiredVouchers);
 
+		let Deadline;
 		if (MemberDetails.company == 'fired') {
-			var Deadline = 'Non-Employee';
+			Deadline = 'Non-Employee';
 		} else {
-			var Deadline =
-				'Deadline: ' + new Date(MemberDetails.deadline).toDateString();
+			Deadline = 'Deadline: ' + new Date(MemberDetails.deadline).toDateString();
 		}
 
 		let CompanyRank;
@@ -102,7 +110,7 @@ module.exports.run = async (bot, args) => {
 					console.log(err);
 					return reject('Unable to get members and company');
 				}
-				var Ranking = [];
+				let Ranking = [];
 
 				result.forEach(member => {
 					Ranking.push([member.vouchers, member.in_game_name]);

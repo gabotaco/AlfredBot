@@ -8,10 +8,11 @@ module.exports.run = async (bot, message, args) => {
 		);
 	}
 
+	let RoleID = '';
 	if (message.guild.id == botconfig.PIGSServer) {
-		var RoleID = botconfig.PIGSRoles.UnavailableRole;
+		RoleID = botconfig.PIGSRoles.UnavailableRole;
 	} else if (message.guild.id == botconfig.RTSServer) {
-		var RoleID = botconfig.RTSRoles.UnavailableRole;
+		RoleID = botconfig.RTSRoles.UnavailableRole;
 	}
 
 	if (!message.member.roles.cache.has(RoleID)) {

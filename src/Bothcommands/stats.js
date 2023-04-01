@@ -2,7 +2,7 @@ const Discord = require('discord.js'); //discord
 const botconfig = require('../botconfig.json'); //handy info
 const functions = require('../util/functions.js'); //Handy functions
 Array.prototype.indexOfId = function (id) {
-	for (var i = 0; i < this.length; i++) if (this[i].in_game_id === id) return i;
+	for (let i = 0; i < this.length; i++) if (this[i].in_game_id === id) return i;
 	return -1;
 };
 

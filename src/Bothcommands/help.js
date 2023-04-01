@@ -15,14 +15,16 @@ function canUseCommand(member, commandPermissions) {
 }
 module.exports.run = async (bot, args) => {
 	return new Promise((resolve, reject) => {
+		let CommandFolder;
+		let MemberRoles;
 		if (args.guild_id == botconfig.PIGSServer) {
-			var CommandFolder = './PIGScommands/'; //folder with pigs commands
-			var MemberRoles = bot.guilds.cache
+			CommandFolder = './PIGScommands/'; //folder with pigs commands
+			MemberRoles = bot.guilds.cache
 				.get(botconfig.PIGSServer)
 				.members.cache.get(args.author_id);
 		} else if (args.guild_id == botconfig.RTSServer) {
-			var CommandFolder = './RTScommands/'; //folder with rts commands
-			var MemberRoles = bot.guilds.cache
+			CommandFolder = './RTScommands/'; //folder with rts commands
+			MemberRoles = bot.guilds.cache
 				.get(botconfig.RTSServer)
 				.members.cache.get(args.author_id);
 		}

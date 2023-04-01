@@ -12,12 +12,12 @@ module.exports.run = async (bot, args) => {
 			question += '?'; //add a ?
 		}
 
+		let answer = '';
 		if (Math.random() <= 0.5) {
 			//50%
-			var answer =
-				YesResponses[Math.floor(Math.random() * YesResponses.length)]; //answer is yes
+			answer = YesResponses[Math.floor(Math.random() * YesResponses.length)]; //answer is yes
 		} else {
-			var answer = NoResponses[Math.floor(Math.random() * NoResponses.length)]; //answer is no
+			answer = NoResponses[Math.floor(Math.random() * NoResponses.length)]; //answer is no
 		}
 
 		const ballembed = new Discord.MessageEmbed()

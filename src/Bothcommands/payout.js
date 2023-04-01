@@ -26,33 +26,35 @@ module.exports.run = async (bot, args) => {
 
 				var voucherWorth = function (playerTotalVouchers, voucherAmount) {
 					//get how much to pay the person
+					let RankVouchers;
+					let rankWorth;
 					if (playerTotalVouchers < 6000) {
 						//Hustler
-						var RankVouchers = 6000;
-						var rankWorth = 3500;
+						RankVouchers = 6000;
+						rankWorth = 3500;
 					} else if (playerTotalVouchers < 18000) {
 						//Pickpocket
-						var RankVouchers = 18000;
-						var rankWorth = 4000;
+						RankVouchers = 18000;
+						rankWorth = 4000;
 					} else if (playerTotalVouchers < 38000) {
 						//Thief
-						var RankVouchers = 38000;
-						var rankWorth = 5000;
+						RankVouchers = 38000;
+						rankWorth = 5000;
 					} else if (playerTotalVouchers < 68000) {
 						//Lawless
-						var RankVouchers = 68000;
-						var rankWorth = 6000;
+						RankVouchers = 68000;
+						rankWorth = 6000;
 					} else if (playerTotalVouchers < 150000) {
 						//Mastermind
-						var RankVouchers = 150000;
-						var rankWorth = 7000;
+						RankVouchers = 150000;
+						rankWorth = 7000;
 					} else if (playerTotalVouchers < 1500000) {
 						//Overlord
-						var RankVouchers = 1500000;
-						var rankWorth = 8500;
+						RankVouchers = 1500000;
+						rankWorth = 8500;
 					} else {
-						var RankVouchers = Infinity;
-						var rankWorth = 9000;
+						RankVouchers = Infinity;
+						rankWorth = 9000;
 					}
 
 					rankVouchers = RankVouchers;
@@ -74,33 +76,35 @@ module.exports.run = async (bot, args) => {
 
 				var RankUp = function (playerTotalVouchers, voucherAmount) {
 					//get how much to pay the person
+					let RankVouchers;
+					let nextRank;
 					if (playerTotalVouchers < 6000) {
 						//Hustler
-						var RankVouchers = 6000;
-						var nextRank = 'Pickpocket';
+						RankVouchers = 6000;
+						nextRank = 'Pickpocket';
 					} else if (playerTotalVouchers < 18000) {
 						//Pickpocket
-						var RankVouchers = 18000;
-						var nextRank = 'Thief';
+						RankVouchers = 18000;
+						nextRank = 'Thief';
 					} else if (playerTotalVouchers < 38000) {
 						//Thief
-						var RankVouchers = 38000;
-						var nextRank = 'Lawless';
+						RankVouchers = 38000;
+						nextRank = 'Lawless';
 					} else if (playerTotalVouchers < 68000) {
 						//Lawless
-						var RankVouchers = 68000;
-						var nextRank = 'Mastermind';
+						RankVouchers = 68000;
+						nextRank = 'Mastermind';
 					} else if (playerTotalVouchers < 150000) {
 						//Mastermind
-						var RankVouchers = 150000;
-						var nextRank = 'Overlord';
+						RankVouchers = 150000;
+						nextRank = 'Overlord';
 					} else if (playerTotalVouchers < 1500000) {
 						//Overlord
-						var RankVouchers = 1500000;
-						var nextRank = 'Swine';
+						RankVouchers = 1500000;
+						nextRank = 'Swine';
 					} else {
-						var RankVouchers = Infinity;
-						var nextRank = 'Max';
+						RankVouchers = Infinity;
+						nextRank = 'Max';
 					}
 
 					if (playerTotalVouchers + voucherAmount >= RankVouchers) {
@@ -206,25 +210,27 @@ module.exports.run = async (bot, args) => {
 
 				var voucherWorth = function (playerTotalVouchers, voucherAmount) {
 					//get how much to pay the person
+					let RankVouchers;
+					let rankWorth;
 					if (playerTotalVouchers < 9600) {
 						//Initiate
-						var RankVouchers = 9600;
-						var rankWorth = 5000;
+						RankVouchers = 9600;
+						rankWorth = 5000;
 					} else if (playerTotalVouchers < 24000) {
 						//Lead Foot
-						var RankVouchers = 24000;
-						var rankWorth = 5500;
+						RankVouchers = 24000;
+						rankWorth = 5500;
 					} else if (playerTotalVouchers < 52800) {
 						//Wheelman
-						var RankVouchers = 52800;
-						var rankWorth = 6000;
+						RankVouchers = 52800;
+						rankWorth = 6000;
 					} else if (playerTotalVouchers < 117600) {
 						//Legendary
-						var RankVouchers = 117600;
-						var rankWorth = 7500;
+						RankVouchers = 117600;
+						rankWorth = 7500;
 					} else {
-						var RankVouchers = Infinity;
-						var rankWorth = 8500;
+						RankVouchers = Infinity;
+						rankWorth = 8500;
 					}
 
 					rankVouchers = RankVouchers;
@@ -246,25 +252,27 @@ module.exports.run = async (bot, args) => {
 
 				var RankUp = function (playerTotalVouchers, voucherAmount) {
 					//get how much to pay the person
+					let RankVouchers;
+					let nextRank;
 					if (playerTotalVouchers < 9600) {
 						//Initiate
-						var RankVouchers = 9600;
-						var nextRank = 'Lead Foot';
+						RankVouchers = 9600;
+						nextRank = 'Lead Foot';
 					} else if (playerTotalVouchers < 24000) {
 						//Lead Foot
-						var RankVouchers = 24000;
-						var nextRank = 'Wheelman';
+						RankVouchers = 24000;
+						nextRank = 'Wheelman';
 					} else if (playerTotalVouchers < 52800) {
 						//Wheelman
-						var RankVouchers = 52800;
-						var nextRank = 'Legendary';
+						RankVouchers = 52800;
+						nextRank = 'Legendary';
 					} else if (playerTotalVouchers < 117600) {
 						//Legendary
-						var RankVouchers = 117600;
-						var nextRank = 'Speed Demon';
+						RankVouchers = 117600;
+						nextRank = 'Speed Demon';
 					} else {
-						var RankVouchers = Infinity;
-						var nextRank = 'Max';
+						RankVouchers = Infinity;
+						nextRank = 'Max';
 					}
 
 					if (playerTotalVouchers + voucherAmount >= RankVouchers) {

@@ -15,15 +15,16 @@ module.exports.run = async (bot, args) => {
 		let playerNames = [];
 		let playerID = [];
 		let playerJobs = [];
+		let CompanyName;
 
 		if (args.guild_id == botconfig.PIGSServer) {
 			//PIGS server
 
-			var CompanyName = 'pigs';
+			CompanyName = 'pigs';
 		} else if (args.guild_id == botconfig.RTSServer) {
 			//RTS server
 
-			var CompanyName = 'rts';
+			CompanyName = 'rts';
 		}
 
 		bot.con.query(
