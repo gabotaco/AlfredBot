@@ -663,6 +663,13 @@ bot.on('messageUpdate', async (oldMessage, newMessage) => {
 
 async function ProcessMessage(message) {
 	if (message.partial) await message.fetch();
+	// Check if the message has an author, if not log a link to the message
+	if (!message.author) {
+		console.log(
+			`Message with no author: https://discord.com/channels/${message.guild.id}/${message.channel.id}/${message.id}`
+		);
+		return;
+	}
 	if (message.author.bot || message.channel.type == 'dm') return; //if message is from a bot or is in a DM with the bot
 	if (message.channel.id == botconfig.PIGSOneWordStory) {
 		//If its in the one word story channel
