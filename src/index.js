@@ -715,7 +715,7 @@ async function ProcessMessage(message) {
 		//if said in the rts server
 		const AllowedRTSCommands = ['.status', '.8ball', '.ud', '.hello']; // commands you can do outside of bot channels
 
-		const commandfile = bot.RTSCommands.get(cmd.slice(prefix.length)); //Trys to get a rts command with the specified cmd without the prefix
+		var commandfile = bot.RTSCommands.get(cmd.slice(prefix.length)); //Trys to get a rts command with the specified cmd without the prefix
 		if (
 			commandfile &&
 			message.channel.id != botconfig.RTSPublicBotCommandsChannel &&
@@ -733,7 +733,7 @@ async function ProcessMessage(message) {
 		//if said in the pigs server
 		const AllowedPIGSCommands = ['.status', '.8ball', '.ud', '.hello'];
 
-		const commandfile = bot.PIGSCommands.get(cmd.slice(prefix.length)); // try to get a pigs command with the specified cmd without the prefix
+		var commandfile = bot.PIGSCommands.get(cmd.slice(prefix.length)); // try to get a pigs command with the specified cmd without the prefix
 		if (
 			commandfile &&
 			message.channel.id != '511853214858084364' &&
