@@ -749,7 +749,7 @@ async function ProcessMessage(message) {
 	}
 	if (!commandfile) {
 		//if theres isn't a pigs or rts command
-		const commandfile = bot.BothCommands.get(cmd.slice(prefix.length)); //try to get a both server command with the specified cmd without the prefix
+		var commandfile = bot.BothCommands.get(cmd.slice(prefix.length)); //try to get a both server command with the specified cmd without the prefix
 		if (commandfile) console.log('BOTH', commandfile.help.name, args); //logs that theres a command file
 	}
 	if (commandfile) {
