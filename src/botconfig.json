@@ -1,0 +1,61 @@
+{
+    "PIGSServer": "487285826544205845",
+    "RTSServer": "447157938390433792",
+    "ApplicationInGameIDIndex": 5,
+    "ApplicationStartingRow": 2,
+    "ApplicationDiscordIndex": 3,
+    "GaboID": "330000865215643658",
+    "RockID": "404650985529540618",
+    "ActiveServers": [
+        {
+            "url": "tycoon-2epova.users.cfx.re",
+            "name": "Main",
+            "direct":"server.tycoon.community:30120",
+            "api": "v1.api.tycoon.community/main",
+            "connect_uri": "2epova?pure_1"
+        },
+        {
+            "url": "tycoon-njyvop.users.cfx.re",
+            "name": "Beta",
+            "direct": "server.tycoon.community:30121",
+            "api": "v1.api.tycoon.community/beta",
+            "connect_uri": "njyvop?pure_1"
+        }
+    ],
+    "PIGSRoles": {
+        "GuestRole": "526487757695090691",
+        "InactiveRole": "576784981024571412",
+        "UnavailableRole": "573159277817233418",
+        "EdgyRole": "498885132468486175",
+        "BotRole": "487289216968032256"
+    },
+    "RTSRoles": {
+        "GuestRole": "483292098976546819",
+        "InactiveRole": "583745333591277590",
+        "UnavailableRole": "576787272142422021",
+        "BotRole": "455014608810541068",
+        "FiveMRole": "475029760930611200"
+    },
+    "PIGSLogs": "569674770816172043",
+    "RTSLogs": "569683812028645386",
+    "OWNERS": [{"id": "447494569173712898", "server": "rts"}, {"id": "447493627791409173", "server": "rts"}, {"id": "487286138529120256", "server": "pigs"}, {"id": "530765121522499584", "server":"pigs"}],
+    "MANAGERS": [{"id": "453982220907184128", "server": "rts"}, {"id": "529643022866972684", "server": "rts"}, {"id": "970370393468710943", "server": "pigs"}],
+    "EMPLOYEES": [{"id": "526203890639699968", "server": "rts"}, {"id": "483297370482933760", "server": "rts"}, {"id": "526160668882239508", "server": "pigs"}, {"id": "562991083882151937", "server": "pigs"}],
+    "MEMBERS": [{"id": "483292098976546819", "server": "rts"}, {"id": "526487757695090691", "server": "pigs"}],
+    "ApplicationRange": "A2:U500",
+    "RTSWelcome": "447500215357014026",
+    "PIGSWelcome": "487285826544205849",
+    "PIGSOneWordStory": "576434701124894735",
+    "prefix": {
+        "PIGS": ".",
+        "RTS": "."
+    },
+    "RTSCEOSpamChannel": "536639000463540256",
+    "RTSPublicBotCommandsChannel": "483312512217907220",
+    "RTSBotCommandsChannel": "472054525172383744",
+    "RTSBennysChannel": "472410321475338246",
+    "PIGSBotCommandsChannel": "488149666249048064",
+    "PIGSVoucherChannel": "487621053494067200",
+    "RTSVoucherChannel": "588099364497653780",
+    "GlitchDetectorID": "71676578244857856"
+}
