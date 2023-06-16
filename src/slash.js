@@ -485,7 +485,7 @@ slash.addCommands = slashCommands => {
 					enabledCommand.name != command.help.name ||
 					enabledCommand.description != command.help.description ||
 					enabledCommand.default_permission ||
-					!optionsAreSame(enabledCommand.options, cmdOptions)
+					!optionsAreSame(enabledCommand.options ?? [], cmdOptions)
 				) {
 					// Update
 					request.patch(
@@ -645,7 +645,7 @@ slash.addCommands = slashCommands => {
 					enabledCommand.name != command.help.name ||
 					enabledCommand.description != command.help.description ||
 					enabledCommand.default_permission ||
-					!optionsAreSame(enabledCommand.options, cmdOptions)
+					!optionsAreSame(enabledCommand.options ?? [], cmdOptions)
 				) {
 					// Update
 					request.patch(
