@@ -520,6 +520,10 @@ slash.addCommands = slashCommands => {
 				}
 
 				function checkPermissions() {
+					if (typeof command.help.permission !== 'string') {
+						return nextCommand();
+					}
+
 					const rtscmdPermissions = [
 						{
 							type: 2,
@@ -570,18 +574,7 @@ slash.addCommands = slashCommands => {
 					);
 
 					if (pigsValid && rtsValid) {
-						slash.commands[botconfig.RTSServer][enabledCommand.name] = {
-							...command,
-							id: enabledCommand.id,
-						};
-						slash.commands[botconfig.PIGSServer][enabledCommand.name] = {
-							...command,
-							id: enabledCommand.id,
-						};
-
-						console.log(`Registered GLOBAL /${enabledCommand.name}`);
-						delete enabledCommands[command.help.name];
-						addCommand(i + 1);
+						nextCommand();
 					} else if (pigsValid && !rtsValid) {
 						slash.commands[botconfig.PIGSServer][enabledCommand.name] = {
 							...command,
@@ -597,6 +590,21 @@ slash.addCommands = slashCommands => {
 					} else {
 						addPermissions('global');
 					}
+				}
+
+				function nextCommand() {
+					slash.commands[botconfig.RTSServer][enabledCommand.name] = {
+						...command,
+						id: enabledCommand.id,
+					};
+					slash.commands[botconfig.PIGSServer][enabledCommand.name] = {
+						...command,
+						id: enabledCommand.id,
+					};
+
+					console.log(`Registered GLOBAL /${enabledCommand.name}`);
+					delete enabledCommands[command.help.name];
+					addCommand(i + 1);
 				}
 			} else {
 				// Create
@@ -672,6 +680,10 @@ slash.addCommands = slashCommands => {
 				}
 
 				function checkPermissions() {
+					if (typeof command.help.permission !== 'string') {
+						return nextCommand();
+					}
+
 					const cmdPermissions = [
 						{
 							type: 2,
@@ -700,19 +712,23 @@ slash.addCommands = slashCommands => {
 							enabledPerms[slashCommands.guild][enabledCommand.id]
 						)
 					) {
-						slash.commands[guildID][enabledCommand.name] = {
-							...command,
-							id: enabledCommand.id,
-						};
-
-						console.log(
-							`Registered ${slashCommands.guild} /${enabledCommand.name}`
-						);
-						delete enabledCommands[command.help.name];
-						addCommand(i + 1);
+						nextCommand();
 					} else {
 						addPermissions(slashCommands.guild);
 					}
+				}
+
+				function nextCommand() {
+					slash.commands[guildID][enabledCommand.name] = {
+						...command,
+						id: enabledCommand.id,
+					};
+
+					console.log(
+						`Registered ${slashCommands.guild} /${enabledCommand.name}`
+					);
+					delete enabledCommands[command.help.name];
+					addCommand(i + 1);
 				}
 			} else {
 				// Create
