@@ -48,7 +48,7 @@ module.exports.run = async (bot, args) => {
 			.addField('Reason', Reason);
 		const WarnChannel = bot.guilds.cache
 			.get(botconfig.PIGSServer)
-			.channels.cache.get('527602243743252550'); //get channel and send
+			.channels.cache.get('1091032211005907060'); //get channel and send
 		WarnChannel.send(WarnEmbed);
 
 		const DeadlineDate = new Date(Deadline);
@@ -75,7 +75,7 @@ module.exports.run = async (bot, args) => {
 			.members.cache.get(DiscordID); //get discord member and then inform if in discord
 		if (warned)
 			warned.send(
-				`Hello ${InGameName}, It has come to our attention that you've broken a rule and as a result, you've been issued a formal warning. Your voucher deadline has been reduced. Multiple warnings could lead to removal from the company.`
+				`Hello ${InGameName}, It has come to our attention that you've broken a rule:${Reason}\nAs a result, you've been issued a formal warning. Your voucher deadline has been reduced. \nMultiple warnings could lead to removal from the company.\nAlfred.`
 			);
 
 		bot.con.query(
