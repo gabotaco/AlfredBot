@@ -75,7 +75,7 @@ module.exports.run = async (bot, args) => {
 			.members.cache.get(DiscordID); //get discord member and then inform if in discord
 		if (warned)
 			warned.send(
-				`Hello ${InGameName}, It has come to our attention that you've broken a rule and as a result, you've been issued a formal warning. Your voucher deadline has been reduced. Multiple warnings could lead to removal from the company.`
+				`Hello ${InGameName}, It has come to our attention that you've broken a rule:${Reason}\nAs a result, you've been issued a formal warning. Your voucher deadline has been reduced. \nMultiple warnings could lead to removal from the company.\nAlfred.`
 			);
 
 		bot.con.query(
