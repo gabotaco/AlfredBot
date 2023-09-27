@@ -126,20 +126,19 @@ app.patch('/roles/update', function (req, res) {
 		member: null,
 	};
 
-	res.json({
-		error: 'Disabled temporarily',
-	});
-
-	// bot.BothCommands.get("roles").run(bot, roleArgs).then((res) => {
-	//     bot.channels.cache.get("727993411461841038").send(res)
-	//     res.json({
-	//         "success": "Yes"
-	//     })
-	// }).catch((err) => {
-	//     res.json({
-	//         "error": err
-	//     })
-	// })
+	bot.BothCommands.get('roles')
+		.run(bot, roleArgs)
+		.then(res => {
+			bot.channels.cache.get('727993411461841038').send(res);
+			res.json({
+				success: 'Yes',
+			});
+		})
+		.catch(err => {
+			res.json({
+				error: err,
+			});
+		});
 });
 
 app.get('/roles/inactive', function (req, res) {
