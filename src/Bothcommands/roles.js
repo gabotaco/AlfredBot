@@ -18,27 +18,27 @@ const pigsfamilyID = '526203890639699968';
 
 module.exports.run = async (bot, args) => {
 	return new Promise(async (resolve, reject) => {
-		if (
-			!bot.guilds.cache
-				.get(args.guild_id)
-				.members.cache.get(args.author_id)
-				.hasPermission('KICK_MEMBERS') &&
-			args.member
-		) {
-			return resolve("You aren't allowed to specify another member.");
-		}
-
 		let person = bot.guilds.cache
 			.get(args.guild_id)
-			.members.cache.get(args.member ? args.member : args.author_id); //get person by first mention or first arg or message author
+			.members.cache.get(args.author_id);
+			
+		if (args.member) {
+			if (
+				!bot.guilds.cache.get(args.guild_id)
+					.members.cache.get(args.author_id)
+					.hasPermission('KICK_MEMBERS')
+			)
+				return resolve("You aren't allowed to specify another member.");
 
-		if (!person) {
-			return resolve("Couldn't find specified member.");
+			person = bot.guilds.cache
+				.get(args.guild_id)
+				.members.cache.get(args.member)
 		}
-		if (!person.id) {
-			console.log(`Person has no ID: ${person}`);
-			return resolve("Couldn't find specified member.");
-		}
+
+		if (!person) return resolve("Couldn't find specified member.");
+
+		if (!person.id) return resolve("Couldn't find specified member.");
+
 		if (
 			args.member &&
 			person.id == args.author_id &&
