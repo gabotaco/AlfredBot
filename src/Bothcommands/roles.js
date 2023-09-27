@@ -32,6 +32,9 @@ module.exports.run = async (bot, args) => {
 			.get(args.guild_id)
 			.members.cache.get(args.member ? args.member : args.author_id); //get person by first mention or first arg or message author
 
+		if (!person) {
+			return resolve("Couldn't find specified member.");
+		}
 		if (!person.id) {
 			console.log(`Person has no ID: ${person}`);
 			return resolve("Couldn't find specified member.");
