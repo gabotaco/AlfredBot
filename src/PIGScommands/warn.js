@@ -12,6 +12,8 @@ const date_diff_indays = function (date1, date2) {
 	);
 };
 
+const WarnChannelId = '527602243743252550';
+
 module.exports.run = async (bot, args) => {
 	return new Promise(async (resolve, reject) => {
 		const ID = args.id || args.member;
@@ -46,9 +48,7 @@ module.exports.run = async (bot, args) => {
 			)
 			.addField('Number of Warnings', warns)
 			.addField('Reason', Reason);
-		const WarnChannel = bot.guilds.cache
-			.get(botconfig.PIGSServer)
-			.channels.cache.get('527602243743252550'); //get channel and send
+		const WarnChannel = bot.channels.cache.get(WarnChannelId);
 		WarnChannel.send(WarnEmbed);
 
 		const DeadlineDate = new Date(Deadline);
