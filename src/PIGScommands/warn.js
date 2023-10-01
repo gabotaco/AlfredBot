@@ -12,8 +12,6 @@ const date_diff_indays = function (date1, date2) {
 	);
 };
 
-const WarnChannelId = '527602243743252550';
-
 module.exports.run = async (bot, args) => {
 	return new Promise(async (resolve, reject) => {
 		const ID = args.id || args.member;
@@ -48,7 +46,7 @@ module.exports.run = async (bot, args) => {
 			)
 			.addField('Number of Warnings', warns)
 			.addField('Reason', Reason);
-		const WarnChannel = bot.channels.cache.get(WarnChannelId);
+		const WarnChannel = bot.channels.cache.get(botconfig.PIGSWarnChannel);
 		WarnChannel.send(WarnEmbed);
 
 		const DeadlineDate = new Date(Deadline);
@@ -75,7 +73,7 @@ module.exports.run = async (bot, args) => {
 			.members.cache.get(DiscordID); //get discord member and then inform if in discord
 		if (warned)
 			warned.send(
-				`Hello ${InGameName}, It has come to our attention that you've broken a rule:${Reason}\nAs a result, you've been issued a formal warning. Your voucher deadline has been reduced. \nMultiple warnings could lead to removal from the company.\nAlfred.`
+				`Hello ${InGameName}, It has come to our attention that you've broken a rule: ${Reason}\nAs a result, you've been issued a formal warning. Your voucher deadline has been reduced. \nMultiple warnings could lead to removal from the company.\nAlfred.`
 			);
 
 		bot.con.query(
