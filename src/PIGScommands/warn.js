@@ -17,7 +17,7 @@ const WarnChannelId = '527602243743252550';
 module.exports.run = async (bot, args) => {
 	return new Promise(async (resolve, reject) => {
 		const ID = args.id || args.member;
-		const SearchColumn = await functions.GetSearchColumn(ID);
+		const SearchColumn = functions.GetSearchColumn(ID);
 
 		const MemberData = await functions.GetMemberDetails(
 			bot.con,
@@ -86,7 +86,18 @@ module.exports.run = async (bot, args) => {
 					console.log(err);
 					return reject('Unable to alter member warnings.');
 				}
-				resolve(`This is warning number ${warns} for ${InGameName}`);
+
+				bot.con.query(
+					`INSERT INTO warnings (member_id, reason) VALUES ('${MemberData.id}', '${Reason}')`,
+					function (err, fields, result) {
+						//insert warning into database
+						if (err) {
+							console.log(err);
+							return reject('Unable to insert warning.');
+						}
+						return resolve('Warned');
+					}
+				);
 			}
 		);
 	});

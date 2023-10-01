@@ -1,21 +1,35 @@
-const functions = require('../util/functions.js');
+const Discord = require('discord.js');
 const botconfig = require('../botconfig');
+const functions = require('../util/functions.js');
 module.exports.run = async (bot, args) => {
 	return new Promise(async (resolve, reject) => {
-		const SearchColumn = functions.GetSearchColumn(args.author_id);
+		const MemberData = await functions.GetMemberDetails(
+			bot.con,
+			'discord_id',
+			args.author_id
+		);
+		if (!MemberData) return resolve('Unable to find that user');
 
 		bot.con.query(
-			`SELECT warnings, discord_id FROM members WHERE ${SearchColumn} = '${args.author_id}'`,
+			`SELECT id, reason FROM warnings WHERE member_id = '${MemberData.id}'`,
 			function (err, result, fields) {
 				//get the warning number for the member
 				if (err) {
 					console.log(err);
 					return reject('Unable to get warnings table.');
 				}
-				if (result.length == 0) return resolve('Not hired'); //not hired
-				resolve(
-					`<@${result[0].discord_id}> has ${result[0].warnings} warnings`
-				); //hired
+				if (result.length == 0) return resolve('No warnings'); //no warnings
+
+				const embed = new Discord.MessageEmbed()
+					.setTitle('Warnings')
+					.setColor('#ff0000')
+					.setDescription(`You have ${result.length} warnings:`);
+
+				for (let i = 0; i < result.length; i++) {
+					embed.addField(`Warning ID: ${result[i].id}`, result[i].reason);
+				}
+
+				return resolve(embed);
 			}
 		);
 	});
