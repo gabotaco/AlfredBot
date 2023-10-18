@@ -21,20 +21,46 @@ module.exports.run = async (bot, args) => {
 					console.log(err);
 					return reject('Unable to get warnings table.');
 				}
-				if (result.length == 0) return resolve('No warnings'); //no warnings
 
-				const embed = new Discord.MessageEmbed()
-					.setTitle('Warnings')
-					.setColor('#ff0000')
-					.setDescription(
-						`<@${MemberData.discord_id}> has ${result.length} warnings:`
-					);
+				bot.con.query(
+					`SELECT warnings FROM members WHERE id = '${MemberData.id}'`,
+					function (err, memberResult, fields) {
+						if (err) {
+							console.log(err);
+							return reject('Unable to get members table.');
+						}
 
-				for (let i = 0; i < result.length; i++) {
-					embed.addField(`Warning ID: ${result[i].id}`, result[i].reason);
-				}
+						if (
+							result.length == 0 ||
+							memberResult.length == 0 ||
+							!memberResult[0].warnings
+						)
+							return resolve('No warnings'); //no warnings
 
-				return resolve(embed);
+						const embed = new Discord.MessageEmbed()
+							.setTitle('Warnings')
+							.setColor('#ff0000')
+							.setDescription(
+								`<@${MemberData.discord_id}> has ${memberResult[0].warnings} warnings:`
+							);
+
+						if (memberResult[0].warnings - result.length > 0)
+							embed.setFooter(
+								`<@${MemberData.discord_id}> has ${
+									memberResult[0].warnings - result.length
+								} warnings before 18/10/2023`
+							);
+
+						for (let i = 0; i < result.length; i++) {
+							embed.addField(
+								`Warning ID: ${result[i].id}`,
+								`${result[i].reason} - ${result[i].createdAt}`
+							);
+						}
+
+						return resolve(embed);
+					}
+				);
 			}
 		);
 	});
