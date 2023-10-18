@@ -46,7 +46,9 @@ module.exports.run = async (bot, args) => {
 			)
 			.addField('Number of Warnings', warns)
 			.addField('Reason', Reason);
+
 		const WarnChannel = bot.channels.cache.get(botconfig.PIGSWarnChannel);
+
 		WarnChannel.send(WarnEmbed);
 
 		const DeadlineDate = new Date(Deadline);
