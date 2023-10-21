@@ -181,7 +181,7 @@ module.exports = {
 
 	/**
 	 * @summary Gets the details for the member with the ID in the search column
-	 * @param {Discord.Client} bot Alfred
+	 * @param {} con Database connection
 	 * @param {String} Column discord iD or in game id
 	 * @param {String} ID the id
 	 * @returns {Array<String>} All their info
