@@ -11,10 +11,10 @@ module.exports.run = async (bot, args) => {
 			SearchColumn,
 			ID
 		);
-		if (!MemberData) return resolve('Unable to find that applicant');
+		if (!MemberData) return resolve(`Unable to find that player: ${ID}`);
 
 		bot.con.query(
-			`SELECT id, reason FROM warnings WHERE member_id = '${MemberData.id}'`,
+			`SELECT id, reason, createdAt FROM warnings WHERE member_id = '${MemberData.id}'`,
 			function (err, result, fields) {
 				//get the warning number for the member
 				if (err) {
@@ -30,32 +30,34 @@ module.exports.run = async (bot, args) => {
 							return reject('Unable to get members table.');
 						}
 
-						if (
-							result.length == 0 ||
-							memberResult.length == 0 ||
-							!memberResult[0].warnings
-						)
-							return resolve('No warnings'); //no warnings
+						if (memberResult[0].warnings == 0)
+							return resolve(`${MemberData.in_game_name} has no warnings`);
 
 						const embed = new Discord.MessageEmbed()
-							.setTitle('Warnings')
-							.setColor('#ff0000')
-							.setDescription(
-								`<@${MemberData.discord_id}> has ${memberResult[0].warnings} warnings:`
-							);
+							.setTitle(
+								`${MemberData.in_game_name}'s (${MemberData.in_game_id}) Warnings`
+							)
+							.setColor(memberResult[0].warnings * 0x00ff00)
 
-						if (memberResult[0].warnings - result.length > 0)
-							embed.setFooter(
-								`<@${MemberData.discord_id}> has ${
-									memberResult[0].warnings - result.length
-								} warnings before 18/10/2023`
-							);
+							.addFields({
+								name: `${memberResult[0].warnings} warning${
+									memberResult[0].warnings > 1 ? 's' : ''
+								}:`,
+								value:
+									memberResult[0].warnings - result.length > 0
+										? `${MemberData.in_game_name} has ${
+												memberResult[0].warnings - result.length
+										  } warnings before <t:1697670000>`
+										: '\u200b',
+							});
 
 						for (let i = 0; i < result.length; i++) {
-							embed.addField(
-								`Warning ID: ${result[i].id}`,
-								`${result[i].reason} - ${result[i].createdAt}`
-							);
+							embed.addFields([
+								{
+									name: `Warning ID: ${result[i].id}`,
+									value: `${result[i].reason} - ${result[i].createdAt}`,
+								},
+							]);
 						}
 
 						return resolve(embed);
@@ -70,16 +72,16 @@ module.exports.help = {
 	name: 'warnlevel-m',
 	aliases: ['wl-m'],
 	usage: '<member>',
-	description: 'Check how many warns an employee has',
+	description: 'Check how many warnings a member has',
 	args: [
 		{
 			name: 'id',
-			description: 'Get the warnlevels of an employee using their id',
+			description: "Get a member's warnlevel using their in game or discord id",
 			type: 1,
 			options: [
 				{
 					name: 'id',
-					description: 'Their in game id or discord id',
+					description: 'Their in game or discord id',
 					type: 4,
 					required: true,
 					parse: (bot, message, args) => {
@@ -92,7 +94,7 @@ module.exports.help = {
 		},
 		{
 			name: 'discord',
-			description: 'Get the warnlevels of an employee using their discord',
+			description: "Get a member's warnlevel using their discord",
 			type: 1,
 			options: [
 				{

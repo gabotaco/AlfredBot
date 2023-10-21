@@ -31,25 +31,25 @@ module.exports.run = async (bot, args) => {
 		let warns = MemberData.warnings;
 
 		warns++; //increase warns by 1
+		const manager = bot.guilds.cache
+			.get(args.guild_id)
+			.members.cache.get(args.author_id).user;
+
+		console.log(warns, Reason);
 
 		let WarnEmbed = new Discord.MessageEmbed() //make embed
 			.setDescription('Warned')
-			.setAuthor(
-				bot.guilds.cache.get(args.guild_id).members.cache.get(args.author_id)
-					.user.username
-			)
+			.setAuthor({ name: manager.username, iconURL: manager.avatarURL() })
 			.setColor('RANDOM')
-			.addField('Warned User', `<@${DiscordID}>`)
-			.addField(
-				'Warned In',
-				bot.guilds.cache.get(args.guild_id).channels.cache.get(args.channel_id)
-			)
-			.addField('Number of Warnings', warns)
-			.addField('Reason', Reason);
+			.addFields([
+				{ name: 'Warned User', value: `<@${DiscordID}>` },
+				{ name: 'Number of Warnings', value: warns.toString() },
+				{ name: 'Reason', value: Reason },
+			]);
 
 		const WarnChannel = bot.channels.cache.get(botconfig.PIGSWarnChannel);
 
-		WarnChannel.send(WarnEmbed);
+		WarnChannel.send({ embeds: [WarnEmbed] }); //send embed
 
 		const DeadlineDate = new Date(Deadline);
 
