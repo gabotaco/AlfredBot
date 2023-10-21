@@ -60,10 +60,10 @@ module.exports.run = async (bot, args) => {
 };
 
 module.exports.help = {
-	name: 'warnlevel',
-	aliases: ['wl'],
+	name: 'warnings',
+	aliases: ['wg'],
 	usage: '',
-	description: 'Check how many warns you have',
+	description: 'Check how many warnings you have',
 	args: [],
 	permission: [
 		...botconfig.OWNERS,
