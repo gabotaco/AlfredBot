@@ -425,49 +425,7 @@ module.exports = {
 
 	CheckForActive: function (bot, SearchColumn, ID) {
 		return new Promise((resolve, reject) => {
-			bot.con.query(
-				`SELECT deadline, discord_id, company FROM members WHERE ${SearchColumn} = '${ID}'`,
-				function (err, result) {
-					if (err) resolve(console.log(err));
-					else if (result.length < 1) resolve(undefined);
-					if (new Date(result[0].deadline) >= Date.now()) {
-						let server;
-						if (result[0].company == 'rts') {
-							server = botconfig.RTSServer;
-						} else {
-							server = botconfig.PIGSServer;
-						}
-
-						bot.guilds.cache
-							.get(server)
-							.members.cache.get(result[0].discord_id)
-							.roles.remove(
-								server == botconfig.RTSServer
-									? botconfig.RTSRoles.InactiveRole
-									: botconfig.PIGSRoles.InactiveRole
-							);
-						resolve();
-					} else {
-						let server;
-						if (result[0].company == 'rts') {
-							server = botconfig.RTSServer;
-						} else {
-							server = botconfig.PIGSServer;
-						}
-
-						bot.guilds.cache
-							.get(server)
-							.members.cache.get(result[0].discord_id)
-							.roles.add(
-								server == botconfig.RTSServer
-									? botconfig.RTSRoles.InactiveRole
-									: botconfig.PIGSRoles.InactiveRole
-							);
-
-						resolve();
-					}
-				}
-			);
+			resolve();
 		});
 	},
 };
