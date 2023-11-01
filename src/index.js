@@ -141,42 +141,6 @@ app.patch('/roles/update', function (req, res) {
 		});
 });
 
-app.get('/roles/inactive', function (req, res) {
-	if (!req.query.access_token) {
-		res.json({
-			code: 404,
-		});
-		return;
-	}
-
-	if (req.query.access_token != process.env.SERVER_PASSWORD) {
-		res.json({
-			code: 404,
-		});
-		return;
-	}
-
-	if (!req.query.member || !req.query.server) {
-		res.json({
-			code: 404,
-		});
-		return;
-	}
-
-	bot.guilds.cache
-		.get(req.query.server)
-		.members.cache.get(req.query.member)
-		.roles.remove(
-			req.query.server == botconfig.RTSServer
-				? botconfig.RTSRoles.InactiveRole
-				: botconfig.PIGSRoles.InactiveRole
-		);
-
-	res.json({
-		code: 200,
-	});
-});
-
 app.get('/member/message', function (req, res) {
 	if (!req.query.access_token) {
 		res.json({
