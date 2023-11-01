@@ -21,10 +21,11 @@ module.exports.run = async (bot, args) => {
 		let person = bot.guilds.cache
 			.get(args.guild_id)
 			.members.cache.get(args.author_id);
-			
+
 		if (args.member) {
 			if (
-				!bot.guilds.cache.get(args.guild_id)
+				!bot.guilds.cache
+					.get(args.guild_id)
 					.members.cache.get(args.author_id)
 					.hasPermission('KICK_MEMBERS')
 			)
@@ -32,7 +33,7 @@ module.exports.run = async (bot, args) => {
 
 			person = bot.guilds.cache
 				.get(args.guild_id)
-				.members.cache.get(args.member)
+				.members.cache.get(args.member);
 		}
 
 		if (!person) return resolve("Couldn't find specified member.");
@@ -49,7 +50,6 @@ module.exports.run = async (bot, args) => {
 		let alwaysKeep;
 		let employeeID;
 		let GuestRole;
-		let InactiveRole;
 		let FamilyID;
 		if (args.guild_id == botconfig.PIGSServer) {
 			alwaysKeep = [
@@ -105,7 +105,6 @@ module.exports.run = async (bot, args) => {
 			];
 			employeeID = '562991083882151937';
 			GuestRole = botconfig.PIGSRoles.GuestRole;
-			InactiveRole = botconfig.PIGSRoles.InactiveRole;
 			FamilyID = rtsfamilyID;
 		} else if (args.guild_id == botconfig.RTSServer) {
 			alwaysKeep = [
@@ -154,7 +153,6 @@ module.exports.run = async (bot, args) => {
 			];
 			employeeID = '483297370482933760';
 			GuestRole = botconfig.RTSRoles.GuestRole;
-			InactiveRole = botconfig.RTSRoles.InactiveRole;
 			FamilyID = pigsfamilyID;
 		}
 
@@ -183,19 +181,6 @@ module.exports.run = async (bot, args) => {
 		if (MemberDetails) {
 			//if member is in database
 			if (MemberDetails.company == 'fired') return resolve('Guest role.'); //if fired stop
-
-			const D1 = new Date(MemberDetails.deadline); //check deadline
-			const D2 = new Date();
-			const D3 = D2 - D1; //difference between two dates
-			if (D3 <= 0) {
-				//if its not past their deadline
-				if (person.roles.cache.has(InactiveRole))
-					await person.roles.remove(InactiveRole); //if they have inactive role remove it
-			} else {
-				//past their deadline
-				if (!person.roles.cache.has(InactiveRole))
-					await person.roles.add(InactiveRole); //if they don't have inactive role add it
-			}
 
 			if (person.id != '404650985529540618')
 				await person.setNickname(MemberDetails.in_game_name); //set nickname to in game name
